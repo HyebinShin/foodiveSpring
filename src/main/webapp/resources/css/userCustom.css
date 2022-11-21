@@ -1,0 +1,10 @@
+.info-basic, .info-additional { width: 550px; margin: 0 auto; }
+.info-basic > .form-group, .info-additional > .form-group {
+    min-height: 20px;
+    overflow: hidden;
+}
+.address { width: 100%; }
+.addr > input, .addr > div { margin: 0.5rem 0;}
+#zipcode { width: calc(100%/2); cursor:pointer; display: inline-block; }
+.addr div { border: 1px solid gray; border-radius: 5px; width: calc(100%/2 - 5px); display: inline-block; text-align: center; }
+.addr span { display: block; margin: 0 auto; width: 100px;}
