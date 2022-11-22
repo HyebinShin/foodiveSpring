@@ -86,6 +86,7 @@
                     <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user">
+                    <c:set value="${loginInfo.state}" var="state"/>
                     <c:choose>
                         <c:when test="${empty state || state eq '0'}">
                             <li>
@@ -105,7 +106,7 @@
                             <li>
                                 <a href="#">로그아웃</a>
                             </li>
-                            <c:if test="${state eq '1'}">
+                            <c:if test="${state eq '2'}">
                                 <li href="#">관리자 페이지</li>
                             </c:if>
                         </c:when>
@@ -118,3 +119,7 @@
     <div id="page-wrapper" style="margin: 0 auto;">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            console.log('state: <c:out value="${loginInfo.state}"/>');
+        </script>

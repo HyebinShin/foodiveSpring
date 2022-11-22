@@ -1,5 +1,6 @@
 package com.foodive.controller;
 
+import com.foodive.domain.LoginInfo;
 import com.foodive.domain.UserVO;
 import com.foodive.persistence.UserMsg;
 import com.foodive.service.UserService;
@@ -9,8 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpSession;
 
 @RequestMapping("/user/*")
 @Controller
@@ -51,14 +55,21 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public String login(UserVO user, RedirectAttributes rttr) {
+    public String login(UserVO user, HttpSession session, RedirectAttributes rttr) {
         log.info("login: "+user);
 
-        if(service.get(user)!=null) {
-            rttr.addFlashAttribute("result", "success");
+        UserVO loginUser = service.get(user);
+
+        if(loginUser!=null) {
+            rttr.addFlashAttribute("result", user.getId()+UserMsg.USER_LOGIN);
+            log.info("login user: "+loginUser);
+            session.setAttribute("loginInfo", new LoginInfo(loginUser.getId(), loginUser.getState()));
+            return "redirect:/main";
+        } else {
+            rttr.addFlashAttribute("result", UserMsg.USER_LOGIN_FAIL);
+            return "redirect:/user/login";
         }
 
-        return "redirect:/main";
     }
 
     @GetMapping(value = {"/register", "/login"})

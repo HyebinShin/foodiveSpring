@@ -21,8 +21,30 @@ let userService = (function () {
         });
     }
 
+    function login(user, callback, error) {
+        console.log("login...");
+
+        $.ajax({
+            type: 'post',
+            url: '/user/login',
+            data: JSON.stringify(user),
+            contentType: "application/json; charset=utf-8",
+            success: function (result, status, xhr) {
+                if (callback) {
+                    callback(result);
+                }
+            },
+            fail: function (xhr, status, er) {
+                if(error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
     return {
-        idCheck: idCheck
+        idCheck: idCheck,
+        login:login
     };
 
 });
