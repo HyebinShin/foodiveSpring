@@ -115,6 +115,6 @@
         </ul>
     </nav>
 
-    <div id="page-wrapper">
+    <div id="page-wrapper" style="margin: 0 auto;">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>

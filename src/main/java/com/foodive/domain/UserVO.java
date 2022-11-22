@@ -1,6 +1,7 @@
 package com.foodive.domain;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -17,7 +18,10 @@ public class UserVO {
     private String email;
 
     private String sex;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
+
     private String phone;
     private String zipcode;
     private String address1;

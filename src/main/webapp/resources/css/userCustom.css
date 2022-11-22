@@ -1,4 +1,4 @@
-.info-basic, .info-additional { width: 550px; margin: 0 auto; }
+.info-basic, .info-additional { width: 550px; }
 .info-basic > .form-group, .info-additional > .form-group {
     min-height: 20px;
     overflow: hidden;
