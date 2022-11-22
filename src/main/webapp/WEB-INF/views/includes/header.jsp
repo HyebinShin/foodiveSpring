@@ -101,7 +101,7 @@
                                 <a href="#">장바구니</a>
                             </li>
                             <li>
-                                <a href="#">마이페이지</a>
+                                <a href="/user/myPage">마이페이지</a>
                             </li>
                             <li>
                                 <a href="#">로그아웃</a>

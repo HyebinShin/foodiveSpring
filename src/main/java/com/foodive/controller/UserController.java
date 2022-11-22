@@ -76,4 +76,13 @@ public class UserController {
     public void userPage() {
         log.info("userPage...");
     }
+
+    @GetMapping(value = {"/myPage"})
+    public void userInfoPage(Model model, @SessionAttribute("loginInfo") LoginInfo loginInfo) {
+        log.info("userInfoPage...");
+        UserVO user = new UserVO();
+        user.setId(loginInfo.getId());
+
+        model.addAttribute("userInfo", service.get(user));
+    }
 }
