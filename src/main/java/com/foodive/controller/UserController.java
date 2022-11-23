@@ -63,17 +63,26 @@ public class UserController {
         log.info("login: "+user);
 
         UserVO loginUser = service.get(user);
+        String msg = "";
+        String url = "";
 
         if(loginUser!=null) {
-            rttr.addFlashAttribute("result", user.getId()+UserMsg.USER_LOGIN);
-            log.info("login user: "+loginUser);
-            session.setAttribute("loginInfo", new LoginInfo(loginUser.getId(), loginUser.getState()));
+            if(loginUser.getState()==0) {
+                msg = UserMsg.USER_DROPPED;
+                url = "/user/login";
+            } else {
+                msg = user.getId()+UserMsg.USER_LOGIN;
+                url = "/main";
+                session.setAttribute("loginInfo", new LoginInfo(loginUser.getId(), loginUser.getState()));
+            }
 
-            return "redirect:/main";
         } else {
-            rttr.addFlashAttribute("result", UserMsg.USER_LOGIN_FAIL);
-            return "redirect:/user/login";
+            msg = UserMsg.USER_LOGIN_FAIL;
+            url = "/user/login";
         }
+
+        rttr.addFlashAttribute("result", msg);
+        return "redirect:"+url;
 
     }
 
@@ -100,7 +109,7 @@ public class UserController {
             }
     )
     @ResponseBody
-    public ResponseEntity<UserVO> get(@RequestBody UserVO user) {
+    public ResponseEntity<UserVO> find(@RequestBody UserVO user) {
         log.info("user: "+user);
 
         return new ResponseEntity<>(service.get(user), HttpStatus.OK);
@@ -112,7 +121,7 @@ public class UserController {
             produces = {MediaType.TEXT_PLAIN_VALUE}
     )
     @ResponseBody
-    public ResponseEntity<String> modifyPassword(@RequestBody ObjectNode node) throws JsonProcessingException {
+    public ResponseEntity<String> modify(@RequestBody ObjectNode node) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         UserVO user = mapper.treeToValue(node.get("user"), UserVO.class);
         Boolean isPasswordChange = node.get("isPassword").asBoolean();
@@ -121,4 +130,6 @@ public class UserController {
                 new ResponseEntity<>("success", HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
 }
