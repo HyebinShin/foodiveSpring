@@ -1,5 +1,8 @@
 package com.foodive.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.foodive.domain.DuplicateInfo;
 import com.foodive.domain.LoginInfo;
 import com.foodive.domain.UserVO;
@@ -101,5 +104,21 @@ public class UserController {
         log.info("user: "+user);
 
         return new ResponseEntity<>(service.get(user), HttpStatus.OK);
+    }
+
+    @PostMapping(
+            value = {"/modify"},
+            consumes = "application/json",
+            produces = {MediaType.TEXT_PLAIN_VALUE}
+    )
+    @ResponseBody
+    public ResponseEntity<String> modifyPassword(@RequestBody ObjectNode node) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        UserVO user = mapper.treeToValue(node.get("user"), UserVO.class);
+        Boolean isPasswordChange = node.get("isPassword").asBoolean();
+
+        return service.modify(user, isPasswordChange) ?
+                new ResponseEntity<>("success", HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
