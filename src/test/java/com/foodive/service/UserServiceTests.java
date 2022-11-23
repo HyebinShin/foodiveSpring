@@ -1,5 +1,6 @@
 package com.foodive.service;
 
+import com.foodive.domain.DuplicateInfo;
 import com.foodive.domain.UserVO;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -41,9 +42,9 @@ public class UserServiceTests {
 
     @Test
     public void testDuplicated() {
-        String id = "user001";
+        DuplicateInfo duplicateInfo = new DuplicateInfo("user001", "I");
 
-        log.info(service.duplicated(id));
+        log.info(service.duplicated(duplicateInfo));
     }
 
     @Test

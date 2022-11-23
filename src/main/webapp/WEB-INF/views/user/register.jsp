@@ -50,7 +50,8 @@
                         <div class="col-sm-8">
                             <input type="email" class="form-control" name="email"
                                    placeholder="ex. foodive123@foodive.com">
-                            <span class="form-check" id="email"></span>
+                            <span class="form-check" id="emailCheck"></span>
+                            <input type="hidden" name="emailCheck">
                         </div>
                     </div>
                 </div>
@@ -104,24 +105,54 @@
 <script type="text/javascript" src="/resources/js/user.js"></script>
 
 <script>
-    $(document).ready(function () {
-        $("input[name='id']").on("focusout", function () {
-            let id = $("input[name='id']").val();
+    const setCheckValue = function (duplicateCase) {
+        return duplicateCase === "I" ? "아이디" : "이메일";
+    }
 
-            if (!userFunction().idValidate(id)) {
-                return;
+    const check = function (duplicateParam, duplicateCase, style, checkInput) {
+        if(!userFunction().checkValidate(duplicateParam, duplicateCase)) {
+            console.log("invalidated...")
+            return;
+        }
+
+        let duplicateInfo = {
+            duplicateParam:duplicateParam,
+            duplicateCase:duplicateCase
+        };
+
+        console.log("duplicate info...")
+
+        userService().check(duplicateInfo, function (result) {
+            if(result === 'success') {
+                style.attr("style", "color:#337ab7").html(`사용 가능한 \${setCheckValue(duplicateCase)}입니다.`);
+                checkInput.val(duplicateParam);
+            } else {
+                style.attr("style", "color:red").html(`이미 사용 중인 \${setCheckValue(duplicateCase)}입니다.`);
             }
+        })
+    }
 
-            userService().idCheck(id, function (result) {
-                if (result === 'success') {
-                    $("#idCheck").attr("style", "color:#337ab7").html("사용 가능한 아이디입니다.");
-                    $("input[name='idCheck']").val(id);
-                } else {
-                    $("#idCheck").attr("style", "color:red").html("이미 사용 중인 아이디입니다.");
-                }
-            });
+    $(document).ready(function () {
+        let idInput = $("input[name='id']");
+        let emailInput = $("input[name='email']");
+
+        $(idInput).on("focusout", function () {
+            let duplicateParam = idInput.val();
+            let style = $("#idCheck");
+            let checkInput = $("input[name='idCheck']");
+
+            check(duplicateParam, "I", style, checkInput);
         });
 
+        $(emailInput).on("focusout", function () {
+            let duplicateParam = emailInput.val();
+            let style = $("#emailCheck");
+            let checkInput = $("input[name='emailCheck']");
+
+            console.log("email input check...");
+
+            check(duplicateParam, "E", style, checkInput);
+        });
 
         $(".submit").on("click", function () {
 

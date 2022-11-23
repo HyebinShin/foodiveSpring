@@ -1,6 +1,7 @@
 package com.foodive.mapper;
 
 import com.foodive.domain.Criteria;
+import com.foodive.domain.DuplicateInfo;
 import com.foodive.domain.UserVO;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -37,9 +38,9 @@ public class UserMapperTests {
 
     @Test
     public void testDuplicated() {
-        String id = "user00";
+        DuplicateInfo duplicateInfo = new DuplicateInfo("user001", "I");
 
-        log.info("duplicated COUNT: "+mapper.duplicated(id));
+        log.info("duplicated COUNT: "+mapper.duplicated(duplicateInfo));
     }
 
     @Test

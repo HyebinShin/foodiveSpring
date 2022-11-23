@@ -1,6 +1,7 @@
 package com.foodive.mapper;
 
 import com.foodive.domain.Criteria;
+import com.foodive.domain.DuplicateInfo;
 import com.foodive.domain.UserVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,7 +11,9 @@ public interface UserMapper {
 
     public int insert(UserVO user);
 
-    public int duplicated(String id);
+    public int duplicated(
+            @Param("duplicateInfo") DuplicateInfo duplicateInfo
+    );
 
     public UserVO get(
             @Param("user") UserVO user
@@ -28,4 +31,8 @@ public interface UserMapper {
     );
 
     public int getTotalUser(int state);
+
+
+    //추가
+
 }

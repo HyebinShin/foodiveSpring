@@ -1,6 +1,7 @@
 package com.foodive.service;
 
 import com.foodive.domain.Criteria;
+import com.foodive.domain.DuplicateInfo;
 import com.foodive.domain.UserVO;
 import com.foodive.function.Encrypt;
 import com.foodive.mapper.UserMapper;
@@ -27,10 +28,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int duplicated(String id) {
-        log.info("duplicated..."+id);
+    public int duplicated(DuplicateInfo duplicateInfo) {
+        log.info("duplicated..."+duplicateInfo);
 
-        return mapper.duplicated(id);
+        return mapper.duplicated(duplicateInfo);
     }
 
     @Override

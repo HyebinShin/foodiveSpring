@@ -40,7 +40,15 @@
     <select id="duplicated" resultType="int">
         select /*+ index_desc(tbl_user pk_user) */ count(uno)
         from tbl_user
-        where id = #{id}
+        where
+            <choose>
+                <when test="duplicateInfo.duplicateCase=='I'.toString()">
+                    id = #{duplicateInfo.duplicateParam}
+                </when>
+                <when test="duplicateInfo.duplicateCase=='E'.toString()">
+                    email = #{duplicateInfo.duplicateParam}
+                </when>
+            </choose>
     </select>
 
     <select id="get" resultType="com.foodive.domain.UserVO">

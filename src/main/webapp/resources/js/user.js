@@ -1,12 +1,12 @@
 let userService = (function () {
 
-    function idCheck(id, callback, error) {
-        console.log("idCheck...");
+    function check(duplicateInfo, callback, error) {
+        console.log("check...");
 
         $.ajax({
             type: 'post',
-            url: '/user/idCheck',
-            data: JSON.stringify(id),
+            url: '/user/check',
+            data: JSON.stringify(duplicateInfo),
             contentType: "application/json; charset=utf-8",
             success: function (result, status, xhr) {
                 if (callback) {
@@ -35,7 +35,7 @@ let userService = (function () {
                 }
             },
             fail: function (xhr, status, er) {
-                if(error) {
+                if (error) {
                     error(er);
                 }
             }
@@ -43,8 +43,8 @@ let userService = (function () {
     }
 
     return {
-        idCheck: idCheck,
-        login:login
+        check: check,
+        login: login
     };
 
 });
@@ -92,6 +92,7 @@ let userFunction = (function () {
         NAME_NOT_VALI: "이름은 한글로 2 ~ 5자만 입력 가능합니다.",
         EMAIL_NULL: "이메일을 입력해주세요.",
         EMAIL_NOT_VALI: "이메일 양식대로 입력해주세요.",
+        EMAIL_NOT_MATCH: "이메일 중복 검사가 진행되지 않았습니다.",
         BIRTHDAY_NOT_VALI: "숫자 8자리의 생년월일을 입력해주세요.",
         BIRTHDAY_UNDER_14: "만 14세 미만은 가입하실 수 없습니다.",
         PHONE_NOT_VALI: "전화번호를 양식에 맞춰 입력해주세요."
@@ -108,21 +109,32 @@ let userFunction = (function () {
         PASSWORD_CHECK: $("input[name='passwordCheck']").val(),
         NAME: $("input[name='name']").val(),
         EMAIL: $("input[name='email']").val(),
+        EMAIL_CHECK: $("input[name='emailCheck']").val(),
         BIRTHDAY: $("input[name='birthday']").val(),
         PHONE: $("input[name='phone']").val()
     }
 
-    function idValidate(id) {
-        console.log('id: ' + id);
-
-        if (inputForm.ID === '') {
-            inputStyle('idCheck', errorMsg.ID_NULL);
-            return false;
-        } else if (!regex('id', inputForm.ID)) {
-            inputStyle('idCheck', errorMsg.ID_NOT_VALI);
-            return false;
+    function checkValidate(checkParam, checkCase) {
+        switch (checkCase) {
+            case "I":
+                if (inputForm.ID === '') {
+                    inputStyle('idCheck', errorMsg.ID_NULL);
+                    return false;
+                } else if (!regex('id', inputForm.ID)) {
+                    inputStyle('idCheck', errorMsg.ID_NOT_VALI);
+                    return false;
+                }
+                return true;
+            case "E":
+                if (inputForm.EMAIL === '') {
+                    inputStyle('emailCheck', errorMsg.EMAIL_NULL);
+                    return false;
+                } else if (!regex('email', inputForm.EMAIL)) {
+                    inputStyle('emailCheck', errorMsg.EMAIL_NOT_VALI);
+                    return false;
+                }
+                return true;
         }
-        return true;
     }
 
     function validate() {
@@ -143,37 +155,34 @@ let userFunction = (function () {
             return false;
         }
 
-        if(inputForm.NAME === '') {
+        if (inputForm.NAME === '') {
             inputStyle('name', errorMsg.NAME_NULL);
             return false;
-        } else if(!regex('name', inputForm.NAME)) {
+        } else if (!regex('name', inputForm.NAME)) {
             inputStyle('name', errorMsg.NAME_NOT_VALI);
             return false;
         }
 
-        if(inputForm.EMAIL === '') {
-            inputStyle('email', errorMsg.EMAIL_NULL);
-            return false;
-        } else if (!regex('email', inputForm.EMAIL)) {
-            inputStyle('email', errorMsg.EMAIL_NOT_VALI);
+        if (inputForm.EMAIL !== inputForm.EMAIL_CHECK) {
+            inputStyle('emailCheck', errorMsg.EMAIL_NOT_MATCH);
             return false;
         }
 
-        if(inputForm.BIRTHDAY !== '') {
+        if (inputForm.BIRTHDAY !== '') {
             let birthday = inputForm.BIRTHDAY;
 
-            console.log("instance of ..."+(Number(birthday.substring(0, 4)) instanceof Number));
+            console.log("instance of ..." + (Number(birthday.substring(0, 4)) instanceof Number));
 
-            if(!regex('birthday', birthday)) {
+            if (!regex('birthday', birthday)) {
                 inputStyle('birthday', errorMsg.BIRTHDAY_NOT_VALI);
                 return false;
-            } else if(Number(birthday.substring(0, 4))>2008) {
+            } else if (Number(birthday.substring(0, 4)) > 2008) {
                 inputStyle('birthday', errorMsg.BIRTHDAY_UNDER_14);
                 return false;
             }
         }
 
-        if(inputForm.PHONE !== '' && !regex('phone', inputForm.PHONE)) {
+        if (inputForm.PHONE !== '' && !regex('phone', inputForm.PHONE)) {
             inputStyle('phone', errorMsg.PHONE_NOT_VALI);
             return false;
         }
@@ -182,7 +191,7 @@ let userFunction = (function () {
     }
 
     return {
-        idValidate: idValidate,
+        checkValidate: checkValidate,
         validate: validate
     };
 

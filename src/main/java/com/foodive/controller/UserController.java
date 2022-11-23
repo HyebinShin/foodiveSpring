@@ -1,5 +1,6 @@
 package com.foodive.controller;
 
+import com.foodive.domain.DuplicateInfo;
 import com.foodive.domain.LoginInfo;
 import com.foodive.domain.UserVO;
 import com.foodive.persistence.UserMsg;
@@ -37,21 +38,21 @@ public class UserController {
     }
 
     @PostMapping(
-            value = "/idCheck",
+            value = "/check",
             consumes = "application/json",
             produces = {MediaType.TEXT_PLAIN_VALUE}
     )
     @ResponseBody
-    public ResponseEntity<String> idCheck(@RequestBody String id, RedirectAttributes rttr) {
-        log.info("check id : "+id);
+    public ResponseEntity<String> idCheck(@RequestBody DuplicateInfo duplicateInfo, RedirectAttributes rttr) {
+        log.info("check param : "+duplicateInfo);
 
-        int idCheckCount = service.duplicated(id.replaceAll("\"", ""));
+        int checkCount = service.duplicated(duplicateInfo);
 
-        log.info("check id DUPLICATE COUNT: "+idCheckCount);
+        log.info("check DUPLICATE COUNT: "+checkCount);
 
-        return idCheckCount == 1 ?
-                new ResponseEntity<>("duplicate", HttpStatus.OK)
-                : new ResponseEntity<>("success", HttpStatus.OK);
+        return checkCount == 0 ?
+                new ResponseEntity<>("success", HttpStatus.OK)
+                : new ResponseEntity<>("duplicated", HttpStatus.OK);
     }
 
     @PostMapping(value = "/login")
