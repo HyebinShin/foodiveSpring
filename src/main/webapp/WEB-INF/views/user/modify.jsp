@@ -165,6 +165,18 @@
                         myModal.modal("show");
                     }
                 })
+            } else if(operation === 'drop') {
+                if(confirm("정말 탈퇴하시겠습니까?")) {
+                    let formObj = $("form");
+
+                    formObj.attr("action", "/user/drop");
+
+                    let idTag = $("input[name='id']").clone();
+
+                    formObj.empty();
+                    formObj.append(idTag);
+                    formObj.submit();
+                }
             }
         })
     });

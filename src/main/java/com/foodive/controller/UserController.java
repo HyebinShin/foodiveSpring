@@ -131,5 +131,18 @@ public class UserController {
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @PostMapping(value = "/drop")
+    public String drop(UserVO user, HttpSession session, RedirectAttributes rttr) {
+        log.info("drop user..."+user.getId());
+        LoginInfo loginInfo = (LoginInfo) session.getAttribute("loginInfo");
 
+        if(loginInfo.getId().equals(user.getId())) {
+            if(service.drop(user.getId())) {
+                session.invalidate();
+                rttr.addFlashAttribute("result", UserMsg.USER_DROP);
+            }
+        }
+
+        return "redirect:/main";
+    }
 }

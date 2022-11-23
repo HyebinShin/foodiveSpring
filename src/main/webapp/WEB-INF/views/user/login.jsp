@@ -25,6 +25,7 @@
                             <button id="findPasswordBtn" type="button" data-oper="findPassword" class="btn btn-default"
                                     data-toggle="collapse" data-target="#divFindPassword">비밀번호 찾기
                             </button>
+                            <button id="registerBtn" type="button" data-oper="register" class="btn btn-info">회원가입</button>
                         </form>
                     </fieldset>
                 </div>
@@ -78,6 +79,7 @@
         let loginBtn = $("#loginBtn");
         let findIdBtn = $("#findIdBtn");
         let findPasswordBtn = $("#findPasswordBtn");
+        let registerBtn = $("#registerBtn");
 
         loginBtn.on("click", function (e) {
             if (id.val() === '') {
@@ -93,6 +95,10 @@
 
             formObj.submit();
         });
+
+        registerBtn.on("click", function () {
+            location.replace("/user/register");
+        })
 
         let modal = $(".modal");
         let myModal = $("#myModal");
