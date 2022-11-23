@@ -42,9 +42,35 @@ let userService = (function () {
         })
     }
 
+    function getUserInfo(user, callback, error) {
+        console.log("get user info..."+JSON.stringify(user));
+
+        $.ajax({
+            type: 'post',
+            url: '/user/find',
+            data: JSON.stringify(user),
+            contentType: "application/json; charset=utf-8",
+            success: function (result, status, xhr) {
+                if (callback) {
+                    callback(result);
+                }
+            },
+            fail: function (xhr, status, er) {
+                if(error) {
+                    error(er);
+                }
+            }
+        });
+    }
+
+    function update(user, callback, error) {
+
+    }
+
     return {
         check: check,
-        login: login
+        login: login,
+        getUserInfo:getUserInfo
     };
 
 });
@@ -137,6 +163,19 @@ let userFunction = (function () {
         }
     }
 
+    function validatePassword(password, passwordCheck) {
+        if (password === '') {
+            inputStyle('password', errorMsg.PASSWORD_NULL);
+            return false;
+        } else if (!regex('password', password)) {
+            inputStyle('password', errorMsg.PASSWORD_NOT_VALI);
+            return false;
+        } else if (password !== passwordCheck) {
+            inputStyle('password', errorMsg.PASSWORD_NOT_MATCH);
+            return false;
+        }
+    }
+
     function validate() {
 
         if (inputForm.ID !== inputForm.ID_CHECK) {
@@ -144,16 +183,7 @@ let userFunction = (function () {
             return false;
         }
 
-        if (inputForm.PASSWORD === '') {
-            inputStyle('password', errorMsg.PASSWORD_NULL);
-            return false;
-        } else if (!regex('password', inputForm.PASSWORD)) {
-            inputStyle('password', errorMsg.PASSWORD_NOT_VALI);
-            return false;
-        } else if (inputForm.PASSWORD !== inputForm.PASSWORD_CHECK) {
-            inputStyle('password', errorMsg.PASSWORD_NOT_MATCH);
-            return false;
-        }
+        validatePassword(inputForm.PASSWORD, inputForm.PASSWORD_CHECK);
 
         if (inputForm.NAME === '') {
             inputStyle('name', errorMsg.NAME_NULL);
@@ -192,7 +222,52 @@ let userFunction = (function () {
 
     return {
         checkValidate: checkValidate,
-        validate: validate
+        validate: validate,
+        validatePassword:validatePassword
     };
 
+});
+
+let init = (function () {
+   function id() {
+       let str = "";
+
+       str += '<div class="form-group"><label>아이디</label>';
+       str += '<input class="form-control" name="id" placeholder="가입하신 아이디를 입력해주세요.">';
+       str += '<span id="modalIdStyle"></span>';
+       str += '</div>';
+
+       return str;
+   }
+
+   function email() {
+       let str = "";
+
+       str += '<div class="form-group"><label>이메일</label>';
+       str += '<input class="form-control" name="email" placeholder="가입하신 이메일을 입력해주세요.">';
+       str += '<span id="modalEmailStyle"></span>';
+       str += '</div>';
+
+       return str;
+   }
+
+   function password() {
+       let str = "";
+
+       str += '<div class="form-group"><label>비밀번호</label>';
+       str += '<input class="form-control" type="password" name="password" placeholder="8 ~ 24자의 영문자와 숫자로 입력해주세요.">';
+       str += '<span id="password"></span>';
+       str += '</div>';
+       str += '<div class="form-group"><label>비밀번호 확인</label>';
+       str += '<input class="form-control" type="password" name="password" placeholder="비밀번호를 한 번 더 입력해 주세요.">';
+       str += '</div>';
+
+       return str;
+   }
+
+   return {
+       id:id,
+       password:password,
+       email:email
+   }
 });

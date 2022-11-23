@@ -19,9 +19,11 @@
                                 <input class="form-control" placeholder="비밀번호를 입력해주세요." name="password" type="password">
                             </div>
                             <button id="loginBtn" type="button" data-oper="login" class="btn btn-primary">로그인</button>
-                            <button id="findIdBtn" type="button" data-oper="findId" class="btn btn-default">아이디 찾기</button>
-                            <button id="findPasswordBtn" type="button" data-oper="findPassword" class="btn btn-default">아이디
-                                찾기
+                            <button id="findIdBtn" type="button" data-oper="findId" class="btn btn-default"
+                                    data-toggle="collapse" data-target="#divFindId">아이디 찾기
+                            </button>
+                            <button id="findPasswordBtn" type="button" data-oper="findPassword" class="btn btn-default"
+                                    data-toggle="collapse" data-target="#divFindPassword">비밀번호 찾기
                             </button>
                         </form>
                     </fieldset>
@@ -31,7 +33,7 @@
     </div>
 </div>
 
-<!-- modal -->
+<!-- result modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -41,7 +43,10 @@
             </div>
             <div class="modal-body">모달 바디</div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id="modalFindIdBtn" class="btn btn-info">아이디 찾기</button>
+                <button type="button" id="modalFindPasswordBtn" class="btn btn-info">비밀번호 찾기</button>
+                <button type="button" id="modalChangePasswordBtn" class="btn btn-info">비밀번호 재설정</button>
+                <button type="button" id="modalCloseBtn" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -53,6 +58,150 @@
 <script src="/resources/js/redirectPage.js"></script>
 
 <script type="text/javascript">
+    function initModal(msg) {
+        if (msg === '') {
+            return;
+        }
+
+        $(".modal").find("button[id!='modalCloseBtn']").hide();
+        $(".modal-body").html(msg);
+    }
+
+    $(document).ready(function () {
+        let msg = "";
+
+        let formObj = $("form");
+        let id = formObj.find("input[name='id']");
+        let password = formObj.find("input[name='password']");
+
+        let loginBtn = $("#loginBtn");
+        let findIdBtn = $("#findIdBtn");
+        let findPasswordBtn = $("#findPasswordBtn");
+
+        loginBtn.on("click", function (e) {
+            if (id.val() === '') {
+                msg = '아이디를 입력해주세요';
+                initModal(msg);
+                return;
+            }
+            if (password.val() === '') {
+                msg = '비밀번호를 입력해주세요.';
+                initModal(msg);
+                return;
+            }
+
+            formObj.submit();
+        });
+
+        let modal = $(".modal");
+        let myModal = $("#myModal");
+
+        let modalCloseBtn = $("#modalCloseBtn");
+        let modalFindIdBtn = $("#modalFindIdBtn");
+        let modalFindPasswordBtn = $("#modalFindPasswordBtn");
+        let modalChangePasswordBtn = $("#modalChangePasswordBtn");
+
+        findIdBtn.on("click", function () {
+            msg = init().email();
+
+            initModal(msg);
+
+            modalFindIdBtn.show();
+            myModal.modal("show");
+        })
+
+        modalFindIdBtn.on("click", function () {
+            let email = modal.find("input[name='email']").val();
+
+            if(email === '') {
+                $("#modalEmailStyle").attr("style", "color:red").html("이메일을 입력해주세요.");
+                return;
+            }
+
+            let user = {
+                email: email
+            }
+
+            userService().getUserInfo(user, function (userInfo) {
+                modalCloseBtn.on("click");
+
+                if(userInfo.length !== 0) {
+                    msg = "가입하신 아이디는 <b>["+userInfo.id+"]</b> 입니다.";
+                } else {
+                    msg = "해당하는 회원 정보가 없습니다.";
+                }
+
+                initModal(msg);
+
+                myModal.modal("show");
+            })
+        });
+
+        findPasswordBtn.on("click", function () {
+            msg = init().id();
+            msg += init().email();
+
+            initModal(msg);
+
+            modalFindPasswordBtn.show();
+            myModal.modal("show");
+        });
+
+        modalFindPasswordBtn.on("click", function () {
+            let id = modal.find("input[name='id']").val();
+            let email = modal.find("input[name='email']").val();
+
+            if(id === '') {
+                $("#modalIdStyle").attr("style", "color:red").html("아이디를 입력해주세요.");
+                return;
+            }
+            if(email === '') {
+                $("#modalEmailStyle").attr("style", "color:red").html("이메일을 입력해주세요.");
+                return;
+            }
+
+            let user = {
+                id:id,
+                email:email
+            }
+
+            userService().getUserInfo(user, function(userInfo) {
+                modalCloseBtn.on("click");
+
+                if(userInfo.length !== 0) {
+                    msg = init().password();
+                    initModal(msg);
+                    modalChangePasswordBtn.show();
+                    myModal.modal("show");
+                } else {
+                    msg = "해당하는 회원 정보가 없습니다.";
+                    initModal(msg);
+                    myModal.modal("show");
+                }
+            })
+        })
+
+        modalChangePasswordBtn.on("click", function () {
+            let password = modal.find("input[name='password']").val();
+            let passwordCheck = modal.find("input[name='passwordCheck']").val()
+
+            userFunction().validatePassword(password, passwordCheck);
+
+            let user = {
+                password:password
+            };
+
+
+        })
+
+        modal.children().on("change", function () {
+            modal.find("span").removeAttr("style").html("");
+        })
+    })
+</script>
+
+<script type="text/javascript">
+
     $(document).ready(function () {
         let result = '<c:out value="${result}"/>';
 
@@ -65,29 +214,10 @@
                 return;
             }
 
+            $(".modal").find("button[id!='modalCloseBtn']").hide();
             $(".modal-body").html(result);
             $("#myModal").modal("show");
         }
 
-        let formObj = $("form");
-        let id = formObj.find("input[name='id']");
-        let password = formObj.find("input[name='password']");
-
-        let loginBtn = $("#loginBtn");
-        let findIdBtn = $("#findIdBtn");
-        let findPasswordBtn = $("#findPasswordBtn");
-
-        loginBtn.on("click", function (e) {
-            if(id.val()==='') {
-                result = '아이디를 입력해주세요';
-                return;
-            }
-            if(password.val()==='') {
-                result = '비밀번호를 입력해주세요.';
-                return;
-            }
-
-            formObj.submit();
-        })
     });
 </script>

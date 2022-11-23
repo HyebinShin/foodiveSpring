@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
-        <!DOCTYPE mapper
-                PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
-                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.foodive.mapper.UserMapper">
 
     <sql id="criteria">
         <![CDATA[
-        (
-            select /*+ index_desc(tbl_user pk_user) */
-                rownum rn, tbl_user.*
-            from
-                tbl_user
-            where
-                rownum <= #{cri.pageNum} * #{cri.amount}
+        (select /*+ index_desc(tbl_user pk_user) */
+             rownum rn,
+             tbl_user.*
+         from tbl_user
+         where rownum <= #{cri.pageNum} * #{cri.amount})
+        where rn > (
+        #{cri.pageNum}
+        -
+        1
         )
-        where rn > (#{cri.pageNum} - 1) * #{cri.amount}
+        *
+        #{cri.amount}
         ]]>
     </sql>
 
@@ -25,12 +28,13 @@
     </select>
 
     <select id="getTotalUser" resultType="int">
-        select count(*) from tbl_user where state = #{state}
+        select count(*)
+        from tbl_user
+        where state = #{state}
     </select>
 
     <insert id="insert">
-        insert into tbl_user(
-                             uno, id, password, name, email,
+        insert into tbl_user(uno, id, password, name, email,
                              sex, birthday, phone, zipcode, address1, address2, state)
         values (seq_user.nextval, #{id}, #{password}, #{name}, #{email},
                 #{sex, jdbcType=VARCHAR}, #{birthday, jdbcType=DATE}, #{phone, jdbcType=VARCHAR},
@@ -41,23 +45,31 @@
         select /*+ index_desc(tbl_user pk_user) */ count(uno)
         from tbl_user
         where
-            <choose>
-                <when test="duplicateInfo.duplicateCase=='I'.toString()">
-                    id = #{duplicateInfo.duplicateParam}
-                </when>
-                <when test="duplicateInfo.duplicateCase=='E'.toString()">
-                    email = #{duplicateInfo.duplicateParam}
-                </when>
-            </choose>
+        <choose>
+            <when test="duplicateInfo.duplicateCase=='I'.toString()">
+                id = #{duplicateInfo.duplicateParam}
+            </when>
+            <when test="duplicateInfo.duplicateCase=='E'.toString()">
+                email = #{duplicateInfo.duplicateParam}
+            </when>
+        </choose>
     </select>
 
     <select id="get" resultType="com.foodive.domain.UserVO">
         select /*+ index_desc(tbl_user pk_user) */ *
         from tbl_user
-        where id = #{user.id}
-    <if test="user.password!=null">
-        and password = #{user.password}
-    </if>
+        where
+        <trim prefixOverrides="and">
+            <if test="user.id!=null">
+                and id = #{user.id}
+            </if>
+            <if test="user.password!=null">
+                and password = #{user.password}
+            </if>
+            <if test="user.email!=null">
+                and email = #{user.email}
+            </if>
+        </trim>
     </select>
 
     <update id="drop">
@@ -69,7 +81,7 @@
     <update id="update">
         update tbl_user
         set
-            <choose>
+        <choose>
             <when test="check==true">
                 password = #{user.password}
             </when>
@@ -80,10 +92,9 @@
                 address1 = #{user.address1, jdbcType=VARCHAR},
                 address2 = #{user.address2, jdbcType=VARCHAR}
             </otherwise>
-            </choose>
+        </choose>
         where id = #{user.id}
     </update>
-    
 
 
 </mapper>

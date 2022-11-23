@@ -65,6 +65,7 @@ public class UserController {
             rttr.addFlashAttribute("result", user.getId()+UserMsg.USER_LOGIN);
             log.info("login user: "+loginUser);
             session.setAttribute("loginInfo", new LoginInfo(loginUser.getId(), loginUser.getState()));
+
             return "redirect:/main";
         } else {
             rttr.addFlashAttribute("result", UserMsg.USER_LOGIN_FAIL);
@@ -85,5 +86,20 @@ public class UserController {
         user.setId(loginInfo.getId());
 
         model.addAttribute("userInfo", service.get(user));
+    }
+
+    @PostMapping(
+            value = "/find",
+            consumes = "application/json",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE
+            }
+    )
+    @ResponseBody
+    public ResponseEntity<UserVO> get(@RequestBody UserVO user) {
+        log.info("user: "+user);
+
+        return new ResponseEntity<>(service.get(user), HttpStatus.OK);
     }
 }
