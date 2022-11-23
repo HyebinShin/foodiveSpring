@@ -11,13 +11,7 @@
              tbl_user.*
          from tbl_user
          where rownum <= #{cri.pageNum} * #{cri.amount})
-        where rn > (
-        #{cri.pageNum}
-        -
-        1
-        )
-        *
-        #{cri.amount}
+        where rn > (#{cri.pageNum} - 1) * #{cri.amount}
         ]]>
     </sql>
 
@@ -38,7 +32,7 @@
                              sex, birthday, phone, zipcode, address1, address2, state)
         values (seq_user.nextval, #{id}, #{password}, #{name}, #{email},
                 #{sex, jdbcType=VARCHAR}, #{birthday, jdbcType=DATE}, #{phone, jdbcType=VARCHAR},
-                #{zipcode, jdbcType=VARCHAR}, #{address1, jdbcType=VARCHAR}, #{address2, jdbcType=VARCHAR}, 1)
+                #{zipcode, jdbcType=VARCHAR}, #{address1, jdbcType=VARCHAR}, #{address2, jdbcType=VARCHAR}, #{state})
     </insert>
 
     <select id="duplicated" resultType="int">

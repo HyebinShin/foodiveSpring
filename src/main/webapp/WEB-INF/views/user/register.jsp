@@ -94,6 +94,7 @@
             </div>
             <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#toggle">추가 정보 입력</button>
             <button type="button" class="btn btn-info submit">회원가입 완료</button>
+            <input type="hidden" name="state" value="1">
         </form>
     </div>
 </div>
