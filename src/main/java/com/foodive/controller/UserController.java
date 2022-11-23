@@ -82,7 +82,7 @@ public class UserController {
         log.info("userPage...");
     }
 
-    @GetMapping(value = {"/myPage"})
+    @GetMapping(value = {"/myPage", "/modify"})
     public void userInfoPage(Model model, @SessionAttribute("loginInfo") LoginInfo loginInfo) {
         log.info("userInfoPage...");
         UserVO user = new UserVO();

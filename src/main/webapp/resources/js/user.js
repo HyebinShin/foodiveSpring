@@ -161,19 +161,19 @@ let userFunction = (function () {
     function checkValidate(checkParam, checkCase) {
         switch (checkCase) {
             case "I":
-                if (inputForm.ID === '') {
+                if (checkParam === '') {
                     inputStyle('idCheck', errorMsg.ID_NULL);
                     return false;
-                } else if (!regex('id', inputForm.ID)) {
+                } else if (!regex('id', checkParam)) {
                     inputStyle('idCheck', errorMsg.ID_NOT_VALI);
                     return false;
                 }
                 return true;
             case "E":
-                if (inputForm.EMAIL === '') {
+                if (checkParam === '') {
                     inputStyle('emailCheck', errorMsg.EMAIL_NULL);
                     return false;
-                } else if (!regex('email', inputForm.EMAIL)) {
+                } else if (!regex('email', checkParam)) {
                     inputStyle('emailCheck', errorMsg.EMAIL_NOT_VALI);
                     return false;
                 }
@@ -195,6 +195,22 @@ let userFunction = (function () {
         return true;
     }
 
+    function validateEmail(email, emailCheck) {
+        if (email !== emailCheck) {
+            inputStyle('emailCheck', errorMsg.EMAIL_NOT_MATCH);
+            return false;
+        }
+        return true;
+    }
+
+    function validatePhone(phone) {
+        if (phone !== '' && !regex('phone', phone)) {
+            inputStyle('phone', errorMsg.PHONE_NOT_VALI);
+            return false;
+        }
+        return true;
+    }
+
     function validate() {
 
         if (inputForm.ID !== inputForm.ID_CHECK) {
@@ -203,6 +219,7 @@ let userFunction = (function () {
         }
 
         if(!validatePassword(inputForm.PASSWORD, inputForm.PASSWORD_CHECK)) {
+            console.log("invalidate password");
             return false;
         }
 
@@ -214,8 +231,8 @@ let userFunction = (function () {
             return false;
         }
 
-        if (inputForm.EMAIL !== inputForm.EMAIL_CHECK) {
-            inputStyle('emailCheck', errorMsg.EMAIL_NOT_MATCH);
+        if(!validateEmail(inputForm.EMAIL, inputForm.EMAIL_CHECK)) {
+            console.log("invalidate email")
             return false;
         }
 
@@ -233,18 +250,21 @@ let userFunction = (function () {
             }
         }
 
-        if (inputForm.PHONE !== '' && !regex('phone', inputForm.PHONE)) {
-            inputStyle('phone', errorMsg.PHONE_NOT_VALI);
+        if(!validatePhone(inputForm.PHONE)) {
+            console.log("invalidate phone");
             return false;
         }
 
         return true;
+
     }
 
     return {
         checkValidate: checkValidate,
         validate: validate,
-        validatePassword:validatePassword
+        validatePassword:validatePassword,
+        validateEmail:validateEmail,
+        validatePhone:validatePhone
     };
 
 });
