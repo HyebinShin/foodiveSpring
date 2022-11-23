@@ -104,7 +104,7 @@
                                 <a href="/user/myPage">마이페이지</a>
                             </li>
                             <li>
-                                <a href="#">로그아웃</a>
+                                <a href="/user/logout">로그아웃</a>
                             </li>
                             <c:if test="${state eq '2'}">
                                 <li href="#">관리자 페이지</li>
