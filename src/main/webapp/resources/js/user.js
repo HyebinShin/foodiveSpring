@@ -63,14 +63,32 @@ let userService = (function () {
         });
     }
 
-    function update(user, callback, error) {
+    function update(node, callback, error) {
+        console.log("update...");
 
+        $.ajax({
+            type:'post',
+            url:'/user/modify',
+            data:JSON.stringify(node),
+            contentType:"application/json; charset=utf-8",
+            success: function (result, status, xhr) {
+                if(callback) {
+                    callback(result);
+                }
+            },
+            fail: function (xhr, status, er) {
+                if(error) {
+                    error(er);
+                }
+            }
+        });
     }
 
     return {
         check: check,
         login: login,
-        getUserInfo:getUserInfo
+        getUserInfo:getUserInfo,
+        update:update
     };
 
 });
@@ -174,6 +192,7 @@ let userFunction = (function () {
             inputStyle('password', errorMsg.PASSWORD_NOT_MATCH);
             return false;
         }
+        return true;
     }
 
     function validate() {
@@ -183,7 +202,9 @@ let userFunction = (function () {
             return false;
         }
 
-        validatePassword(inputForm.PASSWORD, inputForm.PASSWORD_CHECK);
+        if(!validatePassword(inputForm.PASSWORD, inputForm.PASSWORD_CHECK)) {
+            return false;
+        }
 
         if (inputForm.NAME === '') {
             inputStyle('name', errorMsg.NAME_NULL);
@@ -259,7 +280,7 @@ let init = (function () {
        str += '<span id="password"></span>';
        str += '</div>';
        str += '<div class="form-group"><label>비밀번호 확인</label>';
-       str += '<input class="form-control" type="password" name="password" placeholder="비밀번호를 한 번 더 입력해 주세요.">';
+       str += '<input class="form-control" type="password" name="passwordCheck" placeholder="비밀번호를 한 번 더 입력해 주세요.">';
        str += '</div>';
 
        return str;

@@ -46,6 +46,7 @@
                 <button type="button" id="modalFindIdBtn" class="btn btn-info">아이디 찾기</button>
                 <button type="button" id="modalFindPasswordBtn" class="btn btn-info">비밀번호 찾기</button>
                 <button type="button" id="modalChangePasswordBtn" class="btn btn-info">비밀번호 재설정</button>
+                <input type="hidden" name="userInfoId">
                 <button type="button" id="modalCloseBtn" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -100,6 +101,8 @@
         let modalFindIdBtn = $("#modalFindIdBtn");
         let modalFindPasswordBtn = $("#modalFindPasswordBtn");
         let modalChangePasswordBtn = $("#modalChangePasswordBtn");
+
+        let userInfoId = $("input[name='userInfoId']");
 
         findIdBtn.on("click", function () {
             msg = init().email();
@@ -169,6 +172,8 @@
                 modalCloseBtn.on("click");
 
                 if(userInfo.length !== 0) {
+                    userInfoId.val(userInfo.id);
+
                     msg = init().password();
                     initModal(msg);
                     modalChangePasswordBtn.show();
@@ -185,12 +190,28 @@
             let password = modal.find("input[name='password']").val();
             let passwordCheck = modal.find("input[name='passwordCheck']").val()
 
-            userFunction().validatePassword(password, passwordCheck);
+            if(!userFunction().validatePassword(password, passwordCheck)) {
+                return;
+            }
 
             let user = {
+                id:userInfoId.val(),
                 password:password
             };
+            let node = {
+                user:user,
+                isPassword:true
+            }
 
+            userService().update(node, function (result) {
+                modalCloseBtn.on("click");
+
+                if (result==='success') {
+                    msg = "비밀번호를 재설정했습니다. 바뀐 비밀번호로 로그인 해주세요.";
+                    initModal(msg);
+                    myModal.modal("show");
+                }
+            })
 
         })
 

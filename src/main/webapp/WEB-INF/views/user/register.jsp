@@ -161,6 +161,7 @@
             }
 
             $("input[name='idCheck']").remove();
+            $("input[name='emailCheck']").remove();
             $("input[name='passwordCheck']").remove();
 
             let birthday = $("input[name='birthday']").val();
