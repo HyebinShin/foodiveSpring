@@ -106,13 +106,21 @@
                             <li>
                                 <a href="/user/logout">로그아웃</a>
                             </li>
-                            <c:if test="${state eq '2'}">
-                                <li href="#">관리자 페이지</li>
-                            </c:if>
                         </c:when>
                     </c:choose>
                 </ul>
+
             </li>
+            <c:if test="${state eq '2'}">
+                <li>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-cog fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="/adminMain">관리자 페이지</a></li>
+                    </ul>
+                </li>
+            </c:if>
         </ul>
     </nav>
 

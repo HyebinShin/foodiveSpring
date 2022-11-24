@@ -64,7 +64,7 @@
                         <a href="#">관리자 정보</a>
                     </li>
                     <li>
-                        <a href="#">정보정보</a>
+                        <a href="/user/logout">로그아웃</a>
                     </li>
                 </ul>
             </li>
