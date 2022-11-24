@@ -18,14 +18,22 @@
                             <div class="form-group">
                                 <input class="form-control" placeholder="비밀번호를 입력해주세요." name="password" type="password">
                             </div>
-                            <button id="loginBtn" type="button" data-oper="login" class="btn btn-primary">로그인</button>
-                            <button id="findIdBtn" type="button" data-oper="findId" class="btn btn-default"
-                                    data-toggle="collapse" data-target="#divFindId">아이디 찾기
-                            </button>
-                            <button id="findPasswordBtn" type="button" data-oper="findPassword" class="btn btn-default"
-                                    data-toggle="collapse" data-target="#divFindPassword">비밀번호 찾기
-                            </button>
-                            <button id="registerBtn" type="button" data-oper="register" class="btn btn-info">회원가입</button>
+                            <p>
+                                <button id="loginBtn" type="button" data-oper="login" class="btn btn-primary btn-block">로그인</button>
+                            </p>
+                            <p>
+                                <button id="registerBtn" type="button" data-oper="register" class="btn btn-info btn-block">회원가입</button>
+                            </p>
+                            <p>
+                                <button id="findIdBtn" type="button" data-oper="findId" class="btn btn-default btn-block"
+                                        data-toggle="collapse" data-target="#divFindId">아이디 찾기
+                                </button>
+                            </p>
+                            <p>
+                                <button id="findPasswordBtn" type="button" data-oper="findPassword" class="btn btn-default btn-block"
+                                        data-toggle="collapse" data-target="#divFindPassword">비밀번호 찾기
+                                </button>
+                            </p>
                         </form>
                     </fieldset>
                 </div>

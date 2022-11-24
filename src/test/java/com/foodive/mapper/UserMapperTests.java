@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -82,7 +83,7 @@ public class UserMapperTests {
     public void testGetList() {
         Criteria cri = new Criteria(1, 10);
 
-        List<UserVO> users = mapper.getListWithPaging(cri);
+        List<UserVO> users = mapper.getListWithPaging(cri, 1);
         users.forEach(log::info);
     }
 

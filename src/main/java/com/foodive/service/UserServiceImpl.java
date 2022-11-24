@@ -2,6 +2,7 @@ package com.foodive.service;
 
 import com.foodive.domain.Criteria;
 import com.foodive.domain.DuplicateInfo;
+import com.foodive.domain.UserPageDTO;
 import com.foodive.domain.UserVO;
 import com.foodive.function.Encrypt;
 import com.foodive.mapper.UserMapper;
@@ -64,9 +65,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserVO> getList(Criteria cri) {
+    public UserPageDTO getList(Criteria cri, Integer state) {
         log.info("get User List..."+cri);
 
-        return mapper.getListWithPaging(cri);
+        mapper.getListWithPaging(cri, state);
+
+        return new UserPageDTO(
+                mapper.getTotalUser(state),
+                mapper.getListWithPaging(cri, state)
+        );
     }
 }

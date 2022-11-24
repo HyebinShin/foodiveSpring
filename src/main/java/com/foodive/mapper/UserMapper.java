@@ -27,7 +27,8 @@ public interface UserMapper {
     );
 
     public List<UserVO> getListWithPaging(
-            @Param("cri") Criteria cri
+            @Param("cri") Criteria cri,
+            @Param("state") Integer state
     );
 
     public int getTotalUser(int state);

@@ -2,9 +2,8 @@ package com.foodive.service;
 
 import com.foodive.domain.Criteria;
 import com.foodive.domain.DuplicateInfo;
+import com.foodive.domain.UserPageDTO;
 import com.foodive.domain.UserVO;
-
-import java.util.List;
 
 public interface UserService {
 
@@ -18,5 +17,5 @@ public interface UserService {
 
     public boolean modify(UserVO user, Boolean isPasswordCheck);
 
-    public List<UserVO> getList(Criteria cri);
+    public UserPageDTO getList(Criteria cri, Integer state);
 }

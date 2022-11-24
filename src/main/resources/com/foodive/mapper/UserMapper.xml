@@ -10,7 +10,10 @@
              rownum rn,
              tbl_user.*
          from tbl_user
-         where rownum <= #{cri.pageNum} * #{cri.amount})
+         where
+             tbl_user.state = #{state}
+             and rownum <= #{cri.pageNum} * #{cri.amount}
+         )
         where rn > (#{cri.pageNum} - 1) * #{cri.amount}
         ]]>
     </sql>

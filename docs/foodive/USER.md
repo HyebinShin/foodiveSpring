@@ -9,5 +9,5 @@
 ### 요구사항에 따른 화면 설계
 > * 회원 가입 /user/register
 > * 로그인 /user/login
-> * 회원 정보 /user/get
+> * 회원 정보 /user/myPage
 > * 회원 정보 수정 및 탈퇴 /user/modify

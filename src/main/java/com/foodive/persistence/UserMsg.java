@@ -7,4 +7,6 @@ public class UserMsg {
     public static final String USER_DROPPED = "이미 탈퇴한 회원입니다.";
 
     public static final String USER_DROP = "회원 탈퇴가 완료되었습니다. 그동안 이용해주셔서 감사합니다.";
+    public static final String USER_UPDATE = "회원 정보 수정이 완료되었습니다.";
+
 }

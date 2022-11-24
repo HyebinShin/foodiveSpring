@@ -115,26 +115,10 @@ public class UserController {
         return new ResponseEntity<>(service.get(user), HttpStatus.OK);
     }
 
-//    @PostMapping(
-//            value = {"/modify"},
-//            consumes = "application/json",
-//            produces = {MediaType.TEXT_PLAIN_VALUE}
-//    )
-//    @ResponseBody
-//    public ResponseEntity<String> modify(@RequestBody ObjectNode node) throws JsonProcessingException {
-//        ObjectMapper mapper = new ObjectMapper();
-//        UserVO user = mapper.treeToValue(node.get("user"), UserVO.class);
-//        Boolean isPasswordChange = node.get("isPassword").asBoolean();
-//
-//        return service.modify(user, isPasswordChange) ?
-//                new ResponseEntity<>("success", HttpStatus.OK)
-//                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-
     @RequestMapping (
             method = {RequestMethod.PUT, RequestMethod.PATCH},
             value = {"/{id}"},
-            consumes = "application/json",
+            consumes = "application/json; charset=utf-8",
             produces = {MediaType.TEXT_PLAIN_VALUE}
     )
     @ResponseBody
@@ -151,7 +135,7 @@ public class UserController {
         }
 
         return service.modify(user, isPasswordChange) ?
-                new ResponseEntity<>("success", HttpStatus.OK)
+                new ResponseEntity<>(UserMsg.USER_UPDATE, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
