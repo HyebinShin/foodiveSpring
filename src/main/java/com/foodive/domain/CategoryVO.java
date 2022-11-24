@@ -14,4 +14,7 @@ public class CategoryVO {
     private Date regDate;
     private Date modDate;
     private Date dropDate;
+
+    private String hCode;
+    private String eName;
 }
