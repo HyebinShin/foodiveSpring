@@ -158,6 +158,8 @@
                     isPassword: false
                 };
 
+                console.log("node.user.id:"+node.user.id);
+
                 userService().update(node, function (result) {
                     if(result === 'success') {
                         let msg = "회원정보를 수정했습니다.";
