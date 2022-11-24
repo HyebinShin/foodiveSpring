@@ -67,8 +67,8 @@ let userService = (function () {
         console.log("update...");
 
         $.ajax({
-            type:'post',
-            url:'/user/modify',
+            type:'put',
+            url:`/user/${node.user.id}`,
             data:JSON.stringify(node),
             contentType:"application/json; charset=utf-8",
             success: function (result, status, xhr) {
