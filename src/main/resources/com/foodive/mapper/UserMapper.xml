@@ -21,7 +21,7 @@
     <select id="getListWithPaging" resultType="com.foodive.domain.UserVO">
         select *
         from
-        <include refid="criteria"></include>
+        <include refid="criteria"/>
     </select>
 
     <select id="getTotalUser" resultType="int">
@@ -71,7 +71,7 @@
 
     <update id="drop">
         update tbl_user
-        set state = 0
+        set state = 0, dropDate = sysdate
         where id = #{id}
     </update>
 
