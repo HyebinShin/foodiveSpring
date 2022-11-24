@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @AllArgsConstructor
 public class MainController {
 
-    @GetMapping(value = "/main")
+    @GetMapping(value = {"/main", "/adminMain"})
     public void goMain() {
         log.info("mainPage...");
     }
+
 }
