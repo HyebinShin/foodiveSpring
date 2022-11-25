@@ -89,4 +89,21 @@ public class CategoryController {
 
         return new ResponseEntity<>(service.getListWithPaging(cri, category), HttpStatus.OK);
     }
+
+    @GetMapping(
+            value = "/{cno}",
+            produces = {
+                    MediaType.APPLICATION_XML_VALUE,
+                    MediaType.APPLICATION_JSON_VALUE
+            }
+    )
+    @ResponseBody
+    public ResponseEntity<CategoryVO> get(
+            @PathVariable("cno") Long cno
+    ) {
+        CategoryVO categoryVO = new CategoryVO();
+        categoryVO.setCno(cno);
+
+        return new ResponseEntity<>(service.get(categoryVO), HttpStatus.OK);
+    }
 }

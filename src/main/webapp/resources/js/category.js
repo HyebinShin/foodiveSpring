@@ -39,20 +39,31 @@ let categoryService = (function () {
     function add(category, callback, error) {
         console.log(`category: ${JSON.stringify(category)}`);
         $.ajax({
-            type:'post',
-            url:'/category/register',
-            data:JSON.stringify(category),
+            type: 'post',
+            url: '/category/register',
+            data: JSON.stringify(category),
             contentType: 'application/json; charset=utf-8',
             success: function (result, status, xhr) {
-                if(callback) {
+                if (callback) {
                     callback(result);
                 }
             },
             error: function (xhr, status, er) {
-                if(error) {
+                if (error) {
                     error(er);
                 }
             }
+        })
+    }
+
+    function get(cno, callback, error) {
+        $.getJSON(`/category/${cno}`,
+            function (data) {
+                if (callback) {
+                    callback(data);
+                }
+            }).fail(function (xhr, status, err) {
+            error();
         })
     }
 
@@ -71,7 +82,8 @@ let categoryService = (function () {
         check: check,
         getList: getList,
         displayTime: displayTime,
-        add:add
+        add: add,
+        get:get
     }
 })
 

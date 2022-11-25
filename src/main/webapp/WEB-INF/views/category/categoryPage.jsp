@@ -83,6 +83,10 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
+                    <label>카테고리 번호</label>
+                    <input class="form-control" name="code" type="text" readonly>
+                </div>
+                <div class="form-group">
                     <label>카테고리 국문명</label>
                     <input class="form-control" name="name" type="text">
                     <span class="form-check" id="nameCheck"></span>
@@ -96,13 +100,32 @@
                 </div>
                 <div class="form-group" id="hCodeSelect">
                     <label>상위 카테고리</label>
-                    <select class="form-control" name="hCode">
+                    <select class="form-control" name="hCode" id="hCodeSelected">
                         <option value="null">해당 카테고리의 상위 카테고리 없음</option>
                         <c:forEach items="${gnb.getList()}" var="category">
                             <option value='<c:out value="${category.code}"/>'><c:out value="${category.name}"/></option>
                         </c:forEach>
                     </select>
                     <span class="form-check" id="hCode"></span>
+                </div>
+                <div class="form-group" id="dropSelect">
+                    <label>활성화/비활성화</label>
+                    <select class="form-group" id="dropSelected">
+                        <option value="1">활성화</option>
+                        <option value="0">비활성화</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>등록일자</label>
+                    <input class="form-control" name="regDate" type="text" readonly>
+                </div>
+                <div class="form-group">
+                    <label>수정일자</label>
+                    <input class="form-control" name="modDate" type="text" readonly>
+                </div>
+                <div class="form-group">
+                    <label>비활성화 일자</label>
+                    <input class="form-control" name="dropDate" type="text" readonly>
                 </div>
             </div>
             <div class="modal-footer">
@@ -254,6 +277,11 @@
 
         let modalInputName = modal.find("input[name='name']");
         let modalInputEName = modal.find("input[name='eName']");
+        let modalInputCode = modal.find("input[name='code']");
+        let modalInputState = $("#dropSelected");
+        let modalInputRegDate = modal.find("input[name='regDate']");
+        let modalInputModDate = modal.find("input[name='modDate']");
+        let modalInputDropDate = modal.find("input[name='dropDate']");
 
         let modalModBtn = $("#modalModBtn");
         let modalModDoBtn = $("#modalModDoBtn");
@@ -265,6 +293,12 @@
             modal.find("input").val("");
             modal.find("select").val([]);
             modal.find("button[id!='modalCloseBtn']").hide();
+            modal.find("input").closest("div").hide();
+            modal.find("select").closest("div").hide();
+
+            modalInputName.closest("div").show();
+            modalInputEName.closest("div").show();
+            $("#hCodeSelect").show();
 
             modalRegisterBtn.show();
             modalResetBtn.show();
@@ -335,6 +369,42 @@
 
 
         })
+
+       tbody.on("click", "tr", function (e) {
+           let cno = $(this).data("cno");
+
+           console.log(`cno: \${cno}`);
+
+
+           categoryService().get(cno, function (category) {
+               modal.find("input").val("");
+               console.log(`category.hCode: \${category.hCode}`);
+               modalInputCode.val(category.code);
+               modalInputName.val(category.name);
+               modalInputEName.val(category.eName);
+               $("#hCodeSelected").val(category.hCode).prop("selected", true);
+               modalInputState.val(category.state).prop("selected", true);
+               modalInputRegDate.val(categoryService().displayTime(category.regDate));
+               let modDate = category.modDate;
+               if(modDate!=null) {
+                   modalInputModDate.val(categoryService().displayTime(modDate));
+               }
+               let dropDate = category.dropDate;
+               if(dropDate!=null) {
+                   modalInputDropDate.val(categoryService().displayTime(dropDate));
+               }
+
+               let selectedVal = $("#hCodeSelect :selected").val();
+               console.log(`hCodeSelect selected val: \${selectedVal}`);
+
+               modal.find("input").attr("readOnly", "readOnly");
+               modal.find("select").attr("readOnly", "readOnly");
+
+               modal.find("button[id!='modalCloseBtn']").hide();
+               modalModBtn.show();
+               modal.modal("show");
+           })
+       })
 
 
     });
