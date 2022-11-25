@@ -277,6 +277,7 @@
 
         let modalInputName = modal.find("input[name='name']");
         let modalInputEName = modal.find("input[name='eName']");
+        let modalInputHCode = $("#hCodeSelected")
         let modalInputCode = modal.find("input[name='code']");
         let modalInputState = $("#dropSelected");
         let modalInputRegDate = modal.find("input[name='regDate']");
@@ -378,6 +379,7 @@
 
            categoryService().get(cno, function (category) {
                modal.find("input").val("");
+               modal.find("span").empty();
                console.log(`category.hCode: \${category.hCode}`);
                modalInputCode.val(category.code);
                modalInputName.val(category.name);
@@ -405,6 +407,50 @@
                modal.modal("show");
            })
        })
+
+        let cloneName;
+        let cloneEName;
+        let cloneHCode;
+        let cloneState;
+
+        modalModBtn.on("click", function () {
+            modalInputName.removeAttr("readOnly");
+            modalInputEName.removeAttr("readOnly");
+            modalInputHCode.removeAttr("readOnly");
+            modalInputState.removeAttr("readOnly");
+
+            modalResetBtn.show();
+            modalModBtn.hide();
+            modalModDoBtn.show();
+
+            cloneName = modalInputName.val();
+            cloneEName = modalInputEName.val();
+            cloneHCode = modalInputHCode.val();
+            cloneState = modalInputState.val();
+
+            validateCnt = 0;
+        })
+
+        modalModDoBtn.on("click", function () {
+            console.log(`cloneName: \${cloneName}, cloneEName: \${cloneEName}, cloneHCode: \${cloneHCode}, cloneState: \${cloneState}`);
+
+            if(cloneName === modalInputName.val()) {
+                validateCnt++;
+            }
+            if(cloneEName === modalInputEName.val()) {
+                validateCnt++;
+            }
+        })
+
+        modalResetBtn.on("click", function () {
+            modal.find("span").empty();
+            modal.find("div").removeClass("has-success");
+            modal.find("div").removeClass("has-error");
+            modalInputName.val(cloneName);
+            modalInputEName.val(cloneEName);
+            modalInputHCode.val(cloneHCode).prop("selected", true);
+            modalInputState.val(cloneState).prop("selected", true);
+        })
 
 
     });

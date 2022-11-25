@@ -24,11 +24,11 @@ public class CategoryMapperTests {
 
     @Test
     public void testCreate() {
-        IntStream.rangeClosed(1, 1).forEach(i -> {
+        IntStream.rangeClosed(1,100).forEach(i -> {
             CategoryVO category = new CategoryVO();
             category.setHCode("tes");
-            category.setName("테스트하위카테고리");
-            category.setEName("testLowCategory");
+            category.setName("테스트하위카테고리"+i);
+            category.setEName("testLowCategory"+i);
 
             mapper.insert(category);
         });
