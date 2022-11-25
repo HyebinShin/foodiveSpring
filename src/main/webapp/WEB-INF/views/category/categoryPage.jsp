@@ -133,6 +133,7 @@
                 <button id="modalModBtn" type="button" class="btn btn-info">수정</button>
                 <button id="modalModDoBtn" type="button" class="btn btn-info">수정 완료</button>
                 <button id="modalResetBtn" type="reset" class="btn btn-default">취소</button>
+                <button id="modalDropBtn" type="button" class="btn btn-danger">비활성화</button>
                 <button id="modalCloseBtn" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -288,6 +289,7 @@
         let modalModDoBtn = $("#modalModDoBtn");
         let modalRegisterBtn = $("#modalRegisterBtn");
         let modalResetBtn = $("#modalResetBtn");
+        let modalDropBtn = $("#modalDropBtn");
         let validateCnt = 0;
 
         addCategoryBtn.on("click", function () {
@@ -404,6 +406,10 @@
                modal.find("select").attr("readOnly", "readOnly");
 
                modal.find("button[id!='modalCloseBtn']").hide();
+
+               if($("#stateSelect :selected").val()==1) {
+                   modalDropBtn.show();
+               }
                modalModBtn.show();
                modal.modal("show");
            })
@@ -422,6 +428,7 @@
 
             modalResetBtn.show();
             modalModBtn.hide();
+            modalDropBtn.hide();
             modalModDoBtn.show();
 
             cloneName = modalInputName.val();
@@ -469,6 +476,17 @@
             modalInputEName.val(cloneEName);
             modalInputHCode.val(cloneHCode).prop("selected", true);
             modalInputState.val(cloneState).prop("selected", true);
+        })
+
+        modalDropBtn.on("click", function () {
+            if(confirm("정말 비활성화 하시겠습니까?")) {
+                console.log(`drop cno: \${cno}`)
+                categoryService().drop(cno, function (result) {
+                    alert(result);
+                    modal.modal("hide");
+                    showList(pageNum);
+                })
+            }
         })
 
 

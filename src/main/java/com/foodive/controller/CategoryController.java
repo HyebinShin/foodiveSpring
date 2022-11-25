@@ -123,4 +123,17 @@ public class CategoryController {
                 new ResponseEntity<>(CategoryMsg.MODIFY, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @PutMapping(
+            value = "/drop/{cno}",
+            produces = "text/plain; charset=utf-8"
+    )
+    @ResponseBody
+    public ResponseEntity<String> drop(
+            @PathVariable("cno") Long cno
+    ) {
+        return service.drop(cno) ?
+                new ResponseEntity<>(CategoryMsg.DROP, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

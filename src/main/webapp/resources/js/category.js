@@ -86,6 +86,23 @@ let categoryService = (function () {
         })
     }
 
+    function drop(cno, callback, error) {
+        $.ajax({
+            type:'put',
+            url:`/category/drop/${cno}`,
+            success:function (result, status, xhr) {
+                if(callback) {
+                    callback(result);
+                }
+            },
+            fail: function (xhr, status, er) {
+                if(error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
     function displayTime(timeValue) {
         let dateObj = new Date(timeValue);
 
@@ -103,7 +120,8 @@ let categoryService = (function () {
         displayTime: displayTime,
         add: add,
         get:get,
-        modify:modify
+        modify:modify,
+        drop:drop
     }
 })
 
