@@ -67,6 +67,25 @@ let categoryService = (function () {
         })
     }
 
+    function modify(category, callback, error) {
+        $.ajax({
+            type:'put',
+            url:`/category/${category.cno}`,
+            data:JSON.stringify(category),
+            contentType:"application/json; charset=utf-8",
+            success: function (result, status, xhr) {
+                if(callback) {
+                    callback(result);
+                }
+            },
+            fail: function (xhr, status, er) {
+                if(error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
     function displayTime(timeValue) {
         let dateObj = new Date(timeValue);
 
@@ -83,7 +102,8 @@ let categoryService = (function () {
         getList: getList,
         displayTime: displayTime,
         add: add,
-        get:get
+        get:get,
+        modify:modify
     }
 })
 
@@ -95,10 +115,10 @@ let categoryFunction = (function () {
 
         switch (regexCase) {
             case 'name':
-                regex = /^[가-힣 •]{1,20}/g;
+                regex = /^[가-힣•]{1,20}/g;
                 break;
             case 'eName':
-                regex = /^[a-zA-Z •]{1,30}/g;
+                regex = /^[a-zA-Z•]{1,30}/g;
                 break;
         }
 

@@ -110,7 +110,7 @@
                 </div>
                 <div class="form-group" id="dropSelect">
                     <label>활성화/비활성화</label>
-                    <select class="form-group" id="dropSelected">
+                    <select class="form-control" id="dropSelected">
                         <option value="1">활성화</option>
                         <option value="0">비활성화</option>
                     </select>
@@ -370,9 +370,10 @@
 
 
         })
+        let cno;
 
        tbody.on("click", "tr", function (e) {
-           let cno = $(this).data("cno");
+           cno = $(this).data("cno");
 
            console.log(`cno: \${cno}`);
 
@@ -439,6 +440,24 @@
             }
             if(cloneEName === modalInputEName.val()) {
                 validateCnt++;
+            }
+
+            if(validateCnt>=2) {
+                console.log(cno);
+                let category = {
+                    cno:cno,
+                    hCode:modalInputHCode.val(),
+                    code:modalInputCode.val(),
+                    name:modalInputName.val(),
+                    eName:modalInputEName.val(),
+                    state:modalInputState.val()
+                }
+                console.log(JSON.stringify(category));
+                categoryService().modify(category, function (result) {
+                    alert(result);
+                    modal.modal("hide");
+                    showList(pageNum);
+                })
             }
         })
 

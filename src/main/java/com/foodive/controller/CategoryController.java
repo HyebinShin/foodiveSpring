@@ -106,4 +106,21 @@ public class CategoryController {
 
         return new ResponseEntity<>(service.get(categoryVO), HttpStatus.OK);
     }
+
+    @PutMapping(
+            value = "/{cno}",
+            consumes = "application/json; charset=utf-8",
+            produces = "text/plain; charset=utf-8"
+    )
+    @ResponseBody
+    public ResponseEntity<String> modify(
+            @RequestBody CategoryVO categoryVO,
+            @PathVariable("cno") Long cno
+    ) {
+        categoryVO.setCno(cno);
+
+        return service.modify(categoryVO) ?
+                new ResponseEntity<>(CategoryMsg.MODIFY, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
