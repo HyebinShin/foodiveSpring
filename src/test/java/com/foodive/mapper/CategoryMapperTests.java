@@ -112,4 +112,20 @@ public class CategoryMapperTests {
 
         log.info(mapper.update(categoryVO));
     }
+
+
+    //테스트 추가
+    @Test
+    public void testGet2() {
+        Criteria cri = new Criteria(1, 0);
+        CategoryVO categoryVO = new CategoryVO();
+        categoryVO.setState(1);
+//        categoryVO.setCno(5L);
+//        categoryVO.setCode("tes5");
+//        categoryVO.setHCode("tes");
+
+//        log.info(mapper.getTotalCategory(categoryVO));
+        log.info(mapper.getListWithPaging(cri, categoryVO));
+    }
+
 }

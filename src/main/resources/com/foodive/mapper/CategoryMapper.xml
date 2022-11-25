@@ -5,7 +5,8 @@
 <mapper namespace="com.foodive.mapper.CategoryMapper">
 
     <sql id="search">
-        <trim prefixOverrides="or">
+        <trim prefixOverrides="or|and">
+        <trim prefix="(" suffix=")" prefixOverrides="or">
             <if test="category.cno!=null">
                 or tbl_category.cno = #{category.cno}
             </if>
@@ -26,32 +27,20 @@
                 </choose>
             </if>
         </trim>
-    </sql>
-
-    <sql id="state">
-        <trim prefixOverrides="and">
-            <choose>
-                <when test="category.state!=null">
-                    <trim prefix="(" suffix=") ">
-                        <include refid="search"/>
-                    </trim>
-                </when>
-                <otherwise>
-                    <include refid="search"/>
-                </otherwise>
-            </choose>
+            <if test="category.state!=null">
+                and state = #{category.state}
+            </if>
         </trim>
     </sql>
 
-
     <sql id="criteria">
-        (select /*+ index_desc(tbl_user pk_user) */
+        (select /*+ index_desc(tbl_category pk_category) */
         rownum rn,
         tbl_category.*
         from tbl_category
         where
         <trim prefixOverrides="and">
-            <include refid="state"/>
+            <include refid="search"/>
             <choose>
                 <when test="cri.amount!=0">
                     <![CDATA[
@@ -104,7 +93,7 @@
         select /*+ index_desc (tbl_category pk_category) */ *
         from tbl_category
         where
-        <include refid="state"/>
+        <include refid="search"/>
     </select>
 
     <select id="getListWithPaging" resultType="com.foodive.domain.CategoryVO">
@@ -117,7 +106,7 @@
         select count(cno)
         from tbl_category
         where
-        <include refid="state"/>
+        <include refid="search"/>
     </select>
 
     <update id="drop">
