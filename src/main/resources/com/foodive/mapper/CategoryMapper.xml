@@ -6,17 +6,22 @@
 
     <sql id="search">
         <trim prefixOverrides="and">
-            <if test="category.cno!=null">
-                and tbl_category.cno = #{category.cno}
-            </if>
-            <if test="category.code!=null">
-                and tbl_category.code = #{category.code}
-            </if>
-            <if test="category.name!=null">
-                and tbl_category.name like '%'||#{category.name}||'%'
-            </if>
-            <if test="category.HCode != null">
-                and tbl_category.hCode like '%'||#{category.hCode}||'%'
+            <trim prefix="(" suffix=") " prefixOverrides="or">
+                <if test="category.cno!=null">
+                    or tbl_category.cno = #{category.cno}
+                </if>
+                <if test="category.code!=null">
+                    or tbl_category.code = #{category.code}
+                </if>
+                <if test="category.name!=null">
+                    or tbl_category.name like '%'||#{category.name}||'%'
+                </if>
+                <if test="category.HCode != null">
+                    or tbl_category.hCode like '%'||#{category.hCode}||'%'
+                </if>
+            </trim>
+            <if test="category.state != null">
+                and tbl_category.state = #{category.state}
             </if>
         </trim>
     </sql>
@@ -29,8 +34,8 @@
         from tbl_category
         where
         <trim prefixOverrides="and">
-        <include refid="search"/>
-        <![CDATA[
+            <include refid="search"/>
+            <![CDATA[
            and rownum <= #{cri.pageNum} * #{cri.amount}
         )
         where rn > (#{cri.pageNum} - 1) * #{cri.amount}
@@ -78,7 +83,7 @@
     <select id="getListWithPaging" resultType="com.foodive.domain.CategoryVO">
         select *
         from
-            <include refid="criteria"/>
+        <include refid="criteria"/>
     </select>
 
     <select id="getTotalCategory" resultType="int">
@@ -90,13 +95,19 @@
 
     <update id="drop">
         update tbl_category
-        set state = 0, dropDate = sysdate
+        set state    = 0,
+            dropDate = sysdate
         where cno = #{cno}
     </update>
 
     <update id="update">
         update tbl_category
-        set hCode = #{hCode}, code = #{hCode}||substr(#{code}, 4), name = #{name}, modDate = sysdate
+        set hCode   = #{hCode},
+            code    = #{hCode} || substr(#{code}, 4),
+            name    = #{name},
+            eName   = #{eName},
+            state   = #{state},
+            modDate = sysdate
         where cno = #{cno}
     </update>
 
