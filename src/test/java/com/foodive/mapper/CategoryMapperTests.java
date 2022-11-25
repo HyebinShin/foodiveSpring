@@ -35,6 +35,16 @@ public class CategoryMapperTests {
     }
 
     @Test
+    public void testCreate2() {
+        CategoryVO categoryVO = new CategoryVO();
+        categoryVO.setHCode("null");
+        categoryVO.setName("테스트상위카테고리2");
+        categoryVO.setEName("TestHighCategory2");
+
+        mapper.insert(categoryVO);
+    }
+
+    @Test
     public void testDuplicate() {
         String name = "테스트하위카테고리";
         String duplicateCase = "N";

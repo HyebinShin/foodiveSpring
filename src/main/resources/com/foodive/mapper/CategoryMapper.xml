@@ -76,11 +76,11 @@
         insert into tbl_category (cno, code, name, state, hCode, eName)
         values (#{cno},
         <choose>
-            <when test="hCode!=null">
+            <when test='hCode!=null and hCode!="null"'>
                 #{hCode}||#{cno},
             </when>
             <otherwise>
-                #{code},
+                substr(#{eName}, 0, 3),
             </otherwise>
         </choose>
         #{name}, 1, #{hCode, jdbcType=VARCHAR}, #{eName, jdbcType=VARCHAR})
@@ -93,6 +93,9 @@
         <choose>
             <when test="duplicateCase=='N'.toString()">
                 name = #{duplicateParam}
+            </when>
+            <when test="duplicateCase=='E'.toString()">
+                eName = #{duplicateParam}
             </when>
         </choose>
     </select>

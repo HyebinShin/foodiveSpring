@@ -116,16 +116,7 @@
                         <a href="#"><i class="fa fa-star fa-fw"></i> 카테고리 및 상품<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="#">카테고리 관리 <span class="fa arrow"></span></a>
-                                <ul class="nav nav-third-level">
-                                    <li>
-                                        <a href="#">카테고리 등록</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">카테고리 목록</a>
-                                    </li>
-                                </ul>
-                                <!-- /.nav-third-level -->
+                                <a href="/category/categoryPage">카테고리 관리</a>
                             </li>
                             <li>
                                 <a href="#">상품 관리 <span class="fa arrow"></span></a>
