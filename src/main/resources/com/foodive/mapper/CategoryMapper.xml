@@ -17,7 +17,14 @@
                     or tbl_category.name like '%'||#{category.name}||'%'
                 </if>
                 <if test="category.HCode != null">
-                    or tbl_category.hCode like '%'||#{category.hCode}||'%'
+                <choose>
+                    <when test='category.HCode == "null" '>
+                        or tbl_category.hCode is null
+                    </when>
+                    <otherwise>
+                        or tbl_category.hCode like '%'||#{category.hCode}||'%'
+                    </otherwise>
+                </choose>
                 </if>
             </trim>
             <if test="category.state != null">
@@ -35,11 +42,13 @@
         where
         <trim prefixOverrides="and">
             <include refid="search"/>
+            <if test="cri != null">
             <![CDATA[
            and rownum <= #{cri.pageNum} * #{cri.amount}
         )
         where rn > (#{cri.pageNum} - 1) * #{cri.amount}
         ]]>
+            </if>
         </trim>
     </sql>
 

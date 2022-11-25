@@ -64,6 +64,16 @@ public class CategoryMapperTests {
     }
 
     @Test
+    public void testGetList2() {
+        Criteria cri = new Criteria();
+        CategoryVO categoryVO = new CategoryVO();
+        categoryVO.setHCode("null");
+
+        List<CategoryVO> list = mapper.getListWithPaging(cri, categoryVO);
+        list.forEach(log::info);
+    }
+
+    @Test
     public void testGetTotal() {
         CategoryVO categoryVO = new CategoryVO();
 //        categoryVO.setHCode("tes");
