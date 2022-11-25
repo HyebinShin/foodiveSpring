@@ -65,11 +65,11 @@ public class CategoryMapperTests {
 
     @Test
     public void testGetList2() {
-        Criteria cri = new Criteria();
         CategoryVO categoryVO = new CategoryVO();
         categoryVO.setHCode("null");
+        categoryVO.setState(1);
 
-        List<CategoryVO> list = mapper.getListWithPaging(cri, categoryVO);
+        List<CategoryVO> list = mapper.getListWithPaging(new Criteria(1, 0), categoryVO);
         list.forEach(log::info);
     }
 

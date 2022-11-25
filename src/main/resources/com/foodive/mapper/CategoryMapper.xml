@@ -5,18 +5,17 @@
 <mapper namespace="com.foodive.mapper.CategoryMapper">
 
     <sql id="search">
-        <trim prefixOverrides="and">
-            <trim prefix="(" suffix=") " prefixOverrides="or">
-                <if test="category.cno!=null">
-                    or tbl_category.cno = #{category.cno}
-                </if>
-                <if test="category.code!=null">
-                    or tbl_category.code = #{category.code}
-                </if>
-                <if test="category.name!=null">
-                    or tbl_category.name like '%'||#{category.name}||'%'
-                </if>
-                <if test="category.HCode != null">
+        <trim prefixOverrides="or">
+            <if test="category.cno!=null">
+                or tbl_category.cno = #{category.cno}
+            </if>
+            <if test="category.code!=null">
+                or tbl_category.code = #{category.code}
+            </if>
+            <if test="category.name!=null">
+                or tbl_category.name like '%'||#{category.name}||'%'
+            </if>
+            <if test="category.HCode != null">
                 <choose>
                     <when test='category.HCode == "null" '>
                         or tbl_category.hCode is null
@@ -25,11 +24,22 @@
                         or tbl_category.hCode like '%'||#{category.hCode}||'%'
                     </otherwise>
                 </choose>
-                </if>
-            </trim>
-            <if test="category.state != null">
-                and tbl_category.state = #{category.state}
             </if>
+        </trim>
+    </sql>
+
+    <sql id="state">
+        <trim prefixOverrides="and">
+            <choose>
+                <when test="category.state!=null">
+                    <trim prefix="(" suffix=") ">
+                        <include refid="search"/>
+                    </trim>
+                </when>
+                <otherwise>
+                    <include refid="search"/>
+                </otherwise>
+            </choose>
         </trim>
     </sql>
 
@@ -41,14 +51,19 @@
         from tbl_category
         where
         <trim prefixOverrides="and">
-            <include refid="search"/>
-            <if test="cri != null">
-            <![CDATA[
+            <include refid="state"/>
+            <choose>
+                <when test="cri.amount!=0">
+                    <![CDATA[
            and rownum <= #{cri.pageNum} * #{cri.amount}
         )
         where rn > (#{cri.pageNum} - 1) * #{cri.amount}
         ]]>
-            </if>
+                </when>
+                <otherwise>
+                    )
+                </otherwise>
+            </choose>
         </trim>
     </sql>
 
@@ -86,7 +101,7 @@
         select /*+ index_desc (tbl_category pk_category) */ *
         from tbl_category
         where
-        <include refid="search"/>
+        <include refid="state"/>
     </select>
 
     <select id="getListWithPaging" resultType="com.foodive.domain.CategoryVO">
@@ -99,7 +114,7 @@
         select count(cno)
         from tbl_category
         where
-        <include refid="search"/>
+        <include refid="state"/>
     </select>
 
     <update id="drop">
