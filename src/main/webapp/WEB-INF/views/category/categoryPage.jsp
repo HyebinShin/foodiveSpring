@@ -29,7 +29,7 @@
                 <div class="form-group input-group col-lg-6" id="categorySelect">
                     <span class="input-group-addon">상위 카테고리</span>
                     <select class="form-control">
-                        <option value="null">-</option>
+                        <option value="all" selected>-</option>
                         <c:forEach items="${gnb.getList()}" var="category">
                             <option value='<c:out value="${category.code}"/>'><c:out value="${category.name}"/></option>
                         </c:forEach>
@@ -158,7 +158,8 @@
         let tbody = $("tbody");
         let pageNum = 1;
         let categoryPageFooter = $(".panel-footer");
-        let state = $("#stateSelect:selected").val();
+        let state = $("#stateSelect :selected").val();
+        console.log(`처음 state: \${state}`);
 
         function showCategoryPage(categoryCnt) {
             let endNum = Math.ceil(pageNum/10.0) * 10;
@@ -196,8 +197,57 @@
         }
 
         function showList(page) {
+            let hCode = $("#categorySelect :selected").val();
+            console.log(`hCode: \${hCode} 입니다.`);
+            let param = {
+                state:state,
+                page:page||1,
+                hCode:hCode
+            }
+            console.log(`param: \${JSON.stringify(param)}`);
 
+            categoryService().getList(param, function (categoryCnt, list) {
+                console.log(`categoryCnt: \${categoryCnt}`);
+                console.log(`list: \${list}`);
+
+                if(page === -1) {
+                    pageNum = Math.ceil(categoryCnt/10.0);
+                    showList(pageNum);
+                    return;
+                }
+
+                let str = "";
+
+                if (list == null || list.length === 0) {
+                    return;
+                }
+
+                for (let i=0, len=list.length||0; i<len; i++) {
+                    str += `<tr data-cno='<c:out value="\${list[i].cno}"/>'><td><c:out value="\${list[i].cno}"/></td>`;
+                    str += `<td><c:out value="\${list[i].code}"/></td>`;
+                    str += `<td><c:out value="\${list[i].name}"/></td>`;
+                    str += `<td><c:out value="\${categoryService().displayTime(list[i].regDate)}"/></td></tr>`;
+                }
+
+                tbody.html(str);
+                showCategoryPage(categoryCnt);
+            })
         }
+
+        searchBtn.on("click", function () {
+            state = $("#stateSelect :selected").val();
+            console.log(state);
+
+            showList(1);
+
+            categoryPageFooter.on("click", "li a", function (e) {
+                e.preventDefault();
+
+                pageNum = $(this).attr("href");
+
+                showList(pageNum);
+            })
+        })
 
         let addCategoryBtn = $("#addCategoryBtn");
         let modal = $(".modal");

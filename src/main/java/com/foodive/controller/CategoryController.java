@@ -63,8 +63,8 @@ public class CategoryController {
                 : new ResponseEntity<>(CategoryMsg.DUPLICATE, HttpStatus.OK);
     }
 
-    @PutMapping(
-            value = {"/pages/{state}/{page}"},
+    @GetMapping(
+            value = {"/pages/{hCode}/{state}/{page}"},
             produces = {
                     MediaType.APPLICATION_XML_VALUE,
                     MediaType.APPLICATION_JSON_VALUE
@@ -72,12 +72,18 @@ public class CategoryController {
     )
     @ResponseBody
     public ResponseEntity<CategoryPageDTO> getList(
+            @PathVariable("hCode") String hCode,
             @PathVariable("state") int state,
-            @PathVariable("page") int page,
-            @RequestParam(value = "category", required = false) CategoryVO category
+            @PathVariable("page") int page
     ) {
+        CategoryVO category = new CategoryVO();
+        log.info("state: "+state+", page: "+page+", category: "+category);
         Criteria cri = new Criteria(page, 10);
         category.setState(state);
+        if(!"all".equals(hCode)) {
+            category.setHCode(hCode);
+        }
+        log.info("set state category: "+category);
 
         return new ResponseEntity<>(service.getListWithPaging(cri, category), HttpStatus.OK);
     }

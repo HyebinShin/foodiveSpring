@@ -2,25 +2,55 @@ let categoryService = (function () {
 
     function check(duplicateInfo, callback, error) {
         $.ajax({
-            type:'post',
-            url:'/category/check',
-            data:JSON.stringify(duplicateInfo),
-            contentType:"application/json; charset=utf-8",
+            type: 'post',
+            url: '/category/check',
+            data: JSON.stringify(duplicateInfo),
+            contentType: "application/json; charset=utf-8",
             success: function (result, status, xhr) {
                 if (callback) {
                     callback(result);
                 }
             },
             error: function (xhr, status, er) {
-                if(error) {
+                if (error) {
                     error(er);
                 }
             }
         })
     }
 
+    function getList(param, callback, error) {
+        console.log(`node: ${JSON.stringify(param)}`)
+
+        let state = param.state
+        let page = param.page || 1;
+        let hCode = param.hCode || "all";
+
+        $.getJSON(`/category/pages/${hCode}/${state}/${page}`,
+            function (data) {
+                if (callback) {
+                    callback(data.categoryCnt, data.list);
+                }
+            }).fail(function (xhr, status, err) {
+            error();
+        })
+    }
+
+    function displayTime(timeValue) {
+        let dateObj = new Date(timeValue);
+
+
+        let yy = dateObj.getFullYear();
+        let mm = dateObj.getMonth() + 1;
+        let dd = dateObj.getDate();
+
+        return [yy, '/', (mm > 9 ? '' : '0') + mm, '/', (dd > 9 ? '' : '0') + dd].join('');
+    }
+
     return {
-        check:check
+        check: check,
+        getList: getList,
+        displayTime: displayTime
     }
 })
 
@@ -110,7 +140,7 @@ let categoryFunction = (function () {
     }
 
     function validateName(name, nameCheck) {
-        if(name !== nameCheck) {
+        if (name !== nameCheck) {
             inputStyle('nameCheck', errorMsg.NAME_NOT_MATCH);
             addInputError(inputForm.NAME);
             return false;
@@ -120,7 +150,7 @@ let categoryFunction = (function () {
     }
 
     function validateEName(eName, eNameCheck) {
-        if(eName !== eNameCheck) {
+        if (eName !== eNameCheck) {
             inputStyle('eNameCheck', errorMsg.ENAME_NOT_MATCH);
             addInputError(inputForm.ENAME);
             return false;
@@ -130,7 +160,7 @@ let categoryFunction = (function () {
     }
 
     function validateHCode(hCode) {
-        if(hCode === '') {
+        if (hCode === '') {
             inputStyle('hCode', errorMsg.HCODE_NULL);
             addInputError(inputForm.HCODE);
             return false;
@@ -140,9 +170,9 @@ let categoryFunction = (function () {
     }
 
     return {
-        checkValidate:checkValidate,
-        validateName:validateName,
-        validateEName:validateEName,
-        validateHCode:validateHCode
+        checkValidate: checkValidate,
+        validateName: validateName,
+        validateEName: validateEName,
+        validateHCode: validateHCode
     }
 })

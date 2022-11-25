@@ -40,6 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryPageDTO getListWithPaging(Criteria cri, CategoryVO category) {
         log.info("get Category List..."+cri);
+        log.info("get Category List...category: "+category);
 
         return new CategoryPageDTO(
                 mapper.getTotalCategory(category),
