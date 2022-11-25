@@ -42,7 +42,7 @@ public class UserController {
 
     @PostMapping(
             value = "/check",
-            consumes = "application/json",
+            consumes = "application/json; charset=utf-8",
             produces = {MediaType.TEXT_PLAIN_VALUE}
     )
     @ResponseBody
@@ -102,7 +102,7 @@ public class UserController {
 
     @PostMapping(
             value = "/find",
-            consumes = "application/json",
+            consumes = "application/json; charset=utf-8",
             produces = {
                     MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_XML_VALUE

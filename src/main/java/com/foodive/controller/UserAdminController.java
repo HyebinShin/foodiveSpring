@@ -48,7 +48,7 @@ public class UserAdminController {
 
     @PostMapping(
             value = "/register",
-            consumes = "application/json",
+            consumes = "application/json; charset=utf-8",
             produces = {MediaType.TEXT_PLAIN_VALUE}
     )
     @ResponseBody

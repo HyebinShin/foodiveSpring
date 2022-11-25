@@ -68,8 +68,6 @@ public class UserServiceImpl implements UserService {
     public UserPageDTO getList(Criteria cri, Integer state) {
         log.info("get User List..."+cri);
 
-        mapper.getListWithPaging(cri, state);
-
         return new UserPageDTO(
                 mapper.getTotalUser(state),
                 mapper.getListWithPaging(cri, state)
