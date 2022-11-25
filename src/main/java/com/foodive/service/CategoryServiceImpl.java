@@ -10,6 +10,9 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Log4j
 public class CategoryServiceImpl implements CategoryService {
@@ -40,6 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryPageDTO getListWithPaging(Criteria cri, CategoryVO category) {
         log.info("get Category List..."+cri);
+
         log.info("get Category List...category: "+category);
 
         return new CategoryPageDTO(
@@ -60,5 +64,15 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("modify..."+category);
 
         return mapper.update(category)==1;
+    }
+
+    @Override
+    public List<List<CategoryVO>> gnb() {
+        CategoryVO categoryVO = new CategoryVO();
+        categoryVO.setState(1);
+        List<CategoryVO> highCategory = mapper.getListWithPaging(new Criteria(1, 0), categoryVO);
+        List<List<CategoryVO>> lowCategory = new ArrayList<>();
+
+        return null;
     }
 }

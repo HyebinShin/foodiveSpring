@@ -11,6 +11,7 @@
 
 <!-- Bootstrap Core JavaScript -->
 <script src="/resources/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/resources/vendor/bootstrap-2.3.2/bootstrap-2.3.2/docs/assets/js/bootstrap.js"></script>
 
 <!-- Metis Menu Plugin JavaScript -->
 <script src="/resources/vendor/metisMenu/metisMenu.min.js"></script>

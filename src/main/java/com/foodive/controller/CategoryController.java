@@ -25,7 +25,7 @@ public class CategoryController {
 
     private CategoryService service;
 
-    private CategoryPageDTO getHighCategoryList() {
+    public CategoryPageDTO getHighCategoryList() {
         CategoryVO categoryVO = new CategoryVO();
         categoryVO.setHCode("null");
         categoryVO.setState(1);

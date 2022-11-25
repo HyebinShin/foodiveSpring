@@ -47,4 +47,8 @@ public interface CategoryService {
      */
     public boolean modify(CategoryVO category);
 
+    /**
+     * @return 수정에 성공하면 true, 아니면 false
+     */
+    public List<List<CategoryVO>> gnb();
 }

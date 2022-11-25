@@ -14,6 +14,7 @@
     <title>Foodive</title>
 
     <!-- Bootstrap Core CSS -->
+<%--    <link href="/resources/vendor/bootstrap-2.3.2/bootstrap-2.3.2/docs/assets/css/bootstrap.css" rel="stylesheet">--%>
     <link href="/resources/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- MetisMenu CSS -->
@@ -38,6 +39,7 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <link href="/resources/css/bootstrapCustom.css" rel="stylesheet">
     <link href="/resources/css/custom.css" rel="stylesheet">
 
 </head>
@@ -49,35 +51,26 @@
         </div>
         <!-- END .navbar-header -->
         <ul class="nav navbar-top-links navbar-left">
-            <li class="gnb-main">
-                <a href="#">카테고리</a>
-                <div>
-                    <ul class="gnb-sub gnb-transition-before bg-white open-menu">
-                        <li>상위 카테고리1
-                            <ul class="bg-blue gnb-transition-before">
-                                <li>하위 카테고리1-1</li>
-                                <li class="divider"></li>
-                                <li>하위 카테고리2</li>
-                                <li class="divider"></li>
-                                <li>하위 카테고리3</li>
-                                <li class="divider"></li>
-                                <li>하위 카테고리4</li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-th-list fa-fw"></i> 카테고리 <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu high-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <c:forEach var="high" items="${highGnb}" varStatus="status">
+                        <c:set var="lows" value="${lowGnb.get(status.index)}"/>
+                        <li class="dropdown-submenu">
+                            <a tabindex="-1" href="#">
+                                <c:out value="${high.getName()}"/>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <c:forEach var="low" items="${lows}">
+                                    <li><a href="#"><c:out value="${low.getName()}"/></a></li>
+                                    <li class="divider"></li>
+                                </c:forEach>
                             </ul>
                         </li>
-                        <li class="divider"></li>
-                        <li>상위 카테고리2
-                            <ul class="bg-blue gnb-transition-before">
-                                <li>하위 카테고리2-1</li>
-                                <li class="divider"></li>
-                                <li>하위 카테고리2</li>
-                                <li class="divider"></li>
-                                <li>하위 카테고리3</li>
-                                <li class="divider"></li>
-                                <li>하위 카테고리4</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
+                    </c:forEach>
+                </ul>
             </li>
         </ul>
         <ul class="nav navbar-top-links navbar-right">
@@ -109,7 +102,6 @@
                         </c:when>
                     </c:choose>
                 </ul>
-
             </li>
             <c:if test="${state eq '2'}">
                 <li>
