@@ -66,8 +66,9 @@ public class CategoryMapperTests {
     @Test
     public void testGetTotal() {
         CategoryVO categoryVO = new CategoryVO();
-        categoryVO.setHCode("tes");
+//        categoryVO.setHCode("tes");
 //        categoryVO.setCode("tes5");
+        categoryVO.setState(1);
 
         log.info(mapper.getTotalCategory(categoryVO));
     }
@@ -84,8 +85,10 @@ public class CategoryMapperTests {
         CategoryVO categoryVO = new CategoryVO();
         categoryVO.setCno(5L);
         categoryVO.setName("테스트하위카테고리수정");
+        categoryVO.setEName("TestLowCategory");
         categoryVO.setHCode("hig");
         categoryVO.setCode("tes5");
+        categoryVO.setState(1);
 
         log.info(mapper.update(categoryVO));
     }
