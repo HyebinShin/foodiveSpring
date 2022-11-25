@@ -36,6 +36,26 @@ let categoryService = (function () {
         })
     }
 
+    function add(category, callback, error) {
+        console.log(`category: ${JSON.stringify(category)}`);
+        $.ajax({
+            type:'post',
+            url:'/category/register',
+            data:JSON.stringify(category),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result, status, xhr) {
+                if(callback) {
+                    callback(result);
+                }
+            },
+            error: function (xhr, status, er) {
+                if(error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
     function displayTime(timeValue) {
         let dateObj = new Date(timeValue);
 
@@ -50,7 +70,8 @@ let categoryService = (function () {
     return {
         check: check,
         getList: getList,
-        displayTime: displayTime
+        displayTime: displayTime,
+        add:add
     }
 })
 

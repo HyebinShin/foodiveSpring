@@ -28,7 +28,7 @@
                 </div>
                 <div class="form-group input-group col-lg-6" id="categorySelect">
                     <span class="input-group-addon">상위 카테고리</span>
-                    <select class="form-control">
+                    <select class="form-control" id="categorySelectId">
                         <option value="all" selected>-</option>
                         <c:forEach items="${gnb.getList()}" var="category">
                             <option value='<c:out value="${category.code}"/>'><c:out value="${category.name}"/></option>
@@ -94,7 +94,7 @@
                     <span class="form-check" id="eNameCheck"></span>
                     <input type="hidden" name="eNameCheck">
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="hCodeSelect">
                     <label>상위 카테고리</label>
                     <select class="form-control" name="hCode">
                         <option value="null">해당 카테고리의 상위 카테고리 없음</option>
@@ -124,7 +124,6 @@
     }
 
     const check = function (duplicateParam, duplicateCase, style, checkInput) {
-        let checkBoolean;
         console.log(`\${duplicateParam}, \${duplicateCase}, \${style}, \${checkInput}`);
         if(!categoryFunction().checkValidate(duplicateParam, duplicateCase)) {
             console.log("invalidated...");
@@ -141,16 +140,13 @@
                 color = "color:#337ab7";
                 divClass = "has-success";
                 checkInput.val(duplicateParam);
-                checkBoolean = true;
             } else {
                 color = "color:red";
                 divClass = "has-error";
-                checkBoolean = false;
             }
             style.attr("style", color).html(result);
             style.closest("div").attr("class", divClass);
         })
-        return checkBoolean;
     }
 
     $(document).ready(function () {
@@ -195,6 +191,7 @@
 
             console.log(endNum);
         }
+
 
         function showList(page) {
             let hCode = $("#categorySelect :selected").val();
@@ -254,7 +251,6 @@
 
         let modalInputName = modal.find("input[name='name']");
         let modalInputEName = modal.find("input[name='eName']");
-        let modalInputHCode = modal.find("select[name='hCode']");
 
         let modalModBtn = $("#modalModBtn");
         let modalModDoBtn = $("#modalModDoBtn");
@@ -296,12 +292,45 @@
                             checkInput = modal.find("input[name='eNameCheck']");
                             checkCase = "E";
                         }
-                        if(check(duplicateParam, checkCase, style, checkInput)) {
-                            validateCnt++;
-                        }
+                        check(duplicateParam, checkCase, style, checkInput)
                         break;
                 }
             })
+        })
+
+        modalRegisterBtn.on("click", function () {
+            if(!categoryFunction().validateName(modalInputName.val(), modal.find("input[name='nameCheck']").val())) {
+                return;
+            }
+            if(!categoryFunction().validateEName(modalInputEName.val(), modal.find("input[name='eNameCheck']").val())) {
+                return;
+            }
+
+            let modalInputHCode = $("#hCodeSelect :selected").val();
+
+            if(!categoryFunction().validateHCode(modalInputHCode)) {
+                console.log("상위 카테고리 선택하지 않음");
+                return;
+            }
+
+            let category = {
+                name:modalInputName.val(),
+                eName:modalInputEName.val(),
+                hCode:modalInputHCode
+            }
+
+            categoryService().add(category, function (result) {
+                alert(result);
+
+                $("#categorySelectId").val($("#hCodeSelect :selected").val()).prop("selected", true);
+
+                modal.find("input").val("");
+                modal.modal("hide");
+
+                showList(-1);
+            })
+
+
         })
 
 

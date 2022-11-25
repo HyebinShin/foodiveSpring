@@ -42,10 +42,12 @@ public class CategoryController {
     @PostMapping(
             value = "/register",
             consumes = "application/json; charset=utf-8",
-            produces = {MediaType.TEXT_PLAIN_VALUE}
+            produces = "text/plain; charset=utf-8"
     )
     @ResponseBody
     public ResponseEntity<String> register(@RequestBody CategoryVO category) {
+        log.info("register..."+category);
+
         return service.register(category) ?
                 new ResponseEntity<>(CategoryMsg.INSERT, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
