@@ -294,10 +294,13 @@
 
         addCategoryBtn.on("click", function () {
             modal.find("input").val("");
+            modal.find("input").removeAttr("readOnly");
             modal.find("select").val([]);
+            modal.find("select").removeAttr("readOnly");
             modal.find("button[id!='modalCloseBtn']").hide();
             modal.find("input").closest("div").hide();
             modal.find("select").closest("div").hide();
+            modal.find("span").empty();
 
             modalInputName.closest("div").show();
             modalInputEName.closest("div").show();
