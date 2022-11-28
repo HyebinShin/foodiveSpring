@@ -72,7 +72,16 @@
                 substr(#{eName}, 0, 3)||#{cno},
             </otherwise>
         </choose>
-        #{name}, 1, #{hCode, jdbcType=VARCHAR}, #{eName, jdbcType=VARCHAR})
+        #{name}, 1,
+            <choose>
+                <when test='hCode==null or hCode=="null"'>
+                    null
+                </when>
+        <otherwise>
+            #{hCode, jdbcType=VARCHAR}
+        </otherwise>
+            </choose>
+            , #{eName, jdbcType=VARCHAR})
     </insert>
 
     <select id="duplicate" resultType="int">
