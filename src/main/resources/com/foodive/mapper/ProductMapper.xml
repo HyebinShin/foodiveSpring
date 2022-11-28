@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foodive.mapper.ProductMapper">
+
+    <sql id="search">
+        <trim prefixOverrides="or|and">
+            <trim prefix="(" suffix=")" prefixOverrides="or">
+                <if test="product.pno!=null">
+                    or tbl_product.pno = #{product.pno}
+                </if>
+                <if test="product.pcode!=null">
+                    or tbl_product.pcode = #{product.pcode}
+                </if>
+                <if test="product.korName!=null">
+                    or tbl_product.korName like '%'||#{product.korName}||'%'
+                </if>
+                <if test="product.code!=null">
+                    or tbl_product.code like '%'||#{product.code}||'%'
+                </if>
+            </trim>
+            <if test="product.state!=null">
+                and state = #{product.state}
+            </if>
+        </trim>
+    </sql>
+
+    <sql id="criteria">
+        (select /*+ index_desc(tbl_product pk_product) */
+        rownum rn,
+        tbl_product.*
+        from tbl_product
+        where
+        <trim prefixOverrides="and">
+            <include refid="search"/>
+            <choose>
+                <when test="cri.amount!=0">
+                    <![CDATA[
+           and rownum <= #{cri.pageNum} * #{cri.amount}
+        )
+        where rn > (#{cri.pageNum} - 1) * #{cri.amount}
+        ]]>
+                </when>
+                <otherwise>
+                    )
+                </otherwise>
+            </choose>
+        </trim>
+    </sql>
+
+    <insert id="insert">
+        <selectKey keyProperty="pno" order="BEFORE" resultType="long">
+            select seq_product.nextval from dual
+        </selectKey>
+
+        insert into tbl_product (pno, pcode, korName, engName, state, code, price, discount,
+        nation, detail, stock)
+        values (#{pno}, ('p'||#{pno}), #{korName}, #{engName}, 1, #{code}, #{price},
+        <choose>
+            <when test="discount!=null">
+                #{discount, jdbcType=INTEGER},
+            </when>
+            <otherwise>
+                0,
+            </otherwise>
+        </choose>
+        #{nation, jdbcType=VARCHAR}, #{detail, jdbcType=VARCHAR}, 20)
+    </insert>
+
+    <select id="duplicate" resultType="int">
+        select /*+ index_desc (tbl_product pk_product) */ count(pno)
+        from tbl_product
+        where
+        <choose>
+            <when test="duplicateCase=='K'.toString()">
+                korName = #{duplicateParam}
+            </when>
+            <when test="duplicateCase=='E'.toString()">
+                engName = #{duplicateParam}
+            </when>
+        </choose>
+    </select>
+
+    <select id="get" resultType="com.foodive.domain.ProductVO">
+        select /*+ index_desc (tbl_product pk_product) */ *
+        from tbl_product
+        where
+        <include refid="search"/>
+    </select>
+
+    <select id="getListWithPaging" resultType="com.foodive.domain.ProductVO">
+        select *
+        from
+        <include refid="criteria"/>
+    </select>
+
+    <select id="getTotalProduct" resultType="int">
+        select count(pno)
+        from tbl_product
+        where
+        <include refid="search"/>
+    </select>
+
+    <update id="drop">
+        update tbl_product
+        set state    = 0,
+            dropDate = sysdate
+        where pno = #{pno}
+    </update>
+
+    <update id="update">
+        update tbl_product
+        set korName = #{korName},
+        engName = #{engName},
+        state = #{state},
+        code = #{code},
+        price = #{price},
+        <choose>
+            <when test="discount!=null">
+                discount = #{discount, jdbcType=INTEGER},
+            </when>
+            <otherwise>
+                discount = 0,
+            </otherwise>
+        </choose>
+        nation = #{nation, jdbcType=VARCHAR},
+        detail = #{detail, jdbcType=VARCHAR},
+        stock = #{stock},
+        modDate = sysdate
+        where pno = #{pno}
+    </update>
+</mapper>
