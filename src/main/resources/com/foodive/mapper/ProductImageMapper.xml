@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foodive.mapper.ProductImageMapper">
+
+    <insert id="insert">
+        insert into tbl_pimg (uuid, uploadPath, fileName, fileType, pno)
+        values (#{uuid}, #{uploadPath}, #{fileName}, #{fileType}, #{pno})
+    </insert>
+
+    <delete id="delete">
+        delete from tbl_pimg where uuid = #{uuid}
+    </delete>
+
+    <select id="findByBno" resultType="com.foodive.domain.ProductImageVO">
+        select * from tbl_pimg where pno = #{pno}
+    </select>
+
+    <delete id="deleteAll">
+        delete tbl_pimg where pno = #{pno}
+    </delete>
+
+    <select id="getOldFiles" resultType="com.foodive.domain.ProductImageVO">
+        select * from tbl_pimg where uploadPath = to_char(sysdate - 1, 'yyyy\mm\dd')
+    </select>
+</mapper>
