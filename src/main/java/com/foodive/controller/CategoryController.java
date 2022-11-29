@@ -22,7 +22,6 @@ import java.util.List;
 @Controller
 @Log4j
 @AllArgsConstructor
-@NoArgsConstructor
 public class CategoryController {
 
     private CategoryService service;
