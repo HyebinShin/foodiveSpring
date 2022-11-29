@@ -218,8 +218,22 @@
 <script type="text/javascript">
     var oEditors = [];
 
+    function destoryIframe(iframeParam) {
+        let iframe = iframeParam.prop('contentWindow');
+
+        iframeParam.attr('src', 'about:blank');
+
+        try {
+            iframe.document.write('');
+            iframe.document.clear();
+        } catch (e) {}
+
+        iframeParam.remove();
+    }
+
     $("#addProductBtn").click(function () {
-        $("#content").empty();
+        let iframe = $("#content").next();
+        destoryIframe(iframe);
         nhn.husky.EZCreator.createInIFrame({
             oAppRef: oEditors,
             elPlaceHolder: "content",
