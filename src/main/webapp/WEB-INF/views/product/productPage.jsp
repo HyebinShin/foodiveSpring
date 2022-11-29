@@ -14,7 +14,7 @@
                 상품 관리
             </div>
             <div class="panel-body">
-                <div class="form-group input-group col-lg-8" id="stateSelect">
+                <div class="form-group input-group col-lg-12" id="stateSelect">
                     <span class="input-group-addon">상품 상태</span>
                     <select class="form-control">
                         <option value="1" selected>판매</option>
@@ -27,7 +27,7 @@
                         </button>
                     </span>
                 </div>
-                <div class="form-group input-group col-lg-8" id="keyword">
+                <div class="form-group input-group col-lg-12" id="keyword">
                     <span class="input-group-addon">상품 검색</span>
                     <input type="text" class="form-control" placeholder="상품명을 입력해주세요.">
                     <span class="input-group-btn">
@@ -45,7 +45,7 @@
                 카테고리 선택
             </div>
             <div class="panel-body">
-                <div class="form-group input-group col-lg-8" id="categorySelect">
+                <div class="form-group input-group col-lg-12" id="categorySelect">
                     <span class="input-group-addon">상위 카테고리</span>
                     <select class="form-control" id="categorySelectId">
                         <option value="all" selected>-</option>
@@ -59,7 +59,7 @@
                         </button>
                     </span>
                 </div>
-                <div class="form-group input-group col-lg-8" id="lowCategorySelect">
+                <div class="form-group input-group col-lg-12" id="lowCategorySelect">
                     <span class="input-group-addon">하위 카테고리</span>
                     <select class="form-control" id="lowCategorySelectId">
 
@@ -77,7 +77,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 상품 목록
-                <button id="addCategoryBtn" class="btn btn-primary btn-xs pull-right">상품 등록</button>
+                <button id="addProductBtn" class="btn btn-primary btn-xs pull-right">상품 등록</button>
             </div>
             <div class="panel-body">
                 <table class="table table-striped table-bordered table-hover" id="userList">
@@ -106,7 +106,7 @@
 
 <!-- modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="width: 700px">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -114,17 +114,17 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>카테고리 번호</label>
+                    <label>상품 번호</label>
                     <input class="form-control" name="code" type="text" readonly>
                 </div>
                 <div class="form-group">
-                    <label>카테고리 국문명</label>
+                    <label>상품 국문명</label>
                     <input class="form-control" name="name" type="text">
                     <span class="form-check" id="nameCheck"></span>
                     <input type="hidden" name="nameCheck">
                 </div>
                 <div class="form-group">
-                    <label>카테고리 영문명</label>
+                    <label>상품 영문명</label>
                     <input class="form-control" name="eName" type="text">
                     <span class="form-check" id="eNameCheck"></span>
                     <input type="hidden" name="eNameCheck">
@@ -139,11 +139,51 @@
                     </select>
                     <span class="form-check" id="hCode"></span>
                 </div>
+                <div class="form-group" id="codeSelect">
+                    <label>하위 카테고리</label>
+                    <select class="form-control" id="codeSelected">
+
+                    </select>
+                    <span class="form-check" id="code"></span>
+                </div>
+                <div class="form-group" id="price">
+                    <label>가격</label>
+                    <input class="form-control" type="text" name="price">
+                    <span class="form-check" id="priceCheck"></span>
+                </div>
+                <div class="form-group" id="discount">
+                    <label>할인율</label>
+                    <input class="form-control" type="text" name="discount">
+                    <span class="form-check" id="discountCheck"></span>
+                </div>
+                <div class="form-group" id="image">
+                    <label>상품 이미지</label>
+                    <input class="form-control" type="file" name="image">
+                    <span class="form-check" id="imageCheck"></span>
+                </div>
+                <div class="form-group" id="nation">
+                    <label>원산지</label>
+                    <input class="form-control" type="text" name="nation">
+                    <span class="form-check" id="nationCheck"></span>
+                </div>
+                <div class="form-group" id="detail">
+                    <label>상품 상세</label>
+                    <textarea name="content" id="content"  style="width:100%">
+
+                    </textarea>
+                    <span class="form-check" id=""></span>
+                </div>
+                <div class="form-group" id="stock">
+                    <label>재고</label>
+                    <input class="form-control" type="text" name="stock">
+                    <span class="form-check" id="stockCheck"></span>
+                </div>
                 <div class="form-group" id="dropSelect">
-                    <label>활성화/비활성화</label>
+                    <label>판매 상태 변경</label>
                     <select class="form-control" id="dropSelected">
-                        <option value="1">활성화</option>
-                        <option value="0">비활성화</option>
+                        <option value="1">판매</option>
+                        <option value="0">판매중지</option>
+                        <option value="2">품절</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -155,7 +195,7 @@
                     <input class="form-control" name="modDate" type="text" readonly>
                 </div>
                 <div class="form-group">
-                    <label>비활성화 일자</label>
+                    <label>판매중지 일자</label>
                     <input class="form-control" name="dropDate" type="text" readonly>
                 </div>
             </div>
@@ -171,8 +211,30 @@
     </div>
 </div>
 
+<script src="/resources/smart_editor_2/js/HuskyEZCreator.js"></script>
 <script src="/resources/js/productService.js"></script>
 <script src="/resources/js/productFunction.js"></script>
+
+<script type="text/javascript">
+    var oEditors = [];
+
+    $("#addProductBtn").click(function () {
+        $("#content").empty();
+        nhn.husky.EZCreator.createInIFrame({
+            oAppRef: oEditors,
+            elPlaceHolder: "content",
+            sSkinURI: "/resources/smart_editor_2/SmartEditor2Skin.html",
+            fCreator: "createSEditor2"
+        });
+    })
+
+    $(document).ready(function () {
+        $("#content").change(function () {
+            oEditors.getById['content'].exec("UPDATE_CONTENTS_FIELD",[]);
+            // console.log("oEditors: "+oEditors);
+        })
+    });
+</script>
 
 <script type="text/javascript">
 $(document).ready(function () {
@@ -198,6 +260,14 @@ $(document).ready(function () {
             }
         })
 
+    })
+
+    let modal = $(".modal");
+
+    // 상품 등록
+    let addProductBtn = $("#addProductBtn");
+    addProductBtn.click(function () {
+        modal.modal("show")
     })
 
 })
