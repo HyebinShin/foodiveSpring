@@ -122,7 +122,7 @@
                                 <a href="#">상품 관리 <span class="fa arrow"></span></a>
                                 <ul class="nav nav-third-level">
                                     <li>
-                                        <a href="#">상품 등록</a>
+                                        <a href="/product/productPage">상품 관리</a>
                                     </li>
                                     <li>
                                         <a href="#">상품 목록</a>

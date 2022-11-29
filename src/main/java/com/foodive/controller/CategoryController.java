@@ -7,6 +7,7 @@ import com.foodive.domain.DuplicateInfo;
 import com.foodive.persistence.CategoryMsg;
 import com.foodive.service.CategoryService;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import java.util.List;
 @Controller
 @Log4j
 @AllArgsConstructor
+@NoArgsConstructor
 public class CategoryController {
 
     private CategoryService service;
@@ -76,11 +78,16 @@ public class CategoryController {
     public ResponseEntity<CategoryPageDTO> getList(
             @PathVariable("hCode") String hCode,
             @PathVariable("state") int state,
-            @PathVariable("page") int page
+            @PathVariable(value = "page", required = false) int page
     ) {
         CategoryVO category = new CategoryVO();
         log.info("state: "+state+", page: "+page+", category: "+category);
-        Criteria cri = new Criteria(page, 10);
+        Criteria cri;
+        if(page==0) {
+            cri = new Criteria(1, 0);
+        } else {
+            cri = new Criteria(page, 10);
+        }
         category.setState(state);
         if(!"all".equals(hCode)) {
             category.setHCode(hCode);
