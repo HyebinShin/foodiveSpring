@@ -180,30 +180,4 @@ public class ProductImageController {
         return "redirect:"+url;
     }
 
-    @GetMapping("/smartEditor")
-    @ResponseBody
-    public ResponseEntity<byte[]> getFile(HttpSession session, String fileName) {
-        log.info("FileName: "+fileName);
-
-        String folder = "foodive";
-        String fileURL = session.getServletContext().getRealPath(folder);
-        File file = new File(fileURL+"\\"+fileName.substring(fileName.indexOf("/")+1));
-
-        log.info("File: "+file);
-
-        ResponseEntity<byte[]> result = null;
-
-        try {
-            HttpHeaders headers = new HttpHeaders();
-
-            headers.add("Content-Type", Files.probeContentType(file.toPath()));
-            result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-
-        return result;
-    }
-
-
 }

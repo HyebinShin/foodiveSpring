@@ -7,16 +7,16 @@
     <sql id="search">
         <trim prefixOverrides="or|and">
             <trim prefix="(" suffix=")" prefixOverrides="or">
-                <if test="product.pno!=null">
+                <if test='product.pno!=null'>
                     or tbl_product.pno = #{product.pno}
                 </if>
                 <if test="product.pcode!=null">
                     or tbl_product.pcode = #{product.pcode}
                 </if>
-                <if test="product.korName!=null">
+                <if test='product.korName!=null || product.korName != "null"'>
                     or tbl_product.korName like '%'||#{product.korName}||'%'
                 </if>
-                <if test="product.code!=null">
+                <if test='product.code!=null || product.code != "null"'>
                     or tbl_product.code like '%'||#{product.code}||'%'
                 </if>
             </trim>

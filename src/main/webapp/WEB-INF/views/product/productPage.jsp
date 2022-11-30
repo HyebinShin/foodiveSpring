@@ -29,7 +29,7 @@
                 </div>
                 <div class="form-group input-group col-lg-12" id="keyword">
                     <span class="input-group-addon">상품 검색</span>
-                    <input type="text" class="form-control" placeholder="상품명을 입력해주세요.">
+                    <input type="text" class="form-control" name="keyword" placeholder="상품명을 입력해주세요.">
                     <span class="input-group-btn">
                         <button class="btn btn-default searchBtn" type="button">
                             <i class="fa fa-search"></i>
@@ -158,7 +158,7 @@
                 </div>
                 <div class="form-group" id="image">
                     <label>상품 이미지</label>
-                    <input class="form-control" type="file" name="image">
+                    <input class="form-control" type="file" name="image" multiple>
                     <span class="form-check" id="imageCheck"></span>
                 </div>
                 <div class="form-group" id="nation">
@@ -234,6 +234,9 @@
     $("#addProductBtn").click(function () {
         let iframe = $("#content").next();
         destoryIframe(iframe);
+
+        initPage().initRegisterPage();
+
         nhn.husky.EZCreator.createInIFrame({
             oAppRef: oEditors,
             elPlaceHolder: "content",
@@ -254,9 +257,11 @@
 $(document).ready(function () {
     let searchBtn = $(".searchBtn");
     let lowCategorySelectId = $("#lowCategorySelectId");
+    let pageFooter = $('.panel-footer');
 
     let state = $("#stateSelect :selected").val();
     let hCode = $("#categorySelect :selected").val();
+    let pageNum = 1;
 
     searchBtn.each(function () {
         $(this).on("click", function () {
@@ -270,6 +275,17 @@ $(document).ready(function () {
                 productService().getCategoryList(hCode, function (categoryCnt, list) {
                     console.log("받아온 리스트: "+JSON.stringify(list));
                     initPage().initLowCategoryList(list, lowCategorySelectId);
+                })
+
+            } else {
+                initPage().initManageProduct(1);
+
+                pageFooter.on("click", "li a", function (e) {
+                    e.preventDefault();
+
+                    pageNum = $(this).attr("href");
+
+                    initPage().initManageProduct(pageNum);
                 })
             }
         })
