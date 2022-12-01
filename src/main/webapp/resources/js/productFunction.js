@@ -187,7 +187,7 @@ const initPage = (function () {
 
                 str += "<li data-path='"+obj.uploadPath+"' data-uuid='"+obj.uuid+"' " +
                     "data-name='"+obj.fileName+"' data-type='"+obj.image+"'><div>";
-                str += "<span>"+obj.fileName+"</span>";
+                str += "<span class='fileResultSpan'>"+obj.fileName+"</span>";
                 str += "<button type='button' data-file=\'"+fileCallPath+"\' data-type='image' class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
                 str += "<img src='/display?isImage=true&fileName="+fileCallPath+"'>";
                 str += "</div></li>";
@@ -197,7 +197,7 @@ const initPage = (function () {
 
                 str += "<li data-path='"+obj.uploadPath+"' data-uuid='"+obj.uuid+"' " +
                     "data-name='"+obj.fileName+"' data-type='"+obj.image+"'><div>";
-                str += "<span>"+obj.fileName+"</span>";
+                str += "<span class='fileResultSpan'>"+obj.fileName+"</span>";
                 str += "<button type='button' data-file=\'"+fileCallPath+"\' data-type='file' class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
                 str += "<img src='/resources/foodive/attach.png'></a>";
                 str += "</div></li>";

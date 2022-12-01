@@ -328,7 +328,7 @@
 
         modal.find("input").each(function () {
             $(this).change(function () {
-                modal.find("span").empty();
+                modal.find("span[class!='fileResultSpan']").empty();
 
                 let name = $(this).attr("name");
                 let param = $(this).val();
