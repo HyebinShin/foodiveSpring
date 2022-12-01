@@ -21,7 +21,9 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import java.util.UUID;
 public class ProductImageController {
 
     private static final String uploadFolder = "/resources/foodive";
+//    private static final String imageUploadFolder = "c:\\upload\\image";
 
     private String getFolder() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -60,15 +63,15 @@ public class ProductImageController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public ResponseEntity<List<ProductImageVO>> uploadAjaxPost(MultipartFile[] uploadFile, HttpServletRequest request) {
+    public ResponseEntity<List<AttachFileDTO>> uploadAjaxPost(MultipartFile[] uploadFile, HttpServletRequest request) {
         log.info("upload ajax post");
 
-        List<ProductImageVO> list = new ArrayList<>();
-        String imgUploadFolder = request.getSession().getServletContext().getRealPath(uploadFolder)+File.separator+"img";
+        List<AttachFileDTO> list = new ArrayList<>();
+        String imageUploadFolder = request.getSession().getServletContext().getRealPath(uploadFolder) + File.separator + "img";
 
         // make folder
         String uploadFolderPath = getFolder();
-        File uploadPath = new File(imgUploadFolder, uploadFolderPath);
+        File uploadPath = new File(imageUploadFolder, uploadFolderPath);
         log.info("uploadPath: "+uploadPath);
 
         if(!uploadPath.exists()) {
@@ -79,9 +82,10 @@ public class ProductImageController {
             log.info("upload file name: "+multipartFile.getOriginalFilename());
             log.info("upload file size: "+multipartFile.getSize());
 
-            ProductImageVO imageVO = new ProductImageVO();
+            AttachFileDTO attachFileDTO = new AttachFileDTO();
 
             String uploadFileName = multipartFile.getOriginalFilename();
+            attachFileDTO.setFileName(uploadFileName);
 
             //UUID
             UUID uuid = UUID.randomUUID();
@@ -91,19 +95,19 @@ public class ProductImageController {
                 File saveFile = new File(uploadPath, uploadFileName);
                 multipartFile.transferTo(saveFile);
 
-                imageVO.setUuid(uuid.toString());
-                imageVO.setUploadPath(uploadFolderPath);
+                attachFileDTO.setUuid(uuid.toString());
+                attachFileDTO.setUploadPath(uploadFolderPath);
 
                 // check image type file
                 if (checkImageType(saveFile)) {
-                    imageVO.setFileType(true);
+                    attachFileDTO.setImage(true);
 
                     FileOutputStream thumbnail = new FileOutputStream(new File(uploadPath, "s_"+uploadFileName));
                     Thumbnailator.createThumbnail(multipartFile.getInputStream(), thumbnail, 100, 100);
                     thumbnail.close();
                 }
 
-                list.add(imageVO);
+                list.add(attachFileDTO);
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
@@ -126,7 +130,7 @@ public class ProductImageController {
         log.info("callbackFunc: "+callbackFunc);
 
         try {
-            String detailUploadFolder = request.getSession().getServletContext().getRealPath(uploadFolder)+File.separator+"detail";
+            String detailUploadFolder = request.getSession().getServletContext().getRealPath(uploadFolder) + File.separator + "detail";
 
             // make folder
             String uploadFolderPath = getFolder();
@@ -180,4 +184,63 @@ public class ProductImageController {
         return "redirect:"+url;
     }
 
+    @GetMapping("/display")
+    @ResponseBody
+    public ResponseEntity<byte[]> getFile(String fileName, boolean isImage, HttpServletRequest request) {
+        log.info("file name: "+fileName);
+
+        String path = request.getSession().getServletContext().getRealPath(uploadFolder) + File.separator;
+        path += isImage ? "img" : "detail";
+        File file = new File(path+File.separator+fileName);
+//        File file = new File("c:\\upload\\image\\"+fileName);
+
+        log.info("FILE: "+file);
+
+        ResponseEntity<byte[]> result = null;
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+
+            headers.add("Content-Type", Files.probeContentType(file.toPath()));
+            result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);
+            log.info("result");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    @PostMapping("/deleteFile")
+    @ResponseBody
+    public ResponseEntity<String> deleteFile(String fileName, String type, boolean isImage, HttpServletRequest request) {
+        File file;
+
+        String path = request.getSession().getServletContext().getRealPath(uploadFolder) + File.separator;
+        path += isImage ? "img" : "detail";
+
+        ResponseEntity<String> result;
+
+        try {
+            file = new File(path + File.separator + URLDecoder.decode(fileName, "UTF-8"));
+            log.info(file.getName());
+            log.info("file: "+file);
+
+            file.delete();
+
+            if (type.equals("image")) {
+                String largeFileName = file.getAbsolutePath().replace("s_", "");
+                log.info("large file name: "+largeFileName);
+                file = new File(largeFileName);
+
+                file.delete();
+            }
+
+            result = new ResponseEntity<>("deleted", HttpStatus.OK);
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage());
+            result = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return result;
+    }
 }

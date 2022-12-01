@@ -60,6 +60,10 @@ public class ProductController {
     public ResponseEntity<String> register(@RequestBody ProductVO product) {
         log.info("new product!");
 
+        if (product.getImageList() != null) {
+            product.getImageList().forEach(log::info);
+        }
+
         service.register(product);
 
         return new ResponseEntity<>(ProductMsg.INSERT, HttpStatus.OK);

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.*"%>
-<%@include file="../includes/adminHeader.jsp"%>
+<%@ page import="java.util.*" %>
+<%@include file="../includes/adminHeader.jsp" %>
 <div class="row">
     <div class="col-lg-12">
         <h1 class="page-header">상품 관리</h1>
@@ -102,111 +102,119 @@
     </div>
 </div>
 
-<%@include file="../includes/adminFooter.jsp"%>
+<%@include file="../includes/adminFooter.jsp" %>
 
 <!-- modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" style="width: 700px">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">FOODIVE</h4>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>상품 번호</label>
-                    <input class="form-control" name="code" type="text" readonly>
+            <form role="form" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">FOODIVE</h4>
                 </div>
-                <div class="form-group">
-                    <label>상품 국문명</label>
-                    <input class="form-control" name="name" type="text">
-                    <span class="form-check" id="nameCheck"></span>
-                    <input type="hidden" name="nameCheck">
-                </div>
-                <div class="form-group">
-                    <label>상품 영문명</label>
-                    <input class="form-control" name="eName" type="text">
-                    <span class="form-check" id="eNameCheck"></span>
-                    <input type="hidden" name="eNameCheck">
-                </div>
-                <div class="form-group" id="hCodeSelect">
-                    <label>상위 카테고리</label>
-                    <select class="form-control" name="hCode" id="hCodeSelected">
-                        <option value="null">해당 카테고리의 상위 카테고리 없음</option>
-                        <c:forEach items="${gnb.getList()}" var="category">
-                            <option value='<c:out value="${category.code}"/>'><c:out value="${category.name}"/></option>
-                        </c:forEach>
-                    </select>
-                    <span class="form-check" id="hCode"></span>
-                </div>
-                <div class="form-group" id="codeSelect">
-                    <label>하위 카테고리</label>
-                    <select class="form-control" id="codeSelected">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>상품 번호</label>
+                        <input class="form-control" name="code" type="text" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>상품 국문명</label>
+                        <input class="form-control" name="name" type="text">
+                        <span class="form-check" id="nameCheck"></span>
+                        <input type="hidden" name="nameCheck">
+                    </div>
+                    <div class="form-group">
+                        <label>상품 영문명</label>
+                        <input class="form-control" name="eName" type="text">
+                        <span class="form-check" id="eNameCheck"></span>
+                        <input type="hidden" name="eNameCheck">
+                    </div>
+                    <div class="form-group" id="hCodeSelect">
+                        <label>상위 카테고리</label>
+                        <select class="form-control" name="hCode" id="hCodeSelected">
+                            <option value="null">해당 카테고리의 상위 카테고리 없음</option>
+                            <c:forEach items="${gnb.getList()}" var="category">
+                                <option value='<c:out value="${category.code}"/>'><c:out
+                                        value="${category.name}"/></option>
+                            </c:forEach>
+                        </select>
+                        <span class="form-check" id="hCode"></span>
+                    </div>
+                    <div class="form-group" id="codeSelect">
+                        <label>하위 카테고리</label>
+                        <select class="form-control" name="code" id="codeSelected">
 
-                    </select>
-                    <span class="form-check" id="code"></span>
-                </div>
-                <div class="form-group" id="price">
-                    <label>가격</label>
-                    <input class="form-control" type="text" name="price">
-                    <span class="form-check" id="priceCheck"></span>
-                </div>
-                <div class="form-group" id="discount">
-                    <label>할인율</label>
-                    <input class="form-control" type="text" name="discount">
-                    <span class="form-check" id="discountCheck"></span>
-                </div>
-                <div class="form-group" id="image">
-                    <label>상품 이미지</label>
-                    <input class="form-control" type="file" name="image" multiple>
-                    <span class="form-check" id="imageCheck"></span>
-                </div>
-                <div class="form-group" id="nation">
-                    <label>원산지</label>
-                    <input class="form-control" type="text" name="nation">
-                    <span class="form-check" id="nationCheck"></span>
-                </div>
-                <div class="form-group" id="detail">
-                    <label>상품 상세</label>
-                    <textarea name="content" id="content"  style="width:100%">
+                        </select>
+                        <span class="form-check" id="code"></span>
+                    </div>
+                    <div class="form-group" id="price">
+                        <label>가격</label>
+                        <input class="form-control" type="text" name="price">
+                        <span class="form-check" id="priceCheck"></span>
+                    </div>
+                    <div class="form-group" id="discount">
+                        <label>할인율</label>
+                        <input class="form-control" type="text" name="discount">
+                        <span class="form-check" id="discountCheck"></span>
+                    </div>
+                    <div class="form-group" id="image">
+                        <label>상품 이미지</label>
+                        <input class="form-control" type="file" name="image" multiple>
+                        <span class="form-check" id="imageCheck"></span>
+                    </div>
+                    <div class="uploadResult">
+                        <ul>
+
+                        </ul>
+                    </div>
+                    <div class="form-group" id="nation">
+                        <label>원산지</label>
+                        <input class="form-control" type="text" name="nation">
+                        <span class="form-check" id="nationCheck"></span>
+                    </div>
+                    <div class="form-group" id="detail">
+                        <label>상품 상세</label>
+                        <textarea name="content" id="content" style="width:100%">
 
                     </textarea>
-                    <span class="form-check" id=""></span>
+                        <span class="form-check" id=""></span>
+                    </div>
+                    <div class="form-group" id="stock">
+                        <label>재고</label>
+                        <input class="form-control" type="text" name="stock">
+                        <span class="form-check" id="stockCheck"></span>
+                    </div>
+                    <div class="form-group" id="dropSelect">
+                        <label>판매 상태 변경</label>
+                        <select class="form-control" name="state" id="dropSelected">
+                            <option value="1">판매</option>
+                            <option value="0">판매중지</option>
+                            <option value="2">품절</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>등록일자</label>
+                        <input class="form-control" name="regDate" type="text" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>수정일자</label>
+                        <input class="form-control" name="modDate" type="text" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>판매중지 일자</label>
+                        <input class="form-control" name="dropDate" type="text" readonly>
+                    </div>
                 </div>
-                <div class="form-group" id="stock">
-                    <label>재고</label>
-                    <input class="form-control" type="text" name="stock">
-                    <span class="form-check" id="stockCheck"></span>
+                <div class="modal-footer">
+                    <button id="modalRegisterBtn" type="button" class="btn btn-info">등록</button>
+                    <button id="modalModBtn" type="button" class="btn btn-info">수정</button>
+                    <button id="modalModDoBtn" type="button" class="btn btn-info">수정 완료</button>
+                    <button id="modalResetBtn" type="reset" class="btn btn-default">취소</button>
+                    <button id="modalDropBtn" type="button" class="btn btn-danger">비활성화</button>
+                    <button id="modalCloseBtn" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
-                <div class="form-group" id="dropSelect">
-                    <label>판매 상태 변경</label>
-                    <select class="form-control" id="dropSelected">
-                        <option value="1">판매</option>
-                        <option value="0">판매중지</option>
-                        <option value="2">품절</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>등록일자</label>
-                    <input class="form-control" name="regDate" type="text" readonly>
-                </div>
-                <div class="form-group">
-                    <label>수정일자</label>
-                    <input class="form-control" name="modDate" type="text" readonly>
-                </div>
-                <div class="form-group">
-                    <label>판매중지 일자</label>
-                    <input class="form-control" name="dropDate" type="text" readonly>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="modalRegisterBtn" type="button" class="btn btn-info">등록</button>
-                <button id="modalModBtn" type="button" class="btn btn-info">수정</button>
-                <button id="modalModDoBtn" type="button" class="btn btn-info">수정 완료</button>
-                <button id="modalResetBtn" type="reset" class="btn btn-default">취소</button>
-                <button id="modalDropBtn" type="button" class="btn btn-danger">비활성화</button>
-                <button id="modalCloseBtn" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -226,7 +234,8 @@
         try {
             iframe.document.write('');
             iframe.document.clear();
-        } catch (e) {}
+        } catch (e) {
+        }
 
         iframeParam.remove();
     }
@@ -246,59 +255,233 @@
     })
 
     $(document).ready(function () {
-        $("#content").change(function () {
-            oEditors.getById['content'].exec("UPDATE_CONTENTS_FIELD",[]);
-            // console.log("oEditors: "+oEditors);
+        let searchBtn = $(".searchBtn");
+        let lowCategorySelectId = $("#lowCategorySelectId");
+        let pageFooter = $('.panel-footer');
+
+        let state = $("#stateSelect :selected").val();
+        let hCode = $("#categorySelect :selected").val();
+        let pageNum = 1;
+
+        searchBtn.each(function () {
+            $(this).on("click", function () {
+                let closestDiv = $(this).closest("div").attr("id");
+                if (closestDiv === 'categorySelect') {
+                    console.log(closestDiv);
+
+                    hCode = $(`#categorySelect :selected`).val();
+                    console.log("선택한 상위 카테고리: " + hCode);
+
+                    productService().getCategoryList(hCode, function (categoryCnt, list) {
+                        console.log("받아온 리스트: " + JSON.stringify(list));
+                        initPage().initLowCategoryList(list, lowCategorySelectId);
+                    })
+
+                } else {
+                    initPage().initManageProduct(1);
+
+                    pageFooter.on("click", "li a", function (e) {
+                        e.preventDefault();
+
+                        pageNum = $(this).attr("href");
+
+                        initPage().initManageProduct(pageNum);
+                    })
+                }
+            })
+
         })
-    });
-</script>
 
-<script type="text/javascript">
-$(document).ready(function () {
-    let searchBtn = $(".searchBtn");
-    let lowCategorySelectId = $("#lowCategorySelectId");
-    let pageFooter = $('.panel-footer');
+        let modal = $(".modal");
+        let formObj = $("form[role='form']");
 
-    let state = $("#stateSelect :selected").val();
-    let hCode = $("#categorySelect :selected").val();
-    let pageNum = 1;
+        let modalModBtn = $("#modalModBtn");
+        let modalModDoBtn = $("#modalModDoBtn");
+        let modalRegisterBtn = $("#modalRegisterBtn");
+        let modalResetBtn = $("#modalResetBtn");
+        let modalDropBtn = $("#modalDropBtn");
 
-    searchBtn.each(function () {
-        $(this).on("click", function () {
-            let closestDiv = $(this).closest("div").attr("id");
-            if(closestDiv==='categorySelect') {
-                console.log(closestDiv);
+        let validateCnt = 0;
 
-                hCode = $(`#categorySelect :selected`).val();
-                console.log("선택한 상위 카테고리: "+hCode);
+        // 상품 등록
+        let addProductBtn = $("#addProductBtn");
+        addProductBtn.click(function () {
+            modal.find("input").val("");
+            modal.find("select").val([]);
+            $(".uploadResult ul").empty();
 
-                productService().getCategoryList(hCode, function (categoryCnt, list) {
-                    console.log("받아온 리스트: "+JSON.stringify(list));
-                    initPage().initLowCategoryList(list, lowCategorySelectId);
-                })
+            modal.modal("show")
 
-            } else {
-                initPage().initManageProduct(1);
+            validateCnt = 0;
+        });
 
-                pageFooter.on("click", "li a", function (e) {
-                    e.preventDefault();
+        $("#hCodeSelected").change(function () {
+            let modalHCode = $(`#hCodeSelected option:selected`).val();
+            let modalLocation = $("#codeSelected");
+            console.log("선택한 상위 카테고리: " + modalHCode);
 
-                    pageNum = $(this).attr("href");
+            productService().getCategoryList(modalHCode, function (categoryCnt, list) {
+                console.log("받아온 리스트: " + JSON.stringify(list));
+                initPage().initLowCategoryList(list, modalLocation);
+            })
+        })
 
-                    initPage().initManageProduct(pageNum);
-                })
+        modal.find("input").each(function () {
+            $(this).change(function () {
+                modal.find("span").empty();
+
+                let name = $(this).attr("name");
+                let param = $(this).val();
+                console.log(`name: \${name} & param: \${param}`);
+
+                switch (name) {
+                    case 'name':
+                    case 'eName':
+                        let duplicateParam = param;
+                        let style, checkInput, checkCase;
+                        if (name === 'name') {
+                            style = $("#nameCheck");
+                            checkInput = modal.find("input[name='nameCheck']");
+                            checkCase = "K";
+                        } else {
+                            style = $("#eNameCheck");
+                            checkInput = modal.find("input[name='eNameCheck']");
+                            checkCase = "E";
+                        }
+                        let duplicateInfo = {
+                            duplicateParam: duplicateParam,
+                            duplicateCase: checkCase
+                        }
+
+                        console.log("duplicateInfo: " + JSON.stringify(duplicateInfo));
+
+                        initPage().initCheck(duplicateInfo, style, checkInput)
+                        break;
+                    case 'image':
+                        let formData = new FormData();
+                        let inputFile = $(this);
+                        let files = inputFile[0].files;
+
+                        for (let i = 0; i < files.length; i++) {
+                            if (!validate().checkImage(files[i].name, files[i].size)) {
+                                return false;
+                            }
+                            formData.append("uploadFile", files[i]);
+                        }
+
+                        $.ajax({
+                            url: '/uploadAjaxAction',
+                            processData: false,
+                            contentType: false,
+                            data: formData,
+                            type: 'post',
+                            dataType: 'json',
+                            success: function (result) {
+                                console.log(result);
+
+                                initPage().initUploadResult(result);
+                            }
+                        });
+                        break;
+                    case 'price':
+                        validate().validatePrice(param);
+                        break;
+                    case 'discount':
+                        validate().validateDiscount(param);
+                        break;
+                }
+            });
+        });
+
+        let modalInputKorName = modal.find("input[name='name']");
+        let modalInputKorNameCheck = modal.find("input[name='nameCheck']");
+        let modalInputEngName = modal.find("input[name='eName']");
+        let modalInputEngNameCheck = modal.find("input[name='eNameCheck']");
+        let modalInputPrice = modal.find("input[name='price']");
+        let modalInputDiscount = modal.find("input[name='discount']");
+        let modalInputNation = modal.find("input[name='nation']");
+        let modalInputDetail = $("#content");
+
+        $(".uploadResult").on("click", "button", function (e) {
+            console.log("delete file");
+
+            let targetFile = $(this).data("file");
+            let type = $(this).data("type");
+            let targetLi = $(this).closest("li");
+
+            $.ajax({
+                url: '/deleteFile',
+                data: {fileName: targetFile, type: type, isImage: true},
+                dataType: 'text',
+                type: 'post',
+                success: function (result) {
+                    alert(result);
+                    targetLi.remove();
+                }
+            })
+        })
+
+        modalRegisterBtn.click(function (e) {
+            if (!validate().validateName(modalInputKorName.val(), modalInputKorNameCheck.val())) {
+                return;
             }
+            if (!validate().validateEName(modalInputEngName.val(), modalInputEngNameCheck.val())) {
+                return;
+            }
+            let modalInputCode = $("#codeSelect :selected");
+
+            if (!validate().validateCode(modalInputCode.val())) {
+                console.log("카테고리 선택하지 않음");
+                return;
+            }
+
+            e.preventDefault();
+
+            let str = "";
+            let imageList = [];
+
+            $(".uploadResult ul li").each(function (i, obj) {
+                let jobj = $(obj);
+                console.dir(jobj);
+
+                console.log(`name: \${jobj.data("name")}, uploadPath: \${jobj.data("path")}, fileType: \${jobj.data("type")}`);
+
+                str += `<input type='hidden' name='imageList[\${i}].fileName' value=\${jobj.data("name")}>`;
+                str += `<input type='hidden' name='imageList[\${i}].uuid' value=\${jobj.data("uuid")}>`;
+                str += `<input type='hidden' name='imageList[\${i}].uploadPath' value=\${jobj.data("path")}>`;
+                str += `<input type='hidden' name='imageList[\${i}].fileType' value=\${jobj.data("type")}>`;
+
+                let productImageVO = {
+                    fileName: jobj.data("name"),
+                    uuid: jobj.data("uuid"),
+                    uploadPath: jobj.data("path"),
+                    fileType: jobj.data("type")
+                }
+
+                imageList.push(productImageVO);
+            })
+
+            formObj.append(str);
+
+            oEditors.getById['content'].exec("UPDATE_CONTENTS_FIELD", []);
+
+            let product = {
+                korName: modalInputKorName.val(),
+                engName: modalInputEngName.val(),
+                code: modalInputCode.val(),
+                price: modalInputPrice.val(),
+                discount: modalInputDiscount.val(),
+                nation: modalInputNation.val(),
+                detail: modalInputDetail.val(),
+                imageList: imageList
+            }
+
+            console.log("product: "+JSON.stringify(product));
+
+            productService().add(product, function (result) {
+                alert(result);
+            })
         })
 
     })
-
-    let modal = $(".modal");
-
-    // 상품 등록
-    let addProductBtn = $("#addProductBtn");
-    addProductBtn.click(function () {
-        modal.modal("show")
-    })
-
-})
 </script>

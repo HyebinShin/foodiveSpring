@@ -35,9 +35,51 @@ const productService = (function () {
         })
     }
 
+    function check(duplicateInfo, callback, error) {
+        $.ajax({
+            type:'post',
+            url:'/product/check',
+            data:JSON.stringify(duplicateInfo),
+            contentType: "application/json; charset=utf-8",
+            success: function (result, status, xhr) {
+                if (callback) {
+                    callback(result);
+                }
+            },
+            error: function (xhr, status, er) {
+                if (error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
+    function add(product, callback, error) {
+        console.log("product: "+JSON.stringify(product))
+
+        $.ajax({
+            type: 'post',
+            url: '/product/register',
+            data: JSON.stringify(product),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result, status, xhr) {
+                if (callback) {
+                    callback(result);
+                }
+            },
+            error: function (xhr, status, er) {
+                if (error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
 
     return {
         getCategoryList: getCategoryList,
-        getList:getList
+        getList:getList,
+        check:check,
+        add:add
     }
 });

@@ -18,6 +18,28 @@ const initPage = (function () {
         modal.find(`#${id}`).show();
     }
 
+    function removeReadOnlyAll() {
+        removeReadOnly("name");
+        removeReadOnly("eName");
+        removeReadOnly("price");
+        removeReadOnly("discount");
+        removeReadOnly("image");
+        removeReadOnly("nation");
+        removeReadOnly("stock");
+        modal.find("select").removeAttr("readOnly");
+        modal.find("textarea").removeAttr("readOnly");
+    }
+
+    function removeReadOnly(name) {
+        modal.find(`input[name=${name}]`).removeAttr("readOnly");
+    }
+
+    function attrReadOnly() {
+        modal.find("input").attr("readOnly", "readOnly");
+        modal.find("select").attr("readOnly", "readOnly");
+        modal.find("textarea").attr("readOnly", "readOnly");
+    }
+
     function displayTime(timeValue) {
         let dateObj = new Date(timeValue);
 
@@ -42,6 +64,12 @@ const initPage = (function () {
         }
     }
 
+    function reset() {
+        modal.find("span").empty();
+        modal.find("div").removeClass("has-success");
+        modal.find("div").removeClass("has-error");
+    }
+
     function initRegisterPage() {
         hideClosestDiv("code");
         hideClosestDiv("stock");
@@ -53,6 +81,10 @@ const initPage = (function () {
         hideButton("modalCloseBtn");
         showButton("modalRegisterBtn");
         showButton("modalResetBtn");
+        showButton("imageSubmitBtn");
+
+        removeReadOnlyAll();
+        reset();
     }
 
     function initPagination(productCnt, pageNum) {
@@ -133,9 +165,268 @@ const initPage = (function () {
         })
     }
 
+    function initUploadResult(uploadResultArr) {
+        if (!uploadResultArr || uploadResultArr.length===0) {
+            return;
+        }
+
+        console.log(`upload result arr: `+JSON.stringify(uploadResultArr));
+
+        let uploadUL = $(".uploadResult ul");
+        let str = "";
+
+        $(uploadResultArr).each(function (i, obj) {
+            let fileCallPath = "";
+
+            // image type
+            if (obj.image) {
+                fileCallPath = encodeURIComponent(obj.uploadPath+"/s_"+obj.uuid+"_"+obj.fileName);
+                let fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");
+
+                console.log(fileLink);
+
+                str += "<li data-path='"+obj.uploadPath+"' data-uuid='"+obj.uuid+"' " +
+                    "data-name='"+obj.fileName+"' data-type='"+obj.image+"'><div>";
+                str += "<span>"+obj.fileName+"</span>";
+                str += "<button type='button' data-file=\'"+fileCallPath+"\' data-type='image' class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
+                str += "<img src='/display?isImage=true&fileName="+fileCallPath+"'>";
+                str += "</div></li>";
+            } else {
+                fileCallPath = encodeURIComponent(obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
+                let fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");
+
+                str += "<li data-path='"+obj.uploadPath+"' data-uuid='"+obj.uuid+"' " +
+                    "data-name='"+obj.fileName+"' data-type='"+obj.image+"'><div>";
+                str += "<span>"+obj.fileName+"</span>";
+                str += "<button type='button' data-file=\'"+fileCallPath+"\' data-type='file' class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
+                str += "<img src='/resources/foodive/attach.png'></a>";
+                str += "</div></li>";
+            }
+        });
+
+        uploadUL.append(str);
+    }
+
+    function initCheck(duplicateInfo, style, checkInput) {
+        let duplicateParam = duplicateInfo.duplicateParam;
+        let duplicateCase = duplicateInfo.duplicateCase;
+
+        if (!validate().checkValidate(duplicateParam, duplicateCase)) {
+            console.log("invalidate");
+            return;
+        }
+        console.log("validate");
+
+        productService().check(duplicateInfo, function (result) {
+            console.log("result: "+result);
+
+            let color, divClass;
+
+            if (result.indexOf("가능")!==-1) {
+                color = "color:#337ab7";
+                divClass = "has-success";
+                checkInput.val(duplicateParam);
+            } else {
+                color = "color:red";
+                divClass = "has-error";
+            }
+            style.attr("style", color).html(result);
+            style.closest("div").attr("class", divClass);
+        })
+    }
+
     return {
         initLowCategoryList:initLowCategoryList,
         initRegisterPage:initRegisterPage,
-        initManageProduct:initManageProduct
+        initManageProduct:initManageProduct,
+        initUploadResult:initUploadResult,
+        initCheck:initCheck
     }
 });
+
+const validate = (function () {
+
+    let modal = $(".modal");
+
+    let imageRegex = new RegExp("(.*?)\.(jpg|png)$");
+    let maxSize = 5242880;
+
+    function checkImage(fileName, fileSize) {
+        if (fileSize >= maxSize) {
+            inputStyle("imageCheck", errorMsg.FILE_SIZE);
+            addInputError("image");
+            return false;
+        }
+        if (!imageRegex.test(fileName)) {
+            inputStyle("imageCheck", errorMsg.FILE_TYPE);
+            addInputError("image");
+            return false;
+        }
+        addInputSuccess("image");
+        return true;
+    }
+
+    function regex(regexCase, input) {
+        let regex;
+
+        switch (regexCase) {
+            case 'name': case 'nation':
+                regex = /^[가-힣•]{1,20}/g;
+                break;
+            case 'eName':
+                regex = /^[a-zA-Z•]{1,30}/g;
+                break;
+            case 'price': case 'stock': case 'discount':
+                regex = /^\d/g;
+                break;
+        }
+
+        return regex.test(input);
+    }
+
+    const errorMsg = {
+        NAME_NULL: "상품 국문명을 입력해주세요.",
+        NAME_NOT_VALI: "상품 국문명은 20자 이내의 한글과 특수문자(•)만 가능합니다.",
+        NAME_NOT_MATCH: "상품 국문명 중복검사가 진행되지 않았습니다.",
+        ENAME_NULL: "상품 영문명을 입력해주세요.",
+        ENAME_NOT_VALI: "상품 영문명은 30자 이내의 영문과 특수문자(•)만 가능합니다.",
+        ENAME_NOT_MATCH: "상품 영문명 중복검사가 진행되지 않았습니다.",
+        CODE_NULL: "카테고리를 선택해주세요.",
+        PRICE_NULL: "가격을 입력해주세요.",
+        PRICE_NOT_VALI: "가격은 0 이상의 숫자만 입력해주세요.",
+        DISCOUNT_NOT_VALI: "할인율은 0부터 100까지만 입력 가능합니다.",
+        STOCK_NOT_VALI: "재고는 0 이상의 숫자만 입력해주세요.",
+        FILE_SIZE: "파일 사이즈 초과! 5MB 이하의 파일만 업로드 가능합니다.",
+        FILE_TYPE: "이미지는 JPG, PNG 타입만 업로드 가능합니다."
+    }
+
+    const inputStyle = (styleCase, msg) => {
+        $(`#${styleCase}`).attr("style", `color:red`).html(msg)
+    }
+
+    const inputForm = {
+        NAME: modal.find("input[name='name']"),
+        NAME_CHECK: modal.find("input[name='nameCheck']"),
+        ENAME: modal.find("input[name='eName']"),
+        ENAME_CHECK: modal.find("input[name='eNameCheck']"),
+        CODE: modal.find("select[name='code']"),
+        PRICE: modal.find("input[name='price']"),
+        DISCOUNT: modal.find("input[name='discount']"),
+        IMAGE: modal.find("input[name='image']"),
+        NATION: modal.find("input[name='nation']"),
+        STOCK: modal.find("input[name='stock']"),
+        STATE: modal.find("input[name='state']")
+    }
+
+    function addInputError(input) {
+        $(input).closest("div").attr("class", "has-error");
+    }
+
+    function addInputSuccess(input) {
+        $(input).closest("div").attr("class", "has-success");
+    }
+
+    function checkValidate(checkParam, checkCase) {
+        let inputStyleCase;
+        let input;
+        switch (checkCase) {
+            case "K":
+                inputStyleCase = 'nameCheck';
+                input = inputForm.NAME;
+                if (checkParam === '') {
+                    inputStyle(inputStyleCase, errorMsg.NAME_NULL);
+                    addInputError(input);
+                    return false;
+                } else if (!regex('name', checkParam)) {
+                    inputStyle(inputStyleCase, errorMsg.NAME_NOT_VALI);
+                    addInputError(input);
+                    return false;
+                }
+                addInputSuccess(input);
+                return true;
+            case "E":
+                inputStyleCase = 'eNameCheck';
+                input = inputForm.ENAME;
+                if (checkParam === '') {
+                    inputStyle(inputStyleCase, errorMsg.ENAME_NULL);
+                    addInputError(input);
+                    return false;
+                } else if (!regex('eName', checkParam)) {
+                    inputStyle(inputStyleCase, errorMsg.ENAME_NOT_VALI);
+                    addInputError(input);
+                    return false;
+                }
+                addInputSuccess(input);
+                return true;
+        }
+    }
+
+    function validateName(name, nameCheck) {
+        if (name !== nameCheck) {
+            inputStyle('nameCheck', errorMsg.NAME_NOT_MATCH);
+            addInputError(inputForm.NAME);
+            return false;
+        }
+        addInputSuccess(inputForm.NAME);
+        return true;
+    }
+
+    function validateEName(eName, eNameCheck) {
+        if (eName !== eNameCheck) {
+            inputStyle('eNameCheck', errorMsg.ENAME_NOT_MATCH);
+            addInputError(inputForm.ENAME);
+            return false;
+        }
+        addInputSuccess(inputForm.ENAME);
+        return true;
+    }
+
+    function validateCode(code) {
+        if (code === '') {
+            inputStyle('code', errorMsg.CODE_NULL);
+            addInputError(inputForm.CODE);
+            return false;
+        }
+        addInputSuccess(inputForm.CODE);
+        return true;
+    }
+
+    function validatePrice(price) {
+        let inputPrice = inputForm.PRICE;
+        if (price === '') {
+            inputStyle('priceCheck', errorMsg.PRICE_NULL);
+            addInputError(inputPrice);
+            return false;
+        } else if (!regex('price', price) || (Number(price) < 0)) {
+            inputStyle('priceCheck', errorMsg.PRICE_NOT_VALI);
+            addInputError(inputPrice);
+            return false;
+        }
+        addInputSuccess(inputPrice);
+        return true;
+    }
+
+    function validateDiscount(discount) {
+        console.log("discount: "+discount);
+        let inputDiscount = inputForm.DISCOUNT;
+        if (discount === '') {
+
+        } else if (!regex('discount', discount) || (Number(discount) < 0 || Number(discount) > 100)) {
+            inputStyle('discountCheck', errorMsg.DISCOUNT_NOT_VALI);
+            addInputError(inputDiscount);
+            return false;
+        }
+        addInputSuccess(inputDiscount);
+        return true;
+    }
+
+    return {
+        checkValidate: checkValidate,
+        validateName: validateName,
+        validateEName: validateEName,
+        validateCode: validateCode,
+        checkImage:checkImage,
+        validatePrice:validatePrice,
+        validateDiscount:validateDiscount
+    }
+})
