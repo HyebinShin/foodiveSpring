@@ -536,5 +536,17 @@
             cloneEName = modalInputEngName.val();
         });
 
+        modalDropBtn.click(function () {
+            if (confirm("해당 상품을 판매 중지 하시겠습니까?")) {
+                console.log("drop pno: "+pno);
+
+                productService().drop(pno, function (result) {
+                    alert(result);
+                    modal.modal("hide");
+                    initPage().initManageProduct(pageNum);
+                })
+            }
+        })
+
     })
 </script>

@@ -35,7 +35,7 @@ import java.util.UUID;
 @Log4j
 public class ProductImageController {
 
-    private static final String uploadFolder = "/resources/foodive";
+    public static final String uploadFolder = "/resources/foodive";
 //    private static final String imageUploadFolder = "c:\\upload\\image";
 
     private String getFolder() {

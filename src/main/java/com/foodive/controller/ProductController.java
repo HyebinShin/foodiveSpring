@@ -13,8 +13,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.awt.print.Pageable;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
+
+import static com.foodive.controller.ProductImageController.uploadFolder;
 
 @RequestMapping("/product/*")
 @Controller
@@ -136,6 +144,47 @@ public class ProductController {
 
         return service.modify(product) ?
                 new ResponseEntity<>(ProductMsg.MODIFY, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // 첨부 파일 삭제 처리
+    public void deleteFiles(List<ProductImageVO> imageList, HttpServletRequest request) {
+        if (imageList==null || imageList.size()==0) {
+            return;
+        }
+
+        log.info("delete image files");
+
+        imageList.forEach(image -> {
+            try {
+                // java.nio.file
+                String realUploadFolder = request.getSession().getServletContext().getRealPath(uploadFolder) + File.separator + "img";
+                Path file = Paths.get(realUploadFolder+image.getUploadPath()+File.separator+
+                        image.getUuid()+"_"+image.getFileName());
+
+                Files.deleteIfExists(file);
+
+                if (Files.probeContentType(file).startsWith("image")) {
+                    Path thumbNail = Paths.get(realUploadFolder+image.getUploadPath()+
+                            File.separator+"s_"+image.getUuid()+"_"+image.getFileName());
+                    Files.deleteIfExists(thumbNail);
+                }
+            } catch (Exception e) {
+                log.error("delete file error: "+e.getMessage());
+            }
+        });
+    }
+
+    @PutMapping(
+            value = "/drop/{pno}",
+            produces = "text/plain; charset=utf-8"
+    )
+    @ResponseBody
+    public ResponseEntity<String> drop(
+            @PathVariable("pno") Long pno
+    ) {
+        return service.drop(pno) ?
+                new ResponseEntity<>(ProductMsg.DROP, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -105,6 +105,23 @@ const productService = (function () {
         })
     }
 
+    function drop(pno, callback, error) {
+        $.ajax({
+            type:'put',
+            url:`/product/drop/${pno}`,
+            success:function (result, status, xhr) {
+                if (callback) {
+                    callback(result);
+                }
+            },
+            fail: function (xhr, status, er) {
+                if (error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
 
     return {
         getCategoryList: getCategoryList,
@@ -112,6 +129,7 @@ const productService = (function () {
         check: check,
         add: add,
         get:get,
-        modify:modify
+        modify:modify,
+        drop:drop
     }
 });
