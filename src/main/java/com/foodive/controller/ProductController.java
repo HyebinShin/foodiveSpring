@@ -116,6 +116,26 @@ public class ProductController {
         ProductVO productVO = new ProductVO();
         productVO.setPno(pno);
 
-        return new ResponseEntity<>(service.get(productVO), HttpStatus.OK);
+        ProductVO product = service.get(productVO);
+        product.setImageList(service.getImageList(product.getPno()));
+
+        return new ResponseEntity<>(product, HttpStatus.OK);
+    }
+
+    @PutMapping(
+            value = "/{pno}",
+            consumes = "application/json; charset=utf-8",
+            produces = "text/plain; charset=utf-8"
+    )
+    @ResponseBody
+    public ResponseEntity<String> modify(
+            @PathVariable("pno") Long pno,
+            @RequestBody ProductVO product
+    ) {
+        product.setPno(pno);
+
+        return service.modify(product) ?
+                new ResponseEntity<>(ProductMsg.MODIFY, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

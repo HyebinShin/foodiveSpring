@@ -13,7 +13,7 @@
         delete from tbl_pimg where uuid = #{uuid}
     </delete>
 
-    <select id="findByBno" resultType="com.foodive.domain.ProductImageVO">
+    <select id="findByPno" resultType="com.foodive.domain.ProductImageVO">
         select * from tbl_pimg where pno = #{pno}
     </select>
 

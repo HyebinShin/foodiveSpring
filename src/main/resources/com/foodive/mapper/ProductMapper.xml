@@ -13,10 +13,10 @@
                 <if test="product.pcode!=null">
                     or tbl_product.pcode = #{product.pcode}
                 </if>
-                <if test='product.korName!=null || product.korName != "null"'>
+                <if test='product.korName!=null and product.korName != "null"'>
                     or tbl_product.korName like '%'||#{product.korName}||'%'
                 </if>
-                <if test='product.code!=null || product.code != "null"'>
+                <if test='product.code!=null and product.code != "null"'>
                     or tbl_product.code like '%'||#{product.code}||'%'
                 </if>
             </trim>

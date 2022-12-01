@@ -18,10 +18,15 @@ const initPage = (function () {
     let modalInputNation = modal.find("input[name='nation']");
     let modalInputDetail = $("#content");
     let modalInputStock = modal.find("input[name='stock']");
+    let modalInputImage = modal.find("input[name='image']");
 
     let modalInputRegDate = modal.find("input[name='regDate']");
     let modalInputModDate = modal.find("input[name='modDate']");
     let modalInputDropDate = modal.find("input[name='dropDate']");
+
+    function showClosestDiv(input) {
+        modal.find(`input[name=${input}]`).closest("div").show();
+    }
 
     function hideClosestDiv(input) {
         modal.find(`input[name=${input}]`).closest("div").hide();
@@ -85,6 +90,19 @@ const initPage = (function () {
         modal.find("span").empty();
         modal.find("div").removeClass("has-success");
         modal.find("div").removeClass("has-error");
+        $(".uploadResult ul").empty();
+    }
+
+    function showClosestDivAll() {
+        showClosestDiv("code");
+        showClosestDiv("stock");
+        showClosestDiv("regDate");
+        showClosestDiv("modDate");
+        showClosestDiv("dropDate");
+        modal.find("#dropSelect").show();
+
+        $(".product-img ul").empty().show();
+        $("#product-detail").empty().show();
     }
 
     function initRegisterPage() {
@@ -99,6 +117,12 @@ const initPage = (function () {
         showButton("modalRegisterBtn");
         showButton("modalResetBtn");
         showButton("imageSubmitBtn");
+
+        $("#product-detail").empty().hide();
+        $(".product-img ul").empty().hide();
+        $("#hCodeSelect").show();
+        $("#smart-editor").show();
+        modalInputImage.show();
 
         removeReadOnlyAll();
         reset();
@@ -170,7 +194,7 @@ const initPage = (function () {
             }
 
             for (let i=0, len=list.length||0; i<len; i++) {
-                str += `<tr data-pno=${list[i].pno}/>'><td>${list[i].pno}</td>`;
+                str += `<tr data-pno=${list[i].pno}><td>${list[i].pno}</td>`;
                 str += `<td>${list[i].korName}</td>`;
                 str += `<td>${list[i].code}</td>`;
                 str += `<td>${displayTime(list[i].regDate)}</td>`;
@@ -182,46 +206,52 @@ const initPage = (function () {
         })
     }
 
-    function initUploadResult(uploadResultArr) {
+    function initUploadResult(uploadResultArr, location) {
         if (!uploadResultArr || uploadResultArr.length===0) {
+            console.log("이미지 없음");
             return;
         }
 
         console.log(`upload result arr: `+JSON.stringify(uploadResultArr));
 
-        let uploadUL = $(".uploadResult ul");
         let str = "";
 
         $(uploadResultArr).each(function (i, obj) {
             let fileCallPath = "";
 
+            console.log("obj: "+JSON.stringify(obj));
+
+            let type = obj.image || obj.fileType;
+
             // image type
-            if (obj.image) {
-                fileCallPath = encodeURIComponent(obj.uploadPath+"/s_"+obj.uuid+"_"+obj.fileName);
+            if (obj.image || obj.fileType) {
+                fileCallPath = encodeURIComponent(obj.uploadPath + "/s_" + obj.uuid + "_" + obj.fileName);
                 let fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");
 
                 console.log(fileLink);
 
-                str += "<li data-path='"+obj.uploadPath+"' data-uuid='"+obj.uuid+"' " +
-                    "data-name='"+obj.fileName+"' data-type='"+obj.image+"'><div>";
-                str += "<span class='fileResultSpan'>"+obj.fileName+"</span>";
-                str += "<button type='button' data-file=\'"+fileCallPath+"\' data-type='image' class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
-                str += "<img src='/display?isImage=true&fileName="+fileCallPath+"'>";
+                str += "<li data-path='" + obj.uploadPath + "' data-uuid='" + obj.uuid + "' " +
+                    "data-name='" + obj.fileName + "' data-type='" + type + "'><div>";
+                str += "<span class='fileResultSpan'>" + obj.fileName + "</span>";
+                str += "<button type='button' name='image-delete' data-file=\'" + fileCallPath + "\' data-type='image' class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
+                str += "<img src='/display?isImage=true&fileName=" + fileCallPath + "'>";
                 str += "</div></li>";
             } else {
-                fileCallPath = encodeURIComponent(obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
+                fileCallPath = encodeURIComponent(obj.uploadPath + "/" + obj.uuid + "_" + obj.fileName);
                 let fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");
 
-                str += "<li data-path='"+obj.uploadPath+"' data-uuid='"+obj.uuid+"' " +
-                    "data-name='"+obj.fileName+"' data-type='"+obj.image+"'><div>";
-                str += "<span class='fileResultSpan'>"+obj.fileName+"</span>";
-                str += "<button type='button' data-file=\'"+fileCallPath+"\' data-type='file' class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
+                str += "<li data-path='" + obj.uploadPath + "' data-uuid='" + obj.uuid + "' " +
+                    "data-name='" + obj.fileName + "' data-type='" + type + "'><div>";
+                str += "<span class='fileResultSpan'>" + obj.fileName + "</span>";
+                str += "<button type='button' name='image-delete' data-file=\'" + fileCallPath + "\' data-type='file' class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
                 str += "<img src='/resources/foodive/attach.png'></a>";
                 str += "</div></li>";
             }
         });
 
-        uploadUL.append(str);
+        console.log("str: "+str);
+        location.append(str);
+        console.log("location: "+location);
     }
 
     function initCheck(duplicateInfo, style, checkInput) {
@@ -259,16 +289,26 @@ const initPage = (function () {
         showButton("modalModBtn");
         showButton("modalDropBtn");
 
+        showClosestDivAll();
+
+        $("#hCodeSelect").hide();
+
+        let codeSelected = $("#codeSelected");
+        codeSelected.append(`<option>${product.code}</option>`);
+
         modalInputPno.val(product.pno);
         modalInputKorName.val(product.korName);
         modalInputEngName.val(product.engName);
         modalInputPrice.val(product.price);
         modalInputDiscount.val(product.discount);
         modalInputNation.val(product.nation);
-        modalInputDetail.val(product.detail);
+        $("#product-detail").html(product.detail).show();
+        $("#smart-editor").hide();
         modalInputStock.val(product.stock);
 
-        $("#codeSelected").val(product.code).prop("selected", true);
+        let location = $(".uploadResult ul");
+        initUploadResult(product.imageList, location);
+
         $("#dropSelected").val(product.state).prop("selected", true);
 
         modalInputRegDate.val(displayTime(product.regDate));
@@ -281,7 +321,18 @@ const initPage = (function () {
             modalInputDropDate.val(displayTime(dropDate));
         }
 
+        $("button[name='image-delete']").hide();
+        modalInputImage.hide();
+
         modal.modal("show");
+    }
+
+    function initAtferModBtn() {
+        removeReadOnlyAll();
+        $("#hCodeSelect").show();
+        modalInputImage.show();
+        $("#smart-editor").show();
+        $("button[name='image-delete']").show();
     }
 
     return {
@@ -290,7 +341,8 @@ const initPage = (function () {
         initManageProduct:initManageProduct,
         initUploadResult:initUploadResult,
         initCheck:initCheck,
-        initManageGet:initManageGet
+        initManageGet:initManageGet,
+        initAtferModBtn:initAtferModBtn
     }
 });
 

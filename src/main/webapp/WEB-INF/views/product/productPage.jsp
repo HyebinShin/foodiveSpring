@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.*" %>
 <%@include file="../includes/adminHeader.jsp" %>
+<link href="/resources/css/productCustom.css" rel="stylesheet">
 <div class="row">
     <div class="col-lg-12">
         <h1 class="page-header">상품 관리</h1>
@@ -158,13 +159,15 @@
                         <input class="form-control" type="text" name="discount">
                         <span class="form-check" id="discountCheck"></span>
                     </div>
-                    <div class="form-group product-img" style="display: flex">
-
-                    </div>
                     <div class="form-group" id="image">
                         <label>상품 이미지</label>
                         <input class="form-control" type="file" name="image" multiple>
                         <span class="form-check" id="imageCheck"></span>
+                    </div>
+                    <div class="product-img">
+                        <ul>
+
+                        </ul>
                     </div>
                     <div class="uploadResult">
                         <ul>
@@ -178,9 +181,10 @@
                     </div>
                     <div class="form-group" id="detail">
                         <label>상품 상세</label>
-                        <textarea name="content" id="content" style="width:100%">
-
-                    </textarea>
+                        <div id="product-detail"></div>
+                        <div id="smart-editor">
+                            <textarea name="content" id="content" style="width:100%"></textarea>
+                        </div>
                         <span class="form-check" id=""></span>
                     </div>
                     <div class="form-group" id="stock">
@@ -193,7 +197,7 @@
                         <select class="form-control" name="state" id="dropSelected">
                             <option value="1">판매</option>
                             <option value="0">판매중지</option>
-                            <option value="2">품절</option>
+                            <option value="2" disabled>품절</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -210,9 +214,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="modalRegisterBtn" type="button" class="btn btn-info">등록</button>
+                    <button id="modalRegisterBtn" type="button" class="btn btn-info submit">등록</button>
                     <button id="modalModBtn" type="button" class="btn btn-info">수정</button>
-                    <button id="modalModDoBtn" type="button" class="btn btn-info">수정 완료</button>
+                    <button id="modalModDoBtn" type="button" class="btn btn-info submit">수정 완료</button>
                     <button id="modalResetBtn" type="reset" class="btn btn-default">취소</button>
                     <button id="modalDropBtn" type="button" class="btn btn-danger">비활성화</button>
                     <button id="modalCloseBtn" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -229,35 +233,22 @@
 <script type="text/javascript">
     var oEditors = [];
 
-    function destoryIframe(iframeParam) {
-        let iframe = iframeParam.prop('contentWindow');
-
-        iframeParam.attr('src', 'about:blank');
-
-        try {
-            iframe.document.write('');
-            iframe.document.clear();
-        } catch (e) {
-        }
-
-        iframeParam.remove();
-    }
-
-    $("#addProductBtn").click(function () {
-        let iframe = $("#content").next();
-        destoryIframe(iframe);
-
-        initPage().initRegisterPage();
-
+    $(document).ready(function () {
         nhn.husky.EZCreator.createInIFrame({
             oAppRef: oEditors,
             elPlaceHolder: "content",
             sSkinURI: "/resources/smart_editor_2/SmartEditor2Skin.html",
-            fCreator: "createSEditor2"
+            fCreator: "createSEditor2",
+            fOnAppLoad: function () {
+                $("iframe").css("width", "100%").css("height", "299px");
+            }
         });
-    })
 
-    $(document).ready(function () {
+        $("#addProductBtn").click(function () {
+            oEditors.getById["content"].exec("SET_IR", [""]);
+            initPage().initRegisterPage();
+        })
+
         let searchBtn = $(".searchBtn");
         let lowCategorySelectId = $("#lowCategorySelectId");
         let pageFooter = $('.panel-footer');
@@ -383,7 +374,7 @@
                             success: function (result) {
                                 console.log(result);
 
-                                initPage().initUploadResult(result);
+                                initPage().initUploadResult(result, $(".uploadResult ul"));
                             }
                         });
                         break;
@@ -425,83 +416,125 @@
             })
         })
 
-        modalRegisterBtn.click(function (e) {
-            if (!validate().validateName(modalInputKorName.val(), modalInputKorNameCheck.val())) {
-                return;
-            }
-            if (!validate().validateEName(modalInputEngName.val(), modalInputEngNameCheck.val())) {
-                return;
-            }
-            let modalInputCode = $("#codeSelect :selected");
+        let submit = $(".submit");
 
-            if (!validate().validateCode(modalInputCode.val())) {
-                console.log("카테고리 선택하지 않음");
-                return;
-            }
+        let cloneName;
+        let cloneEName;
 
-            e.preventDefault();
+        submit.each(function () {
+            $(this).click(function (e) {
+                if (cloneName !== modalInputKorName.val() && !validate().validateName(modalInputKorName.val(), modalInputKorNameCheck.val())) {
+                    return;
+                }
+                if (cloneEName !== modalInputEngName.val() && !validate().validateEName(modalInputEngName.val(), modalInputEngNameCheck.val())) {
+                    return;
+                }
+                let modalInputCode = $("#codeSelect :selected");
 
-            let str = "";
-            let imageList = [];
-
-            $(".uploadResult ul li").each(function (i, obj) {
-                let jobj = $(obj);
-                console.dir(jobj);
-
-                console.log(`name: \${jobj.data("name")}, uploadPath: \${jobj.data("path")}, fileType: \${jobj.data("type")}`);
-
-                str += `<input type='hidden' name='imageList[\${i}].fileName' value=\${jobj.data("name")}>`;
-                str += `<input type='hidden' name='imageList[\${i}].uuid' value=\${jobj.data("uuid")}>`;
-                str += `<input type='hidden' name='imageList[\${i}].uploadPath' value=\${jobj.data("path")}>`;
-                str += `<input type='hidden' name='imageList[\${i}].fileType' value=\${jobj.data("type")}>`;
-
-                let productImageVO = {
-                    fileName: jobj.data("name"),
-                    uuid: jobj.data("uuid"),
-                    uploadPath: jobj.data("path"),
-                    fileType: jobj.data("type")
+                if (!validate().validateCode(modalInputCode.val())) {
+                    console.log("카테고리 선택하지 않음");
+                    return;
                 }
 
-                imageList.push(productImageVO);
-            })
+                e.preventDefault();
 
-            formObj.append(str);
+                let str = "";
+                let imageList = [];
 
-            oEditors.getById['content'].exec("UPDATE_CONTENTS_FIELD", []);
+                $(".uploadResult ul li").each(function (i, obj) {
+                    let jobj = $(obj);
+                    console.dir(jobj);
 
-            let product = {
-                korName: modalInputKorName.val(),
-                engName: modalInputEngName.val(),
-                code: modalInputCode.val(),
-                price: modalInputPrice.val(),
-                discount: modalInputDiscount.val(),
-                nation: modalInputNation.val(),
-                detail: modalInputDetail.val(),
-                imageList: imageList
-            }
+                    console.log(`name: \${jobj.data("name")}, uploadPath: \${jobj.data("path")}, fileType: \${jobj.data("type")}`);
 
-            console.log("product: "+JSON.stringify(product));
+                    str += `<input type='hidden' name='imageList[\${i}].fileName' value=\${jobj.data("name")}>`;
+                    str += `<input type='hidden' name='imageList[\${i}].uuid' value=\${jobj.data("uuid")}>`;
+                    str += `<input type='hidden' name='imageList[\${i}].uploadPath' value=\${jobj.data("path")}>`;
+                    str += `<input type='hidden' name='imageList[\${i}].fileType' value=\${jobj.data("type")}>`;
 
-            productService().add(product, function (result) {
-                alert(result);
+                    let productImageVO = {
+                        fileName: jobj.data("name"),
+                        uuid: jobj.data("uuid"),
+                        uploadPath: jobj.data("path"),
+                        fileType: jobj.data("type")
+                    }
 
-                $("#stateSelectId").val(1).prop("selected", true);
+                    imageList.push(productImageVO);
+                })
 
-                modal.find("input").val("");
-                modal.modal("hide");
+                formObj.append(str);
 
-                initPage().initManageProduct(-1, modalInputCode.val());
+                if ($("#content").length) {
+                    oEditors.getById['content'].exec("UPDATE_CONTENTS_FIELD", []);
+                }
+
+                let product = {
+                    korName: modalInputKorName.val(),
+                    engName: modalInputEngName.val(),
+                    code: modalInputCode.val(),
+                    price: modalInputPrice.val(),
+                    discount: modalInputDiscount.val(),
+                    nation: modalInputNation.val(),
+                    detail: modalInputDetail.val(),
+                    imageList: imageList
+                }
+
+                console.log("product: " + JSON.stringify(product));
+
+                let id = $(this).attr("id");
+
+                if (id === 'modalRegisterBtn') {
+                    productService().add(product, function (result) {
+                        alert(result);
+
+                        $("#stateSelectId").val(1).prop("selected", true);
+
+                        modal.find("input").val("");
+                        modal.modal("hide");
+
+                        initPage().initManageProduct(1, modalInputCode.val());
+                    })
+                } else if (id === 'modalModDoBtn') {
+                    product.stock = modal.find("input[name='stock']").val();
+                    product.state = $("#dropSelect :selected").val();
+                    product.pno = modal.find("input[name='code']").val();
+
+                    if (product.detail === '<br>') {
+                        product.detail = $("#product-detail").html();
+                    }
+
+                    console.log("modify product: " + JSON.stringify(product));
+
+                    productService().modify(product, function (result) {
+                        alert(result);
+                        modal.modal("hide");
+                        initPage().initManageProduct(pageNum)
+                    })
+                }
             })
         })
+
         let pno;
 
         tbody.on("click", "tr", function (e) {
             pno = $(this).data("pno");
+            console.log("pno: " + pno);
 
             productService().get(pno, function (product) {
                 initPage().initManageGet(product);
             })
         })
+
+        modalModBtn.click(function () {
+            initPage().initAtferModBtn();
+            oEditors.getById["content"].exec("SET_IR", [""]);
+            modalModBtn.hide();
+            modalModDoBtn.show();
+            modalResetBtn.show();
+
+            cloneName = modalInputKorName.val();
+            cloneEName = modalInputEngName.val();
+        });
 
     })
 </script>

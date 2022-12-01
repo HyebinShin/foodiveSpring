@@ -86,12 +86,32 @@ const productService = (function () {
         })
     }
 
+    function modify(product, callback, error) {
+        $.ajax({
+            type:'put',
+            url:`/product/${product.pno}`,
+            data:JSON.stringify(product),
+            contentType: "application/json; charset=utf-8",
+            success: function (result, status, xhr) {
+                if (callback) {
+                    callback(result);
+                }
+            },
+            fail: function (xhr, status, er) {
+                if (error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
 
     return {
         getCategoryList: getCategoryList,
         getList: getList,
         check: check,
         add: add,
-        get:get
+        get:get,
+        modify:modify
     }
 });
