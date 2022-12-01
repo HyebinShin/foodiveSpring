@@ -5,6 +5,23 @@ const initPage = (function () {
     let modal = $(".modal");
     let tbody = $("tbody");
     let pageFooter = $(".panel-footer");
+    let uploadResult = $(".uploadResult");
+    let productImg = $(".product-img");
+
+    let modalInputPno = modal.find("input[name='code']");
+    let modalInputKorName = modal.find("input[name='name']");
+    let modalInputKorNameCheck = modal.find("input[name='nameCheck']");
+    let modalInputEngName = modal.find("input[name='eName']");
+    let modalInputEngNameCheck = modal.find("input[name='eNameCheck']");
+    let modalInputPrice = modal.find("input[name='price']");
+    let modalInputDiscount = modal.find("input[name='discount']");
+    let modalInputNation = modal.find("input[name='nation']");
+    let modalInputDetail = $("#content");
+    let modalInputStock = modal.find("input[name='stock']");
+
+    let modalInputRegDate = modal.find("input[name='regDate']");
+    let modalInputModDate = modal.find("input[name='modDate']");
+    let modalInputDropDate = modal.find("input[name='dropDate']");
 
     function hideClosestDiv(input) {
         modal.find(`input[name=${input}]`).closest("div").hide();
@@ -120,12 +137,12 @@ const initPage = (function () {
         pageFooter.html(str);
     }
 
-    function initManageProduct(page) {
+    function initManageProduct(page, isModal) {
         tbody.empty();
 
         let state = $("#stateSelect :selected").val();
         let keyword = $("input[name='keyword']").val();
-        let category = $("#lowCategorySelect :selected").val();
+        let category = isModal!=null ? isModal : $("#lowCategorySelect :selected").val();
 
         let param = {
             state:state,
@@ -142,7 +159,7 @@ const initPage = (function () {
 
             if (page === -1) {
                 pageNum = Math.ceil(productCnt/10.0);
-                initManageProduct(pageNum);
+                initManageProduct(pageNum, category);
                 return;
             }
 
@@ -235,12 +252,45 @@ const initPage = (function () {
         })
     }
 
+    function initManageGet(product) {
+        reset();
+        attrReadOnly();
+        hideButton("modalCloseBtn");
+        showButton("modalModBtn");
+        showButton("modalDropBtn");
+
+        modalInputPno.val(product.pno);
+        modalInputKorName.val(product.korName);
+        modalInputEngName.val(product.engName);
+        modalInputPrice.val(product.price);
+        modalInputDiscount.val(product.discount);
+        modalInputNation.val(product.nation);
+        modalInputDetail.val(product.detail);
+        modalInputStock.val(product.stock);
+
+        $("#codeSelected").val(product.code).prop("selected", true);
+        $("#dropSelected").val(product.state).prop("selected", true);
+
+        modalInputRegDate.val(displayTime(product.regDate));
+        let modDate = product.modDate;
+        if (modDate!=null) {
+            modalInputModDate.val(displayTime(modDate));
+        }
+        let dropDate = product.dropDate;
+        if (dropDate!=null) {
+            modalInputDropDate.val(displayTime(dropDate));
+        }
+
+        modal.modal("show");
+    }
+
     return {
         initLowCategoryList:initLowCategoryList,
         initRegisterPage:initRegisterPage,
         initManageProduct:initManageProduct,
         initUploadResult:initUploadResult,
-        initCheck:initCheck
+        initCheck:initCheck,
+        initManageGet:initManageGet
     }
 });
 

@@ -101,4 +101,21 @@ public class ProductController {
 
         return new ResponseEntity<>(service.getList(criteria, product), HttpStatus.OK);
     }
+
+    @GetMapping(
+            value = "/admin/{pno}",
+            produces = {
+                    MediaType.APPLICATION_XML_VALUE,
+                    MediaType.APPLICATION_JSON_VALUE
+            }
+    )
+    @ResponseBody
+    public ResponseEntity<ProductVO> get(
+            @PathVariable("pno") Long pno
+    ) {
+        ProductVO productVO = new ProductVO();
+        productVO.setPno(pno);
+
+        return new ResponseEntity<>(service.get(productVO), HttpStatus.OK);
+    }
 }

@@ -16,7 +16,7 @@
             <div class="panel-body">
                 <div class="form-group input-group col-lg-12" id="stateSelect">
                     <span class="input-group-addon">상품 상태</span>
-                    <select class="form-control">
+                    <select class="form-control" id="stateSelectId">
                         <option value="1" selected>판매</option>
                         <option value="0">판매중지</option>
                         <option value="2">품절</option>
@@ -158,6 +158,9 @@
                         <input class="form-control" type="text" name="discount">
                         <span class="form-check" id="discountCheck"></span>
                     </div>
+                    <div class="form-group product-img" style="display: flex">
+
+                    </div>
                     <div class="form-group" id="image">
                         <label>상품 이미지</label>
                         <input class="form-control" type="file" name="image" multiple>
@@ -293,6 +296,7 @@
         })
 
         let modal = $(".modal");
+        let tbody = $("tbody");
         let formObj = $("form[role='form']");
 
         let modalModBtn = $("#modalModBtn");
@@ -480,6 +484,22 @@
 
             productService().add(product, function (result) {
                 alert(result);
+
+                $("#stateSelectId").val(1).prop("selected", true);
+
+                modal.find("input").val("");
+                modal.modal("hide");
+
+                initPage().initManageProduct(-1, modalInputCode.val());
+            })
+        })
+        let pno;
+
+        tbody.on("click", "tr", function (e) {
+            pno = $(this).data("pno");
+
+            productService().get(pno, function (product) {
+                initPage().initManageGet(product);
             })
         })
 

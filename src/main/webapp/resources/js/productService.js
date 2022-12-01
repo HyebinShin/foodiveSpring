@@ -37,9 +37,9 @@ const productService = (function () {
 
     function check(duplicateInfo, callback, error) {
         $.ajax({
-            type:'post',
-            url:'/product/check',
-            data:JSON.stringify(duplicateInfo),
+            type: 'post',
+            url: '/product/check',
+            data: JSON.stringify(duplicateInfo),
             contentType: "application/json; charset=utf-8",
             success: function (result, status, xhr) {
                 if (callback) {
@@ -55,7 +55,7 @@ const productService = (function () {
     }
 
     function add(product, callback, error) {
-        console.log("product: "+JSON.stringify(product))
+        console.log("product: " + JSON.stringify(product))
 
         $.ajax({
             type: 'post',
@@ -75,11 +75,23 @@ const productService = (function () {
         })
     }
 
+    function get(pno, callback, error) {
+        $.getJSON(`/product/admin/${pno}`,
+            function (data) {
+                if (callback) {
+                    callback(data);
+                }
+            }).fail(function (xhr, status, err) {
+            error();
+        })
+    }
+
 
     return {
         getCategoryList: getCategoryList,
-        getList:getList,
-        check:check,
-        add:add
+        getList: getList,
+        check: check,
+        add: add,
+        get:get
     }
 });
