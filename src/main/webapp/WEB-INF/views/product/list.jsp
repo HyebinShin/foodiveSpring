@@ -39,7 +39,29 @@
             pageNum = $(this).data("page");
 
             productController().getList(pageNum, keyword, category);
-        })
+        })// 상품 목록 출력 END
+
+        // 상세 페이지, 장바구니, 바로 주문 버튼
+        $(document).on("click", ".product-btn button", function (e) {
+            e.preventDefault();
+
+            let btnType = $(this).attr("id");
+            let pno = $(this).data("pno");
+
+            switch (btnType) {
+                case 'getDetail':
+                    let categoryName = $(this).data("name");
+
+                    let url = category === 'null' ?
+                        `/product/get?keyword=\${keyword}&pno=\${pno}`
+                        : `/product/get?category=\${category}&categoryName=\${categoryName}&pno=\${pno}`
+
+                    location.href = url;
+                    break;
+            }
+
+        })// 상세 페이지, 장바구니, 바로 주문 버튼 END
+
 
     })
 </script>

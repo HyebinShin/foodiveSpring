@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/main")
-    public void goMain(Model model) {
+    public void goMain(HttpSession session) {
         Criteria cri = new Criteria(1, 0);
         CategoryVO setting = new CategoryVO();
         setting.setHCode("null");
@@ -47,8 +48,8 @@ public class MainController {
             gnb.add(menu);
         }
 
-        model.addAttribute("highGnb", high);
-        model.addAttribute("lowGnb", gnb);
+        session.setAttribute("highGnb", high);
+        session.setAttribute("lowGnb", gnb);
     }
 
 }

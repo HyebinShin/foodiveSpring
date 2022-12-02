@@ -12,10 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.awt.print.Pageable;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -112,7 +110,7 @@ public class ProductController {
     }
 
     @GetMapping(
-            value = "/admin/{pno}",
+            value = {"/admin/{pno}", "/get/{pno}"},
             produces = {
                     MediaType.APPLICATION_XML_VALUE,
                     MediaType.APPLICATION_JSON_VALUE
@@ -200,6 +198,24 @@ public class ProductController {
 
         model.addAttribute("category", category);
         model.addAttribute("keyword", name);
+    }
+
+    @GetMapping("/get")
+    public void goProductDetail(
+            @RequestParam(value = "keyword", required = false) Optional<String> keyword,
+            @RequestParam(value = "category", required = false) Optional<String> category,
+            @RequestParam(value = "categoryName", required = false) Optional<String> categoryName,
+            @RequestParam("pno") Long pno,
+            Model model
+    ) {
+        String optionKeyword = keyword.orElse("null");
+        String optionCategory = category.orElse("null");
+        String optionCategoryName = categoryName.orElse("null");
+
+        model.addAttribute("pno", pno);
+        model.addAttribute("keyword", optionKeyword);
+        model.addAttribute("category", optionCategory);
+        model.addAttribute("categoryName", optionCategoryName);
     }
 
 }
