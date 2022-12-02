@@ -156,7 +156,7 @@ const init = (function () {
 
         let html = "";
 
-        html += `<div class='col-lg-10 product-detail-info'>`;
+        html += `<div class='col-lg-12 product-detail-info'>`;
         html += `${initProductImg(product.imageList)}`;
         html += `${initProductInfo(product)}`;
         html += `</div>`;
@@ -299,6 +299,8 @@ const init = (function () {
         html += `<li class="active"><a href="#detail-pills" data-toggle="tab">상세페이지</a></li>`;
         html += `<li><a href="#review-pills" data-toggle="tab">리뷰</a></li>`;
 
+        html += `</ul>`;
+
         return html;
     }
 
@@ -307,6 +309,8 @@ const init = (function () {
 
         html += `<div class='tab-pane fade in active' id='detail-pills'>${product.detail}</div>`;
         html += `<div class='tab-pane fade' id='review-pills'>리뷰</div>`;
+
+        html += `</div>`;
 
         return html;
     }

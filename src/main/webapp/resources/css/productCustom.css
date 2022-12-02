@@ -2,7 +2,7 @@
     width: 100%;
 }
 
-.product-one-info, .mini-info, .product-btn, .product-list, .product-img, .product-detail-info, .qty {
+.product-one-info, .mini-info, .product-btn, .product-list, .product-img, .product-detail-info, .qty, .product-detail .tab-content {
     display: flex;
 }
 
@@ -14,7 +14,7 @@
     flex-wrap: wrap;
 }
 
-.product-list {
+.product-list, .product-detail .tab-content {
     justify-content: center;
 }
 
