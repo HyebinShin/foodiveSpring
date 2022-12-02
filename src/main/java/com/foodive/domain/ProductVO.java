@@ -25,4 +25,5 @@ public class ProductVO {
     private Date dropDate;
 
     private List<ProductImageVO> imageList;
+    private String name;
 }

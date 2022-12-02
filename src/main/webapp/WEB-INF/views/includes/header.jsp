@@ -64,7 +64,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <c:forEach var="low" items="${lows}">
-                                    <li><a href="#"><c:out value="${low.getName()}"/></a></li>
+                                    <li><a href="${low.getCode()}"><c:out value="${low.getName()}"/></a></li>
                                     <li class="divider"></li>
                                 </c:forEach>
                             </ul>
@@ -73,6 +73,10 @@
                 </ul>
             </li>
         </ul>
+        <div class="input-group col-lg-4" style="float: left; margin-top: 10px">
+            <input type="text" class="form-control" name="keyword" placeholder="검색어를 입력해주세요.">
+            <span class="input-group-btn"><button class="btn btn-default" type="button" id="keyword-search"><i class="fa fa-search"></i></button></span>
+        </div>
         <ul class="nav navbar-top-links navbar-right">
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -122,4 +126,38 @@
 
         <script type="text/javascript">
             console.log('state: <c:out value="${loginInfo.state}"/>');
+
+            $(document).ready(function () {
+                let subMenu = $(".dropdown-submenu a");
+
+                subMenu.each(function () {
+                    $(this).click(function (e) {
+                        e.preventDefault();
+
+                        let code = $(this).attr("href");
+
+                        location.replace("/product/list?code="+code);
+                    })
+                });
+
+                let keywordSearch = $("#keyword-search");
+                let inputKeyword = $("input[name='keyword']");
+
+                keywordSearch.on("click", function (e) {
+                    e.preventDefault();
+
+                    let keyword = inputKeyword.val();
+
+                    location.replace("/product/list?keyword="+keyword);
+                })
+
+                inputKeyword.on("keyup", function (e) {
+                    let keyword = $(this).val();
+
+                    if (e.keyCode===13) {
+                        location.replace("/product/list?keyword="+keyword);
+                    }
+
+                })
+            })
         </script>

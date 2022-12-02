@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.awt.print.Pageable;
@@ -187,4 +188,18 @@ public class ProductController {
                 new ResponseEntity<>(ProductMsg.DROP, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @GetMapping("/list")
+    public void goProductList(
+            @RequestParam(value = "keyword", required = false) Optional<String> keyword,
+            @RequestParam(value = "code", required = false) Optional<String> code,
+            Model model
+    ) {
+        String name = keyword.orElse("null");
+        String category = code.orElse("null");
+
+        model.addAttribute("category", category);
+        model.addAttribute("keyword", name);
+    }
+
 }

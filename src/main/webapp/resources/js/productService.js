@@ -21,7 +21,7 @@ const productService = (function () {
 
         console.log(`state: ${state}, page: ${page}, code: ${code}, keyword: ${keyword}`);
 
-        let url = (code === '' || code === undefined) ?
+        let url = (code === '' || code === undefined || code === 'null') ?
             `/product/list/${state}/${page}?keyword=${keyword}` : `/product/list/${state}/${page}?code=${code}`;
 
 

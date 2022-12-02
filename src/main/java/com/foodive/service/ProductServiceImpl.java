@@ -55,9 +55,15 @@ public class ProductServiceImpl implements ProductService {
     public ProductPageDTO getList(Criteria cri, ProductVO product) {
         log.info("get product list");
 
+        List<ProductVO> list = mapper.getListWithPaging(cri, product);
+
+        for(ProductVO productVO : list) {
+            productVO.setImageList(imageMapper.findByPno(productVO.getPno()));
+        }
+
         return new ProductPageDTO(
                 mapper.getTotalProduct(product),
-                mapper.getListWithPaging(cri, product)
+                list
         );
     }
 

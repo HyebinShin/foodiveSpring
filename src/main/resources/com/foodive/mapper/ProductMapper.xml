@@ -21,16 +21,23 @@
                 </if>
             </trim>
             <if test="product.state!=null">
-                and state = #{product.state}
+                and tbl_product.state = #{product.state}
             </if>
         </trim>
     </sql>
 
     <sql id="criteria">
-        (select /*+ index_desc(tbl_product pk_product) */
-        rownum rn,
-        tbl_product.*
-        from tbl_product
+        (select /*+ index_desc(tbl_product pk_product) */ rownum rn, tbl_product.*
+        <choose>
+            <when test='product.code!=null and product.code != "null"'>
+                , tbl_category.name
+                from tbl_product inner join tbl_category
+                on tbl_product.code = tbl_category.code
+            </when>
+            <otherwise>
+                from tbl_product
+            </otherwise>
+        </choose>
         where
         <trim prefixOverrides="and">
             <include refid="search"/>
