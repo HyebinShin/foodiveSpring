@@ -49,5 +49,42 @@
             $(".product-thumbnail").not($(this)).fadeTo("fast", 0.3);
         })
 
+        // 상품 수량 변경
+        let i = 0;
+        $(document).on("click", ".qty button", function (e) {
+            e.preventDefault();
+
+            let type = $(this).data("type");
+            let stock = $(this).data("stock");
+            let qty = $("input[name='qty']");
+
+            console.log("type: "+type);
+            console.log("stock: "+stock);
+            getBeforeLog(i);
+
+            switch (type) {
+                case 'minus':
+                    if (cart().minus(i)) {
+                        i--;
+                    }
+                    break;
+                case 'plus':
+                    if (cart().plus(i, stock)) {
+                        i++;
+                    }
+                    break;
+            }
+
+            qty.val(i);
+            getAfterLog(i);
+        })
+
+        function getBeforeLog(param) {
+            console.log("before i: "+param);
+        }
+        function getAfterLog(param) {
+            console.log("after i: "+param);
+        }
+
     })
 </script>

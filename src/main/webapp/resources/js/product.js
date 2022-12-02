@@ -241,8 +241,8 @@ const init = (function () {
         let html = "";
 
         html += `<div class='product-btn'>`;
-        html += `<button type='button' id="getCart" class='btn btn-default' data-pno=${product.pno}>장바구니</button>`;
-        html += `<button type='button' id="getOrder" class='btn btn-primary' data-pno=${product.pno}>바로주문</button>`;
+        html += `<button type='button' id="getCart" class='btn btn-default' data-pno=${product.pno} data-qty="0">장바구니</button>`;
+        html += `<button type='button' id="getOrder" class='btn btn-primary' data-pno=${product.pno} data-qty="0">주문하기</button>`;
         html += `</div>`;
 
         return html;
@@ -267,10 +267,9 @@ const init = (function () {
                 html += `<div>품절 임박! 현재 재고가 ${stock}개 남았습니다.</div>`
             }
             html += `<div class='form-group input-group qty'>`;
-            html += `<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-minus"></i></button></span>`
-            html += `<input type='hidden' name='stock' id='stock' value=${product.stock}>`;
+            html += `<span class="input-group-btn"><button class="btn btn-default" data-type="minus" data-stock=${stock}><i class="fa fa-minus"></i></button></span>`
             html += `<input type='text' class="form-control" name='qty' id='qty' value='0' readonly>`;
-            html += `<span class="input-group-btn"><button class="btn btn-default"><i class='fa fa-plus'></i></button></span>`
+            html += `<span class="input-group-btn"><button class="btn btn-default" data-type="plus" data-stock=${stock}><i class='fa fa-plus'></i></button></span>`
             html += `</div>`;
         } else {
             html += `<div>품절</div>`;
@@ -322,3 +321,27 @@ const init = (function () {
         initGetFooter:initGetFooter
     }
 })
+
+const cart = (function () {
+
+    function minus(qty, stock) {
+        if (0 > (qty - 1)) {
+            alert('구매 수량은 0보다 적을 수 없습니다.');
+            return false;
+        }
+        return true;
+    }
+
+    function plus(qty, stock) {
+        if (stock < (qty + 1)) {
+            alert('상품 재고보다 더 많이 구매하실 수 없습니다.');
+            return false;
+        }
+        return true;
+    }
+
+    return {
+        minus:minus,
+        plus:plus
+    }
+});
