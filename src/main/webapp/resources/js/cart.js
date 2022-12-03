@@ -3,7 +3,7 @@ const cart = (function () {
     function minus(qty, pno) {
         if (0 > (qty - 1)) {
             if(confirm('구매 수량은 0보다 적을 수 없습니다. 장바구니에서 삭제하시겠습니까?')) {
-                controller().deleteCart(pno);
+                cartController().deleteCart(pno);
                 location.reload();
                 return;
             }
@@ -26,29 +26,40 @@ const cart = (function () {
     }
 });
 
-const controller = (function () {
+const cartController = (function () {
 
     function getCartList(id) {
         console.log("controller get list");
-        service().getList(id, function (cartList) {
+        cartService().getList(id, function (cartList) {
             console.log("service get list callback");
-            init().initCart(cartList);
+            cartInit().initCart(cartList);
         })
     }
 
     function deleteCart(pno) {
-        service().deleteCart(pno, function (result) {
+        cartService().deleteCart(pno, function (result) {
             alert(result);
+        })
+    }
+
+    function addCart(cart) {
+        cartService().addCart(cart, function (result) {
+            alert(result);
+
+            if (confirm('장바구니 페이지로 이동하시겠습니까?')) {
+                location.href = "/cart/cartPage";
+            }
         })
     }
 
     return {
         getCartList:getCartList,
-        deleteCart:deleteCart
+        deleteCart:deleteCart,
+        addCart:addCart
     }
 })
 
-const service = (function () {
+const cartService = (function () {
 
     function getList(id, callback, error) {
         $.getJSON(`/cart/get/${id}`,
@@ -78,13 +89,33 @@ const service = (function () {
         })
     }
 
+    function addCart(cart, callback, error) {
+        $.ajax({
+            type:'post',
+            url: '/cart/add',
+            data: JSON.stringify(cart),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result, status, xhr) {
+                if (callback) {
+                    callback(result);
+                }
+            },
+            error: function (xhr, status, er) {
+                if (error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
     return {
         getList: getList,
-        deleteCart:deleteCart
+        deleteCart:deleteCart,
+        addCart:addCart
     }
 })
 
-const init = (function () {
+const cartInit = (function () {
 
     let pageBody = $(".page-body");
 

@@ -137,4 +137,11 @@
         modDate = sysdate
         where pno = #{pno}
     </update>
+
+    <select id="getCartInfo" resultType="com.foodive.domain.CartDTO">
+        select korName, price, discount,
+               (price * (100-discount)/100) as realPrice
+        from tbl_product
+        where pno = #{pno}
+    </select>
 </mapper>

@@ -20,6 +20,7 @@
 
 <script src="/resources/js/productService.js"></script>
 <script src="/resources/js/product.js"></script>
+<script src="/resources/js/cart.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -64,12 +65,12 @@
 
             switch (type) {
                 case 'minus':
-                    if (cart().minus(i)) {
+                    if (productCart().minus(i)) {
                         i--;
                     }
                     break;
                 case 'plus':
-                    if (cart().plus(i, stock)) {
+                    if (productCart().plus(i, stock)) {
                         i++;
                     }
                     break;
@@ -85,6 +86,38 @@
         function getAfterLog(param) {
             console.log("after i: "+param);
         }
+
+        // 장바구니에 담기
+        let id = `<c:out value="${loginInfo.id}"/>`
+
+        $(document).on("click", ".product-btn button", function (e) {
+            e.preventDefault();
+
+            if(id===undefined||id==null||id==='null') {
+                alert('회원만 이용 가능합니다.');
+                return;
+            }
+
+            let type = $(this).data("type");
+            let pno = $(this).data("pno");
+            let qty = $("input[name='qty']").val();
+
+            console.log("type: "+type);
+            console.log("pno: "+pno);
+            console.log("qty: "+qty);
+
+            switch (type) {
+                case 'cart':
+                    let cart = {
+                        pno:pno,
+                        qty:qty,
+                        id:id
+                    }
+                    cartController().addCart(cart);
+                    break;
+            }
+
+        })
 
     })
 </script>

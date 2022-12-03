@@ -1,5 +1,6 @@
 package com.foodive.mapper;
 
+import com.foodive.domain.CartDTO;
 import com.foodive.domain.Criteria;
 import com.foodive.domain.DuplicateInfo;
 import com.foodive.domain.ProductVO;
@@ -55,4 +56,10 @@ public interface ProductMapper {
      */
     public int update(ProductVO product);
 
+    /**
+     * 새로운 상품을 장바구니에 담을 때 해당 상품의 정보를 얻어 장바구니 객체에 담는다
+     * @param pno 검색하고 싶은 상품 번호
+     * @return 장바구니 객체 (유저 아이디와 수량, 총액은 빠져 있음)
+     */
+    public CartDTO getCartInfo(Long pno);
 }

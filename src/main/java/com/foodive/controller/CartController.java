@@ -4,6 +4,7 @@ import com.foodive.domain.CartDTO;
 import com.foodive.domain.LoginInfo;
 import com.foodive.persistence.CartMsg;
 import com.foodive.service.CartService;
+import com.foodive.service.ProductService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -23,6 +25,7 @@ import java.util.List;
 public class CartController {
 
     private CartService service;
+    private ProductService productService;
 
     @GetMapping(value = "/cartPage")
     public void goCartPage() {
@@ -71,9 +74,66 @@ public class CartController {
 
             list.removeIf(cart -> cart.equals(removeCart));
 
-            log.info("after remove list: "+list);
+            log.info("after remove list: "+loginInfo.getCartList());
         }
 
         return new ResponseEntity<>(CartMsg.REMOVE, HttpStatus.OK);
+    }
+
+    // 장바구니에 상품 담기
+    @PostMapping(
+            value = "/add",
+            consumes = "application/json; charset=utf-8",
+            produces = "text/plain; charset=utf-8"
+    )
+    @ResponseBody
+    public ResponseEntity<String> addCart(@RequestBody CartDTO cart, HttpSession session) {
+        log.info("add cart!");
+
+        LoginInfo loginInfo = (LoginInfo) session.getAttribute("loginInfo");
+
+        if (!isSameId(loginInfo, cart.getId())) {
+            return null;
+        }
+
+        if (service.insertCart(cart)) {
+            String msg = addContainsCart(loginInfo, cart);
+
+            log.info("after set list: "+loginInfo.getCartList());
+
+            return new ResponseEntity<>(msg, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private String addContainsCart(LoginInfo loginInfo, CartDTO newCart) {
+        List<CartDTO> list = loginInfo.getCartList();
+        String msg = null;
+
+        if (list.contains(newCart)) {
+            CartDTO cloneCart = list.get(list.indexOf(newCart));
+            int qty = cloneCart.getQty() + newCart.getQty();
+
+            if (qty > cloneCart.getStock()) {
+                cloneCart.setQty(cloneCart.getStock());
+                msg = CartMsg.CANT_ADD;
+            } else {
+                cloneCart.setQty(qty);
+                msg = CartMsg.ADD;
+            }
+            list.set(list.indexOf(newCart), cloneCart);
+        } else {
+            CartDTO addCart = productService.getCartInfo(newCart.getPno());
+            addCart.setQty(newCart.getQty());
+            addCart.setId(newCart.getId());
+            list.add(addCart);
+            msg = CartMsg.ADD;
+        }
+
+        return msg;
+    }
+
+    private boolean isSameId(LoginInfo loginInfo, String id) {
+        return loginInfo.getId().equals(id);
     }
 }

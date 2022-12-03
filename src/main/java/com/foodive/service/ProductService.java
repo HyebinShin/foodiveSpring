@@ -54,4 +54,11 @@ public interface ProductService {
      * @return 해당 상품 번호의 상품 이미지 리스트
      */
     public List<ProductImageVO> getImageList(Long pno);
+
+    /**
+     * 새로운 상품을 장바구니에 담을 때 해당 상품의 정보를 얻어 장바구니 객체에 담는다
+     * @param pno 검색하고 싶은 상품 번호
+     * @return 장바구니 객체 (유저 아이디와 수량, 총액은 빠져 있음)
+     */
+    public CartDTO getCartInfo(Long pno);
 }

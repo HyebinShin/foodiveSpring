@@ -100,4 +100,9 @@ public class ProductServiceImpl implements ProductService {
 
         return imageMapper.findByPno(pno);
     }
+
+    @Override
+    public CartDTO getCartInfo(Long pno) {
+        return mapper.getCartInfo(pno);
+    }
 }

@@ -28,7 +28,7 @@
         console.log("cart page login info id: "+id);
         console.log("cart page login info cart: "+cartList);
 
-        controller().getCartList(id);
+        cartController().getCartList(id);
 
         // 장바구니 수량 변경
         $(document).on("click", ".qty button", function (e) {

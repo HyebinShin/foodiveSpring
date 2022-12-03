@@ -241,8 +241,8 @@ const init = (function () {
         let html = "";
 
         html += `<div class='product-btn'>`;
-        html += `<button type='button' id="getCart" class='btn btn-default' data-pno=${product.pno} data-qty="0">장바구니</button>`;
-        html += `<button type='button' id="getOrder" class='btn btn-primary' data-pno=${product.pno} data-qty="0">주문하기</button>`;
+        html += `<button type='button' class='btn btn-default' data-type="cart" data-pno=${product.pno}>장바구니</button>`;
+        html += `<button type='button' class='btn btn-primary' data-type="order" data-pno=${product.pno}>주문하기</button>`;
         html += `</div>`;
 
         return html;
@@ -326,7 +326,7 @@ const init = (function () {
     }
 })
 
-const cart = (function () {
+const productCart = (function () {
 
     function minus(qty, stock) {
         if (0 > (qty - 1)) {
@@ -345,7 +345,7 @@ const cart = (function () {
     }
 
     return {
-        minus:minus,
-        plus:plus
+        minus: minus,
+        plus: plus
     }
 });
