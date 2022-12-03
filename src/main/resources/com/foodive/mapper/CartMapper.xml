@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foodive.mapper.CartMapper">
+
+    <insert id="insert">
+        <selectKey keyProperty="cno" order="BEFORE" resultType="long">
+            select seq_cart.nextval from dual
+        </selectKey>
+
+        insert into tbl_cart (cno, id, pno, qty)
+        values (#{cno}, #{id}, #{pno}, #{qty})
+    </insert>
+
+    <delete id="delete">
+        delete tbl_cart
+        where id = #{id} and pno = #{pno}
+    </delete>
+
+    <select id="findById" resultType="com.foodive.domain.CartDTO">
+        select tbl_cart.*,
+               tbl_product.korName, tbl_product.price, tbl_product.discount,
+               (tbl_product.price * (100-tbl_product.discount)/100) as realPrice,
+               (tbl_product.price * (100-tbl_product.discount)/100) * tbl_cart.qty as totalPrice
+        from tbl_cart
+        inner join tbl_product
+        on tbl_cart.pno = tbl_product.pno
+        where tbl_cart.id = #{id}
+    </select>
+
+    <update id="update">
+        update tbl_cart
+        set qty = #{qty}
+        where id = #{id} and pno = #{pno}
+    </update>
+
+    <select id="countCart" resultType="int">
+        select count(*)
+        from tbl_cart
+        where id = #{id} and pno = #{pno}
+    </select>
+
+</mapper>
