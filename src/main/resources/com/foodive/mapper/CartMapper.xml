@@ -20,7 +20,7 @@
 
     <select id="findById" resultType="com.foodive.domain.CartDTO">
         select tbl_cart.*,
-               tbl_product.korName, tbl_product.price, tbl_product.discount,
+               tbl_product.korName, tbl_product.price, tbl_product.discount, tbl_product.stock,
                (tbl_product.price * (100-tbl_product.discount)/100) as realPrice,
                (tbl_product.price * (100-tbl_product.discount)/100) * tbl_cart.qty as totalPrice
         from tbl_cart

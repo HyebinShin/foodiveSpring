@@ -29,7 +29,7 @@ public class CartServiceImpl implements CartService {
     public boolean deleteCart(String id, Long pno) {
         if (!hasCart(id, pno)) {
             log.info("no data in cart table");
-            return false;
+            return true;
         }
 
         return mapper.delete(id, pno)==1;

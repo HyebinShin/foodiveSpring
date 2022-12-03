@@ -95,7 +95,7 @@
                         </c:when>
                         <c:when test="${!empty state && state ne '0'}">
                             <li>
-                                <a href="#"><i class="fa fa-shopping-cart cart-size"></i><span></span> 장바구니</a>
+                                <a href="/cart/cartPage"><i class="fa fa-shopping-cart cart-size"></i><span></span> 장바구니</a>
                             </li>
                             <li>
                                 <a href="/user/myPage">마이페이지</a>

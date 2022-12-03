@@ -16,6 +16,7 @@ public class CartDTO {
     private String korName;
     private Integer price;
     private Integer discount;
+    private Integer stock;
 
     // calculate
     private Integer realPrice;

@@ -1,0 +1,10 @@
+.qty {
+    display: flex;
+}
+
+.qty .input-group-btn {
+    width: 37px;
+}
+.qty .form-control {
+    width: 100px;
+}
