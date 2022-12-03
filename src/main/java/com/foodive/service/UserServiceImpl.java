@@ -6,13 +6,10 @@ import com.foodive.domain.UserPageDTO;
 import com.foodive.domain.UserVO;
 import com.foodive.function.Encrypt;
 import com.foodive.mapper.UserMapper;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @Log4j

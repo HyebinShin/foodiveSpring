@@ -3,10 +3,12 @@ package com.foodive.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.foodive.domain.CartDTO;
 import com.foodive.domain.DuplicateInfo;
 import com.foodive.domain.LoginInfo;
 import com.foodive.domain.UserVO;
 import com.foodive.persistence.UserMsg;
+import com.foodive.service.CartService;
 import com.foodive.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RequestMapping("/user/*")
 @Controller
@@ -27,6 +30,8 @@ import javax.servlet.http.HttpSession;
 public class UserController {
 
     private UserService service;
+
+    private CartService cartService;
 
     @PostMapping(value = "/register")
     public String register(UserVO user, RedirectAttributes rttr) {
@@ -73,7 +78,10 @@ public class UserController {
             } else {
                 msg = user.getId()+UserMsg.USER_LOGIN;
                 url = "/main";
-                session.setAttribute("loginInfo", new LoginInfo(loginUser.getId(), loginUser.getState()));
+
+                List<CartDTO> cartList = cartService.getCartList(loginUser.getId());
+
+                session.setAttribute("loginInfo", new LoginInfo(loginUser.getId(), loginUser.getState(), cartList));
             }
 
         } else {

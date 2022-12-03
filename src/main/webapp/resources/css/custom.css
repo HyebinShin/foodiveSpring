@@ -34,3 +34,10 @@
     background-color: #fff;
 }
 .open-menu li { display: block; }
+
+/* cart */
+.cart-size ~span {
+    color: #337ab7;
+    font-weight: bold;
+    padding-left: 3px;
+}
