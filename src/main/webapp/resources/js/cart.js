@@ -202,7 +202,63 @@ const cartInit = (function () {
         return html;
     }
 
+    // 상품 목록 페이지에서 상품 수량 모달창 오픈
+    let modal = $(".modal");
+    let modalTitle = $("#shopModal .modal-title");
+    let modalBody = $("#shopModal .modal-body");
+    let modalFooter = $("#shopModal .modal-footer");
+    function initCartModal(product) {
+        initCartModalTitle(product);
+        initCartModalBody(product);
+        initCartModalFooter(product);
+        modal.modal("show");
+    }
+
+    function initCartModalTitle(product) {
+        modalTitle.empty();
+        modalTitle.append(`${product.korName}`);
+    }
+
+    function initCartModalBody(product) {
+        modalBody.empty();
+
+        let html = `<div class='col-lg-12' data-pno=${product.pno}>`;
+
+        // 가격
+        let price = product.price;
+        let discount = product.discount;
+        let realPrice = discount!=0 ? price * (100-discount)/100 : price;
+
+        if (discount==0) {
+            html += `<div class="real-price">가격: ${price.toLocaleString(undefined, {maximumFractionDigits:0})}</div>`;
+        } else {
+            html += `<div class="real-price">가격: ${realPrice.toLocaleString(undefined, {maximumFractionDigits:0})}</div>`;
+        }
+
+        // 수량 조절 버튼
+        let stock = product.stock;
+        let cart = {stock:stock, qty:0};
+        html += `${initCartQty(cart)}`;
+
+        html += `</div>`; //div.class.col-lg-12
+
+        modalBody.append(html);
+        modalBody.height("100px");
+    }
+
+    function initCartModalFooter(product) {
+        modalFooter.empty();
+
+        let html = `<div class='modal-product-btn'>`;
+        html += `<button type='button' class='btn btn-default' data-type="cart" data-pno=${product.pno}>장바구니</button>`;
+        html += `<button type='button' class='btn btn-primary' data-type="order" data-pno=${product.pno}>주문하기</button>`;
+        html += `</div>`;
+
+        modalFooter.append(html);
+    }
+
     return {
-        initCart: initCart
+        initCart: initCart,
+        initCartModal:initCartModal
     }
 })

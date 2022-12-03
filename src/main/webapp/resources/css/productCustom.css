@@ -55,7 +55,7 @@ img {
     width: 40%;
     margin-left: 20px;
 }
-.detail-info .panel-body > div {
+.detail-info .panel-body > div, #shopModal .modal-body > div {
     margin-top: 5px;
     padding: 10px;
 }
