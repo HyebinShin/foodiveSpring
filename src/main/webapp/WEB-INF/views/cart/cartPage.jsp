@@ -47,18 +47,26 @@
 
             switch (type) {
                 case 'minus':
-                    if (cart().minus(qtyVal, pno)) {
+                    if (cartFunction().minus(qtyVal, pno)) {
                         qtyVal--;
                     }
                     break;
                 case 'plus':
-                    if (cart().plus(qtyVal, stock)) {
+                    if (cartFunction().plus(qtyVal, stock)) {
                         qtyVal++;
                     }
                     break;
             }
 
             qty.val(qtyVal);
+
+            let cart = {
+                pno:pno,
+                qty:qty.val(),
+                id:id
+            }
+
+            cartController().modifyCart(cart);
 
             console.log("after qty: "+qty.val());
         })

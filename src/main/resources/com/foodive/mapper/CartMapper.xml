@@ -31,7 +31,7 @@
 
     <update id="update">
         update tbl_cart
-        set qty = qty + #{qty}
+        set qty = #{qty}
         where id = #{id} and pno = #{pno}
     </update>
 

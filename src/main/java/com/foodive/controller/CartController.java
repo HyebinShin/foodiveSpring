@@ -45,7 +45,7 @@ public class CartController {
             HttpSession session
     ) {
         LoginInfo loginInfo = (LoginInfo) session.getAttribute("loginInfo");
-        if (!loginInfo.getId().equals(id)) {
+        if (!isSameId(loginInfo, id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -135,5 +135,45 @@ public class CartController {
 
     private boolean isSameId(LoginInfo loginInfo, String id) {
         return loginInfo.getId().equals(id);
+    }
+
+    @PutMapping(
+            value = "/modify/{id}",
+            consumes = "application/json; charset=utf-8",
+            produces = "text/plain; charset=utf-8"
+    )
+    @ResponseBody
+    public ResponseEntity<String> modifyCart(
+            @PathVariable("id") String id,
+            @RequestBody CartDTO cart,
+            HttpSession session
+    ) {
+       LoginInfo loginInfo = (LoginInfo) session.getAttribute("loginInfo");
+
+       if (!isSameId(loginInfo, id)) {
+           return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+       }
+
+       cart.setId(id);
+       updateCart(loginInfo, cart);
+
+       log.info("after modify cart list: "+loginInfo.getCartList());
+
+       if (service.updateCart(cart)) {
+           return new ResponseEntity<>(CartMsg.MODIFY, HttpStatus.OK);
+       }
+       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private void updateCart(LoginInfo loginInfo, CartDTO cartDTO) {
+        if (!loginInfo.getCartList().contains(cartDTO)) {
+            return;
+        }
+
+        List<CartDTO> list = loginInfo.getCartList();
+        CartDTO cloneCart = list.get(list.indexOf(cartDTO));
+        cloneCart.setQty(cartDTO.getQty());
+
+        list.set(list.indexOf(cartDTO), cloneCart);
     }
 }

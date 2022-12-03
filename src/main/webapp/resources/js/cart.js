@@ -1,4 +1,4 @@
-const cart = (function () {
+const cartFunction = (function () {
 
     function minus(qty, pno) {
         if (0 > (qty - 1)) {
@@ -52,10 +52,17 @@ const cartController = (function () {
         })
     }
 
+    function modifyCart(cart) {
+        cartService().modify(cart, function (result) {
+            alert(result);
+        })
+    }
+
     return {
         getCartList:getCartList,
         deleteCart:deleteCart,
-        addCart:addCart
+        addCart:addCart,
+        modifyCart:modifyCart
     }
 })
 
@@ -108,10 +115,30 @@ const cartService = (function () {
         })
     }
 
+    function modify(cart, callback, error) {
+        $.ajax({
+            type: 'put',
+            url: `/cart/modify/${cart.id}`,
+            data:JSON.stringify(cart),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result, status, xhr) {
+                if (callback) {
+                    callback(result);
+                }
+            },
+            error: function (xhr, status, er) {
+                if(error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
     return {
         getList: getList,
         deleteCart:deleteCart,
-        addCart:addCart
+        addCart:addCart,
+        modify:modify
     }
 })
 
