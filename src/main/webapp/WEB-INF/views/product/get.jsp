@@ -102,6 +102,11 @@
             let pno = $(this).data("pno");
             let qty = $("input[name='qty']").val();
 
+            if(qty==0) {
+                alert('수량을 선택해주세요');
+                return;
+            }
+
             console.log("type: "+type);
             console.log("pno: "+pno);
             console.log("qty: "+qty);
