@@ -67,11 +67,30 @@ const cartController = (function () {
         })
     }
 
+    function deleteAll(cart) {
+        if (cart.length === 0) {
+            return;
+        }
+        for (let i=0, len=cart.length; i<len; i++) {
+            let pno = cart[i].pno;
+            let thisTR = cart[i].thisTR;
+
+            console.log(`${i}번째 tr: `+JSON.stringify(thisTR));
+
+            cartService().deleteCart(pno, function (result) {
+                thisTR.remove();
+            })
+        }
+        alert('장바구니 삭제를 완료했습니다.');
+        location.reload();
+    }
+
     return {
         getCartList:getCartList,
         deleteCart:deleteCart,
         addCart:addCart,
-        modifyCart:modifyCart
+        modifyCart:modifyCart,
+        deleteAll:deleteAll
     }
 })
 
@@ -154,6 +173,7 @@ const cartService = (function () {
 const cartInit = (function () {
 
     let pageBody = $(".page-body");
+    let pageFooter = $(".page-footer");
 
     function initCart(cartList) {
         pageBody.empty();
@@ -186,10 +206,13 @@ const cartInit = (function () {
 
         pageBody.append(html);
 
+        initCartFooter();
+
     }
 
     function initCartTHead() {
         let html = `<thead><tr>`;
+        html += `<th></th>`;
         html += `<th>#번호</th>`;
         html += `<th>상품명</th>`;
         html += `<th>정상가</th>`;
@@ -211,8 +234,11 @@ const cartInit = (function () {
         let html = `<tbody>`;
 
         for (let i=0, len=cartList.length||0; i<len; i++) {
+            console.log("cart list pno: "+cartList[i].pno);
+
             html += `<tr data-cno=${cartList[i].cno} data-pno=${cartList[i].pno}>`;
 
+            html += `<td><input type="checkbox" id=${cartList[i].pno} value=${cartList[i].pno}><label for=${cartList[i].pno} class="fa"></label></td>`
             html += `<td>${i+1}</td>`;
             html += `<td>${cartList[i].korName}</td>`;
             html += `<td>${cartList[i].price}</td>`;
@@ -245,8 +271,20 @@ const cartInit = (function () {
         return html;
     }
 
-    function initCartFooter(cart) {
+    function initCartFooter() {
+        pageFooter.empty();
 
+        let html = `<div class='cart-page-btn'>`;
+
+        html += `<button type="button" class="btn btn-default" data-number="none">전체 선택 해제</button>`;
+        html += `<button type="button" class="btn btn-default" data-number="some" data-type="delete">선택 삭제</button>`
+        html += `<button type="button" class="btn btn-default" data-number="all" data-type="delete">전체 삭제</button>`
+        html += `<button type="button" class="btn btn-primary" data-number="some" data-type="order">선택 주문</button>`
+        html += `<button type="button" class="btn btn-primary" data-number="all" data-type="order">전체 주문</button>`
+
+        html += `</div>`; //div.class.cart-page-btn
+
+        pageFooter.append(html);
     }
 
     // 상품 목록 페이지에서 상품 수량 모달창 오픈

@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<div class="row page-body">
+<div class="row page-body cart-page">
 
 </div>
 
@@ -92,6 +92,45 @@
                 }
 
                 cartController().deleteCart(param);
+            }
+        })
+
+        // 장바구니 체크박스
+        $(document).on("click", ".cart-page-btn button", function (e) {
+            e.preventDefault();
+
+            let number = $(this).data("number");
+            let type = $(this).data("type");
+            let checkbox = $(".cart-page input:checkbox");
+
+            if (number==='all') {
+                checkbox.prop("checked", true);
+            } else if(number==='none') {
+                checkbox.prop("checked", false);
+            }
+
+            let cart = [];
+
+            $(".cart-page input[type='checkbox']").each(function () {
+                if ($(this).is(':checked')) {
+                    let pno = $(this).val();
+                    let thisTR = $(this).closest("tr");
+                    console.log("pno: "+pno);
+                    console.log("tr: "+thisTR.data('pno'));
+
+                    let param = {
+                        pno:pno,
+                        thisTR:thisTR
+                    }
+                    cart.push(param);
+                    console.log("push cart: "+JSON.stringify(param));
+                }
+            })
+
+            switch (type) {
+                case 'delete':
+                    cartController().deleteAll(cart);
+                    break;
             }
         })
     })
