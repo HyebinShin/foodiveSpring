@@ -38,6 +38,7 @@
             let stock = $(this).data("stock");
             let qty = $(this).closest("div").find("input[name='qty']");
             let pno = $(this).closest("tr").data("pno");
+            let thisTR = $(this).closest("tr");
             let qtyVal = Number(qty.val());
 
             console.log("type: "+type);
@@ -47,7 +48,7 @@
 
             switch (type) {
                 case 'minus':
-                    if (cartFunction().minus(qtyVal, pno)) {
+                    if (cartFunction().minus(qtyVal, pno, thisTR)) {
                         qtyVal--;
                     }
                     break;
@@ -69,6 +70,29 @@
             cartController().modifyCart(cart);
 
             console.log("after qty: "+qty.val());
+        });
+
+        // 장바구니 삭제
+        $(document).on("click", ".deleteBtn button", function (e) {
+            e.preventDefault();
+
+            let type = $(this).data("type");
+            let thisTR = $(this).closest("tr");
+            let pno = thisTR.data("pno");
+
+            if (type==='delete') {
+                if (!confirm("장바구니에서 상품을 삭제하시겠습니까?")) {
+                    return;
+                }
+                console.log("delete one cart");
+
+                let param = {
+                    pno:pno,
+                    thisTR:thisTR
+                }
+
+                cartController().deleteCart(param);
+            }
         })
     })
 </script>

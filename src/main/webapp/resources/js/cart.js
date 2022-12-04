@@ -1,10 +1,14 @@
 const cartFunction = (function () {
 
-    function minus(qty, pno) {
+    function minus(qty, pno, thisTR) {
         if (0 > (qty - 1)) {
             if(confirm('구매 수량은 0보다 적을 수 없습니다. 장바구니에서 삭제하시겠습니까?')) {
-                cartController().deleteCart(pno);
-                location.reload();
+                let param = {
+                    pno:pno,
+                    thisTR:thisTR
+                }
+
+                cartController().deleteCart(param);
                 return;
             }
             return false;
@@ -36,9 +40,14 @@ const cartController = (function () {
         })
     }
 
-    function deleteCart(pno) {
+    function deleteCart(param) {
+        let pno = param.pno;
+        let thisTR = param.thisTR;
+
         cartService().deleteCart(pno, function (result) {
             alert(result);
+
+            thisTR.remove();
         })
     }
 
@@ -167,6 +176,11 @@ const cartInit = (function () {
         html += `</table>`;
         html += `</div>`; // div.class.table-responsive
         html += `</div>`; // div.class.panel-body
+        html += `<div class='panel-footer'>`;
+
+
+
+        html += `</div>`; //div.class.panel-footer
         html += `</div>`; // div.class.panel panel-default
         html += `</div>`; // div.class.col-lg-12
 
@@ -182,6 +196,7 @@ const cartInit = (function () {
         html += `<th>할인가</th>`;
         html += `<th>수량</th>`;
         html += `<th>총액</th>`;
+        html += `<th></th>`;
         html += `</tr></thead>`;
 
         return html;
@@ -204,6 +219,7 @@ const cartInit = (function () {
             html += `<td>${cartList[i].realPrice}</td>`;
             html += `<td>${initCartQty(cartList[i])}</td>`;
             html += `<td>${cartList[i].totalPrice}</td>`;
+            html += `<td class="deleteBtn"><button type="button" class="btn btn-default" data-type="delete"><span class="glyphicon glyphicon-remove"></span></button></td>`
 
             html += `</tr>`;
         }
@@ -227,6 +243,10 @@ const cartInit = (function () {
         html += `</div>`; //div.class.cart-stock
 
         return html;
+    }
+
+    function initCartFooter(cart) {
+
     }
 
     // 상품 목록 페이지에서 상품 수량 모달창 오픈
