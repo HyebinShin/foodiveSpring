@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foodive.mapper.ShipMapper">
+
+    <insert id="insert">
+        <selectKey keyProperty="sno" order="BEFORE" resultType="long">
+            select seq_ship.nextval from dual
+        </selectKey>
+
+        insert into tbl_ship (sno, ono, name, zipcode, address, phone, orderDate)
+        values (#{sno}, #{ono}, #{name}, #{zipcode}, #{address}, #{phone}, sysdate)
+    </insert>
+
+    <update id="update">
+        update tbl_ship
+        set
+        <trim suffixOverrides=",">
+            <if test="name!=null">
+                name = #{name},
+            </if>
+            <if test="zipcode!=null">
+                zipcode = #{zipcode},
+            </if>
+            <if test="address!=null">
+                address = #{address},
+            </if>
+            <if test="phone!=null">
+                phone = #{phone},
+            </if>
+        </trim>
+        where sno = #{sno}
+    </update>
+
+    <select id="get" resultType="com.foodive.domain.ShipVO">
+        select * from tbl_ship where ono = #{ono}
+    </select>
+</mapper>
