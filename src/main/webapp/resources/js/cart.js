@@ -174,6 +174,7 @@ const cartInit = (function () {
 
     let pageBody = $(".page-body");
     let pageFooter = $(".page-footer");
+    let sum = 0;
 
     function initCart(cartList) {
         pageBody.empty();
@@ -191,14 +192,14 @@ const cartInit = (function () {
         html += `<table class='table table-hover'>`;
 
         html += `${initCartTHead()}`;
-        html += `${initCartBody(cartList)}`;
+        html += `${initCartBody(cartList, sum)}`;
 
         html += `</table>`;
         html += `</div>`; // div.class.table-responsive
         html += `</div>`; // div.class.panel-body
         html += `<div class='panel-footer'>`;
 
-
+        html += `${initCartPanelFooter()}`;
 
         html += `</div>`; //div.class.panel-footer
         html += `</div>`; // div.class.panel panel-default
@@ -208,6 +209,17 @@ const cartInit = (function () {
 
         initCartFooter();
 
+    }
+
+    function initCartPanelFooter() {
+        console.log("sum: "+sum);
+        let html = `<div class='cart-total-page'>`;
+
+        html += `<div data-sum=${sum}>총액 : ${sum.toLocaleString(undefined, {maximumFractionDigits:0})} 원</div>`
+
+        html += `</div>`; // div.class.center-block
+
+        return html;
     }
 
     function initCartTHead() {
@@ -241,10 +253,10 @@ const cartInit = (function () {
             html += `<td><input type="checkbox" id=${cartList[i].pno} value=${cartList[i].pno}><label for=${cartList[i].pno} class="fa"></label></td>`
             html += `<td>${i+1}</td>`;
             html += `<td>${cartList[i].korName}</td>`;
-            html += `<td>${cartList[i].price}</td>`;
-            html += `<td>${cartList[i].realPrice}</td>`;
+            html += `<td class="td-price" data-price=${cartList[i].price}>${cartList[i].price.toLocaleString(undefined, {maximumFractionDigits:0})} 원</td>`;
+            html += `<td class="td-real-price" data-realprice=${cartList[i].realPrice}>${cartList[i].realPrice.toLocaleString(undefined, {maximumFractionDigits:0})} 원</td>`;
             html += `<td>${initCartQty(cartList[i])}</td>`;
-            html += `<td>${cartList[i].totalPrice}</td>`;
+            html += `<td class="td-total-price" data-total=${cartList[i].totalPrice}>${cartList[i].totalPrice.toLocaleString(undefined, {maximumFractionDigits:0})} 원</td>`;
             html += `<td class="deleteBtn"><button type="button" class="btn btn-default" data-type="delete"><span class="glyphicon glyphicon-remove"></span></button></td>`
 
             html += `</tr>`;
@@ -342,8 +354,40 @@ const cartInit = (function () {
         modalFooter.append(html);
     }
 
+    // 장바구니 페이지 변경
+    let cartTotalPage = $(".cart-total-page");
+
+    function initModifyCart(thisTR, qtyVal) {
+        let realPrice = Number(thisTR.find(".td-real-price").data("realprice"));
+        let oldTotal = Number(thisTR.find(".td-total-price").data("total"));
+        let newTotal = realPrice * qtyVal;
+        thisTR.find(".td-total-price").empty().append(`${newTotal.toLocaleString(undefined, {maximumFractionDigits:0})} 원`).data("total", newTotal);
+
+        let checkbox = thisTR.find("input:checkbox");
+        if (checkbox.is(':checked')) {
+            let cloneSum = Number(cartTotalPage.find("div").data("sum"));
+            let newSum = cloneSum - oldTotal + newTotal;
+
+            cartTotalPage.empty();
+            cartTotalPage.append(`<div data-sum=${newSum}>총액 : ${newSum.toLocaleString(undefined, {maximumFractionDigits:0})} 원</div>`);
+        }
+    }
+
+    // 장바구니 체크하면 총액 출력
+    function printCartSum(thisTR, isChecked) {
+        let cloneSum = Number(cartTotalPage.find("div").data("sum"));
+        let totalPrice = Number(thisTR.find(".td-total-price").data("total"));
+        totalPrice = isChecked ? totalPrice : -totalPrice;
+        let newSum = cloneSum + totalPrice;
+
+        cartTotalPage.empty();
+        cartTotalPage.append(`<div data-sum=${newSum}>총액 : ${newSum.toLocaleString(undefined, {maximumFractionDigits:0})} 원</div>`);
+    }
+
     return {
         initCart: initCart,
-        initCartModal:initCartModal
+        initCartModal:initCartModal,
+        initModifyCart:initModifyCart,
+        printCartSum:printCartSum
     }
 })

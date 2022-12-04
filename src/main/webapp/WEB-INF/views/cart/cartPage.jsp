@@ -68,6 +68,7 @@
             }
 
             cartController().modifyCart(cart);
+            cartInit().initModifyCart(thisTR, qtyVal);
 
             console.log("after qty: "+qty.val());
         });
@@ -96,6 +97,17 @@
         })
 
         // 장바구니 체크박스
+        $(document).on("change", "input:checkbox", function (e) {
+            let thisTR = $(this).closest("tr");
+            let isChecked = false;
+            if ($(this).is(':checked')) {
+                isChecked = true;
+                cartInit().printCartSum(thisTR, isChecked);
+            } else {
+                cartInit().printCartSum(thisTR, isChecked);
+            }
+        })
+
         $(document).on("click", ".cart-page-btn button", function (e) {
             e.preventDefault();
 
