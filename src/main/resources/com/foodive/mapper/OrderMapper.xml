@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foodive.mapper.OrderMapper">
+
+    <sql id="datePage">
+        <if test="datePage.dateNumber!=null">
+            and (orderDate between (sysdate - #{datePage.dateNumber}) and sysdate)
+        </if>
+        <if test="datePage.state!=null">
+            and state = #{datePage.state}
+        </if>
+    </sql>
+
+    <sql id="criteria">
+        (
+        select /*+ index_desc (tbl_order pk_order) */ rownum rn, tbl_order.*
+        from tbl_order
+        <where>
+            <include refid="datePage"></include>
+            <![CDATA[
+            and rownum<= #{cri.pageNum} * #{cri.amount}
+           ]]>
+        </where>
+        <![CDATA[
+        ) where rn > (#{cri.pageNum} - 1) * #{cri.amount}
+        ]]>
+    </sql>
+
+    <insert id="insert">
+        <selectKey keyProperty="ono" order="BEFORE" resultType="long">
+            select seq_order.nextval from dual
+        </selectKey>
+
+        insert into tbl_order (ono, id, totalPrice, orderDate)
+        values (#{ono}, #{id}, #{totalPrice}, sysdate)
+    </insert>
+
+    <update id="update">
+        update tbl_order
+        set state = #{state}
+        where ono = #{ono}
+    </update>
+
+    <select id="getList" resultType="com.foodive.domain.OrderVO">
+        select *
+        from
+        <include refid="criteria"></include>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(ono)
+        from tbl_order
+        <where>
+            <include refid="datePage"></include>
+        </where>
+    </select>
+
+    <select id="get" resultType="com.foodive.domain.OrderVO">
+        select /*+ index_desc (tbl_order pk_order */ *
+        from tbl_order
+        where ono = #{ono}
+    </select>
+
+</mapper>
