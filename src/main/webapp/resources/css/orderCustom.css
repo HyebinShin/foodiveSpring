@@ -8,3 +8,23 @@
 .address-form div { border: 1px solid gray; border-radius: 5px; width: calc(100%/2 - 5px); display: inline-block; text-align: center; }
 .address-form span { display: block; margin: 0 auto; width: 100px;}
 .order-btn, .address-form span { margin: 0 auto; }
+
+.order-line-ship > .well {
+    display: none;
+    border: 0;
+    background-color: #942a25;
+}
+
+.order-line-ship > .well > div {
+    display:flex;
+    align-content: center;
+}
+
+.order-line-ship > .well i {
+    color: white;
+    font-size: 20px;
+}
+.validate-well {
+    color:white;
+    margin-left: 5px;
+}

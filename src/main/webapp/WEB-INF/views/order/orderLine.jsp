@@ -16,13 +16,19 @@
             <div class="panel panel-info">
                 <div class="panel-heading">배송지 정보 입력</div>
                 <div class="panel-body order-line-ship">
+                    <div class="well">
+                        <div>
+                            <i class="fa fa-info-circle"> </i>
+                            <div class="validate-well">경고메시지</div>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label>수신인</label>
-                        <input class="form-control" name="name" type="text" required>
+                        <input class="form-control" name="name" type="text" required="required">
                     </div>
                     <div class="form-group">
                         <label>연락처</label>
-                        <input class="form-control" name="phone" type="tel" required>
+                        <input class="form-control" name="phone" type="tel" required="required">
                     </div>
                     <div class="form-group">
                         <label>배송지</label>
@@ -30,7 +36,7 @@
                             <input class="form-control" name="zipcode" id="zipcode" maxlength="7" readonly>
                             <div class="form-control" id="search_zipcode"><span>우편번호 검색</span></div>
                             <input class="form-control address" name="address1" id="address1" maxlength="70" readonly>
-                            <input class="form-control address" name="address2" id="address2" maxlength="70" required>
+                            <input class="form-control address" name="address2" id="address2" maxlength="70" required="required">
                         </div>
                     </div>
                 </div> <!-- div.class.panel-body order-line-ship -->
@@ -78,8 +84,8 @@
                 </div>
             </div> <!-- 결제 방법 끝 -->
             <div class="order-btn">
-                <button id="orderDoBtn" type="button" class="btn btn-success">주문하기</button>
-                <button id="goCartPage" type="button" class="btn btn-default">취소</button>
+                <button data-type="orderDo" type="submit" class="btn btn-success">주문하기</button>
+                <button data-type="goCartPage" type="button" class="btn btn-default">주문 취소</button>
             </div>
         </form>
     </div>
@@ -98,5 +104,44 @@
 <script type="text/javascript">
     $(document).ready(function () {
         console.log(`<c:out value="${detailList}"/>`);
+
+        $(".order-line-ship").on("change", "input", function () {
+            let name = $(this).attr("name");
+            let input = $(this).val();
+            console.log("name: "+name); // name, phone, address2
+            console.log("input: "+input);
+
+            orderValidate.checkChange(name, input)
+        })
+
+        $(".order-btn").on("click", "button", function (e) {
+            e.preventDefault();
+
+            let type = $(this).data("type");
+            console.log("type: "+type);
+
+            if (type==='goCartPage') {
+                location.href="/cart/cartPage";
+                return;
+            }
+
+
+            $(".order-line-ship input").each(function () {
+                let input = $(this).val();
+                let name = $(this).attr("name");
+
+                console.log("input: "+input+", name: "+name);
+
+                if (!orderValidate.checkNull(name, input)) {
+                    return false;
+                }
+
+                if (!orderValidate.checkChange(name, input)) {
+                    return false;
+                }
+            })
+
+            console.log("주문하기");
+        })
     })
 </script>
