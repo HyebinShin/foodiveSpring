@@ -1,10 +1,8 @@
 package com.foodive.controller;
 
-import com.foodive.domain.LoginInfo;
-import com.foodive.domain.OrderDetailListDTO;
-import com.foodive.domain.OrderDetailVO;
-import com.foodive.domain.OrderLineDTO;
+import com.foodive.domain.*;
 import com.foodive.persistence.OrderMsg;
+import com.foodive.service.CartService;
 import com.foodive.service.OrderService;
 import com.foodive.service.PayService;
 import com.foodive.service.ShipService;
@@ -29,6 +27,8 @@ public class OrderController {
     private OrderService orderService;
     private ShipService shipService;
     private PayService payService;
+
+    private CartService cartService;
 
     @GetMapping("/orderLine")
     public void goOrderLine() {
@@ -63,6 +63,7 @@ public class OrderController {
         }
 
         if (orderService.order(orderLine)) {
+            deleteCartOrderItem(orderLine.getDetailList(), loginInfo);
             return new ResponseEntity<>(OrderMsg.ADD, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -70,5 +71,20 @@ public class OrderController {
 
     private boolean isSameId(LoginInfo loginInfo, String id) {
         return loginInfo.getId().equals(id);
+    }
+
+    private void deleteCartOrderItem(List<OrderDetailVO> detailList, LoginInfo loginInfo) {
+        List<CartDTO> list = loginInfo.getCartList();
+        String id = loginInfo.getId();
+
+        detailList.forEach(detail -> {
+            if (cartService.deleteCart(id, detail.getPno())) {
+                CartDTO removeCart = new CartDTO();
+                removeCart.setPno(detail.getPno());
+                removeCart.setId(id);
+
+                list.removeIf(cart -> cart.equals(removeCart));
+            }
+        });
     }
 }

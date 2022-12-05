@@ -29,6 +29,9 @@ public class OrderServiceImpl implements OrderService {
     @Setter(onMethod_ = @Autowired)
     private ProductMapper productMapper;
 
+    @Setter(onMethod_ = @Autowired)
+    private CartMapper cartMapper;
+
     @Transactional
     @Override
     public boolean order(OrderLineDTO orderLineDTO) {
@@ -38,20 +41,27 @@ public class OrderServiceImpl implements OrderService {
 
         OrderVO orderVO = orderLineDTO.getOrder();
         orderMapper.insert(orderVO);
+        log.info("order mapper insert end");
+        Long ono = orderVO.getOno();
 
-        orderLineDTO.getDetailList().forEach(detail -> {
-            detail.setOno(orderVO.getOno());
-            detailMapper.insert(detail);
+        String id = orderVO.getId();
+
+        List<OrderDetailVO> detailList = orderLineDTO.getDetailList();
+        detailList.forEach(detail -> {
+            detail.setOno(ono);
             CartDTO cart = new CartDTO(detail.getPno(), detail.getQty(), detail.getStock());
+
+            detailMapper.insert(detail);
             productMapper.afterOrder(cart);
+            cartMapper.delete(id, detail.getPno());
         });
 
         ShipVO shipVO = orderLineDTO.getShip();
-        shipVO.setOno(orderVO.getOno());
+        shipVO.setOno(ono);
         shipMapper.insert(shipVO);
 
         PayVO payVO = orderLineDTO.getPay();
-        payVO.setOno(orderVO.getOno());
+        payVO.setOno(ono);
         payMapper.insert(payVO);
 
         return true;

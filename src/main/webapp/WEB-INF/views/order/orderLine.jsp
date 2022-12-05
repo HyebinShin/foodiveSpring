@@ -56,7 +56,7 @@
                         <tbody>
                         <c:forEach var="detail" items="${detailList.getDetailList()}">
                         <tr data-pno="${detail.pno}" data-kor="${detail.korName}" data-qty="${detail.qty}"
-                            data-total="${detail.totalPrice}" data-real="${detail.realPrice}">
+                            data-total="${detail.totalPrice}" data-real="${detail.realPrice}" data-stock="${detail.stock}">
                             <td>${detail.korName}</td>
                             <td><fmt:formatNumber value="${detail.realPrice}" type="currency" var="realPrice"/><c:out value="${realPrice}"/></td>
                             <td>${detail.qty}</td>
@@ -103,7 +103,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        console.log(`<c:out value="${detailList}"/>`);
+        let id = `<c:out value="${loginInfo.id}"/>`;
 
         $(".order-line-ship").on("change", "input", function () {
             let name = $(this).attr("name");
@@ -136,12 +136,63 @@
                     return false;
                 }
 
-                if (!orderValidate.checkChange(name, input)) {
-                    return false;
+                switch (name) {
+                    case 'name': case 'phone': case 'address2':
+                        if (!orderValidate.checkChange(name, input)) {
+                            return false;
+                        }
+                        break;
                 }
+
             })
 
             console.log("주문하기");
+
+            let detailList = [];
+
+            $(".order-line-detailList tbody tr").each(function () {
+                detailList.push({
+                    pno:$(this).data("pno"),
+                    korName:$(this).data("kor"),
+                    qty:$(this).data("qty"),
+                    totalPrice:$(this).data("total"),
+                    realPrice:$(this).data("real"),
+                    stock:$(this).data("stock")
+                })
+            })
+
+
+            let address = $("input[name='address1']").val() + ", " + $("input[name='address2']").val();
+
+            let order = {
+                id:id,
+                totalPrice:`<c:out value="${detailList.sumPrice}"/>`
+            };
+            let ship = {
+                name:$("input[name='name']").val(),
+                zipcode:$("input[name='zipcode']").val(),
+                address:address,
+                phone:$("input[name='phone']").val()
+            };
+            let pay = {
+                payment:$("#paymentSelect option:selected").val()
+            };
+
+            console.log("order: "+JSON.stringify(order));
+            console.log("detailList: "+JSON.stringify(detailList));
+            console.log("ship: "+JSON.stringify(ship));
+            console.log("pay: "+JSON.stringify(pay));
+
+            let orderLine = {
+                order:order,
+                detailList:detailList,
+                ship:ship,
+                pay:pay
+            }
+
+            console.log("orderLine: "+JSON.stringify(orderLine));
+
+            orderController.addOrder(orderLine);
         })
     })
 </script>

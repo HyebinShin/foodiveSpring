@@ -10,9 +10,18 @@ let orderController = (function () {
         });
     }
 
+    function addOrder(orderLine) {
+        orderService.addOrder(orderLine, function (result) {
+            alert(result);
+
+            location.href = "/main"; // [수정 예정] 주문 결과창으로 이동
+        })
+    }
+
     return {
         testExist:testExist,
-        setOrderDetail:setOrderDetail
+        setOrderDetail:setOrderDetail,
+        addOrder:addOrder
     };
 })();
 
@@ -37,8 +46,28 @@ let orderService = (function () {
         })
     }
 
+    function addOrder(orderLine, callback, error) {
+        $.ajax({
+            type:'post',
+            url: '/order/new',
+            data: JSON.stringify(orderLine),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result, status, xhr) {
+                if (callback) {
+                    callback(result);
+                }
+            },
+            error: function (xhr, status, er) {
+                if (error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
     return {
-        setOrderDetail:setOrderDetail
+        setOrderDetail:setOrderDetail,
+        addOrder:addOrder
     }
 
 })();
