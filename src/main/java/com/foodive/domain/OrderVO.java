@@ -1,7 +1,9 @@
 package com.foodive.domain;
 
-import lombok.*;
-import lombok.experimental.NonFinal;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
 

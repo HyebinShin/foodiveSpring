@@ -30,8 +30,8 @@ public class OrderController {
 
     private CartService cartService;
 
-    @GetMapping("/orderLine")
-    public void goOrderLine() {
+    @GetMapping({"/orderLine", "/orderHistory"})
+    public void goOrderPage() {
         // 주문서 페이지로 이동
     }
 
@@ -87,4 +87,42 @@ public class OrderController {
             }
         });
     }
+
+    @GetMapping(
+            value = "/history/{date}/{page}",
+            produces = "application/json; charset=utf-8"
+    )
+    @ResponseBody
+    public ResponseEntity<OrderPageDTO> getOrderHistory(
+            @PathVariable("page") Integer page,
+            @PathVariable("date") Integer date,
+            HttpSession session
+    ) {
+        LoginInfo loginInfo = (LoginInfo) session.getAttribute("loginInfo");
+        DatePageDTO datePageDTO = new DatePageDTO(date*page, null, loginInfo.getId());
+
+        return new ResponseEntity<>(orderService.getList(new Criteria(), datePageDTO), HttpStatus.OK);
+    }
+
+
+    @GetMapping(
+            value = "/history/{type}/{ono}",
+            produces = "application/json; charset=utf-8"
+    )
+    @ResponseBody
+    public ResponseEntity<?> getOrderHistoryShip(
+            @PathVariable("type") String type,
+            @PathVariable("ono") Long ono
+    ) {
+        switch (type) {
+            case "detailList":
+                return new ResponseEntity<>(orderService.get(ono), HttpStatus.OK);
+            case "ship":
+                return new ResponseEntity<>(shipService.get(ono), HttpStatus.OK);
+            case "pay":
+                return new ResponseEntity<>(payService.get(ono), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
 }
