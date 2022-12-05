@@ -92,21 +92,33 @@
                             <li>
                                 <a href="/user/register">회원가입</a>
                             </li>
+                </ul>
+            </li>
                         </c:when>
                         <c:when test="${!empty state && state ne '0'}">
-                            <li>
-                                <a href="/cart/cartPage"><i class="fa fa-shopping-cart cart-size"></i><span></span> 장바구니</a>
-                            </li>
                             <li>
                                 <a href="/user/myPage">마이페이지</a>
                             </li>
                             <li>
                                 <a href="/user/logout">로그아웃</a>
                             </li>
-                        </c:when>
-                    </c:choose>
                 </ul>
             </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-shopping-cart fa-fw cart-size"></i><span></span> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li>
+                        <a href="/cart/cartPage"> 장바구니</a>
+                    </li>
+                    <li>
+                        <a href="/order/orderHistory"> 주문 내역</a>
+                    </li>
+                </ul>
+            </li>
+                        </c:when>
+                    </c:choose>
             <c:if test="${state eq '2'}">
                 <li>
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
