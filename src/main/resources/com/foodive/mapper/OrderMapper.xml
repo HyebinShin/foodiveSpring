@@ -33,8 +33,8 @@
             select seq_order.nextval from dual
         </selectKey>
 
-        insert into tbl_order (ono, id, totalPrice, orderDate)
-        values (#{ono}, #{id}, #{totalPrice}, sysdate)
+        insert into tbl_order (ono, id, state, totalPrice, orderDate)
+        values (#{ono}, #{id}, 0, #{totalPrice}, sysdate)
     </insert>
 
     <update id="update">
