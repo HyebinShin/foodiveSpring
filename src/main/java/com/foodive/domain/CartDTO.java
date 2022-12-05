@@ -28,14 +28,6 @@ public class CartDTO {
     private Integer realPrice;
     private Integer totalPrice;
 
-    public Integer getRealPrice() {
-        return getPrice() * (100-getDiscount())/100;
-    }
-
-    public Integer getTotalPrice() {
-        return getRealPrice() * getQty();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
