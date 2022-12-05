@@ -19,6 +19,7 @@
 <%@include file="../includes/footer.jsp" %>
 
 <script src="/resources/js/cart.js"></script>
+<script src="/resources/js/order.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -122,6 +123,7 @@
             }
 
             let cart = [];
+            let detailList = [];
 
             $(".cart-page input[type='checkbox']").each(function () {
                 if ($(this).is(':checked')) {
@@ -130,18 +132,27 @@
                     console.log("pno: "+pno);
                     console.log("tr: "+thisTR.data('pno'));
 
+                    let korName = thisTR.data("kor");
+                    let qty = thisTR.find("input[name='qty']").val();
+                    let totalPrice = thisTR.find(".td-total-price").data("total");
+                    let realPrice = thisTR.find(".td-real-price").data("realprice");
+                    let stock = thisTR.find(".cart-stock .input-group-btn button").data("stock");
+
                     let param = {
                         pno:pno,
                         thisTR:thisTR
                     }
                     cart.push(param);
-                    console.log("push cart: "+JSON.stringify(param));
+                    detailList.push({pno:pno, korName:korName, qty:qty, totalPrice:totalPrice, realPrice:realPrice, stock:stock});
                 }
             })
 
             switch (type) {
                 case 'delete':
                     cartController().deleteAll(cart);
+                    break;
+                case 'order':
+                    orderController().setOrderDetail(detailList);
                     break;
             }
         })

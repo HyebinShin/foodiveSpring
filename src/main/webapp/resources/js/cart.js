@@ -248,7 +248,7 @@ const cartInit = (function () {
         for (let i=0, len=cartList.length||0; i<len; i++) {
             console.log("cart list pno: "+cartList[i].pno);
 
-            html += `<tr data-cno=${cartList[i].cno} data-pno=${cartList[i].pno}>`;
+            html += `<tr data-cno=${cartList[i].cno} data-pno=${cartList[i].pno} data-kor=${cartList[i].korName}>`;
 
             html += `<td><input type="checkbox" id=${cartList[i].pno} value=${cartList[i].pno}><label for=${cartList[i].pno} class="fa"></label></td>`
             html += `<td>${i+1}</td>`;
