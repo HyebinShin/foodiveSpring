@@ -40,7 +40,8 @@ public class OrderServiceTests {
         List<OrderDetailVO> detailList = new ArrayList<>();
 
         LongStream.rangeClosed(40L, 45L).forEach(l -> {
-            OrderDetailVO orderDetailVO = new OrderDetailVO(l, "주문서비스테스트상품", qty,totalPrice);
+            OrderDetailVO orderDetailVO = new OrderDetailVO(l, "상품테스트"+l, qty,totalPrice);
+            orderDetailVO.setStock(20);
             detailList.add(orderDetailVO);
         });
 

@@ -1,5 +1,6 @@
 package com.foodive.mapper;
 
+import com.foodive.domain.CartDTO;
 import com.foodive.domain.Criteria;
 import com.foodive.domain.DuplicateInfo;
 import com.foodive.domain.ProductVO;
@@ -135,6 +136,16 @@ public class ProductMapperTests {
         updateProduct.setNation("한국");
 
         log.info("update: "+mapper.update(updateProduct));
+    }
+
+    @Test
+    public void testAfterOrder() {
+        CartDTO cart = new CartDTO();
+        cart.setPno(20L);
+        cart.setStock(20);
+        cart.setQty(20);
+
+        mapper.afterOrder(cart);
     }
 
 }
