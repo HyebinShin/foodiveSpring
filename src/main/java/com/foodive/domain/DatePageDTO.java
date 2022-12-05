@@ -8,4 +8,6 @@ import lombok.*;
 public class DatePageDTO {
     private Integer dateNumber;
     private Integer state;
+
+    private String id;
 }

@@ -5,6 +5,9 @@
 <mapper namespace="com.foodive.mapper.OrderMapper">
 
     <sql id="datePage">
+        <if test="datePage.id!=null">
+            and id = #{datePage.id}
+        </if>
         <if test="datePage.dateNumber!=null">
             and (orderDate between (sysdate - #{datePage.dateNumber}) and sysdate)
         </if>
@@ -19,13 +22,18 @@
         from tbl_order
         <where>
             <include refid="datePage"></include>
+            <if test="cri.pageNum!=null">
             <![CDATA[
             and rownum<= #{cri.pageNum} * #{cri.amount}
            ]]>
+            </if>
         </where>
+        )
+        <if test="cri.pageNum!=null">
         <![CDATA[
-        ) where rn > (#{cri.pageNum} - 1) * #{cri.amount}
+        where rn > (#{cri.pageNum} - 1) * #{cri.amount}
         ]]>
+        </if>
     </sql>
 
     <insert id="insert">

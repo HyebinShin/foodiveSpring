@@ -53,14 +53,14 @@ public class OrderMapperTests {
     @Test
     public void testGetList() {
         Criteria criteria = new Criteria(1, 10);
-        DatePageDTO datePageDTO = new DatePageDTO(1, 0);
+        DatePageDTO datePageDTO = new DatePageDTO(1, 0, null);
 
         mapper.getList(criteria, datePageDTO);
     }
 
     @Test
     public void testCount() {
-        DatePageDTO datePageDTO = new DatePageDTO(1, 0);
+        DatePageDTO datePageDTO = new DatePageDTO(1, 0, null);
 
         mapper.count(datePageDTO);
     }
