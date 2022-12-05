@@ -139,8 +139,7 @@ const init = (function () {
 
         html += `<div class='product-btn' data-kor=${product.korName} data-stock=${product.stock} data-price=${product.price} data-discount=${product.discount}>`;
         html += `<button type='button' id="getDetail" class="btn btn-default" data-pno=${product.pno} data-name=${product.name}>상세보기</button>`;
-        html += `<button type='button' id="getCart" class='btn btn-default' data-pno=${product.pno}>장바구니</button>`;
-        html += `<button type='button' id="getOrder" class='btn btn-primary' data-pno=${product.pno}>바로주문</button>`;
+        html += `<button type='button' id="getCart" class='btn btn-primary' data-pno=${product.pno}>장바구니/바로주문</button>`;
         html += `</div>`;
 
         return html;

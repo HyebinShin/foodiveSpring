@@ -152,7 +152,8 @@
                     cartController().deleteAll(cart);
                     break;
                 case 'order':
-                    orderController().setOrderDetail(detailList);
+                    let orderDetailListDTO = {detailList:detailList, sumPrice:$(".cart-total-page > div").data("sum")};
+                    orderController().setOrderDetail(orderDetailListDTO);
                     break;
             }
         })

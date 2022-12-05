@@ -182,8 +182,9 @@
                     detailList.push({
                         pno:pno, korName:korName, qty:qty, totalPrice:totalPrice, realPrice:price, stock:stock
                     })
+                    let orderDetailListDTO = {detailList:detailList, sumPrice:totalPrice};
 
-                    orderController().setOrderDetail(detailList);
+                    orderController().setOrderDetail(orderDetailListDTO);
                     break;
             }
         })

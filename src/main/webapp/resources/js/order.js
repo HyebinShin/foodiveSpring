@@ -1,6 +1,6 @@
 const orderController = (function () {
-    function setOrderDetail(detailList) {
-        orderService().setOrderDetail(detailList, function (result) {
+    function setOrderDetail(orderDetailListDTO) {
+        orderService().setOrderDetail(orderDetailListDTO, function (result) {
             location.href=result;
         })
     }
@@ -12,11 +12,11 @@ const orderController = (function () {
 
 const orderService = (function () {
 
-    function setOrderDetail(detailList, callback, error) {
+    function setOrderDetail(orderDetailListDTO, callback, error) {
         $.ajax({
             type:'post',
             url: '/order/setOrderDetail',
-            data: JSON.stringify(detailList),
+            data: JSON.stringify(orderDetailListDTO),
             contentType: 'application/json; charset=utf-8',
             success: function (result, status, xhr) {
                 if(callback) {

@@ -1,6 +1,7 @@
 package com.foodive.controller;
 
 import com.foodive.domain.LoginInfo;
+import com.foodive.domain.OrderDetailListDTO;
 import com.foodive.domain.OrderDetailVO;
 import com.foodive.domain.OrderLineDTO;
 import com.foodive.persistence.OrderMsg;
@@ -39,8 +40,8 @@ public class OrderController {
             consumes = "application/json; charset=utf-8"
     )
     @ResponseBody
-    public ResponseEntity<String> setOrderDetail(@RequestBody List<OrderDetailVO> detailList, HttpSession session) {
-        session.setAttribute("detailList", detailList);
+    public ResponseEntity<String> setOrderDetail(@RequestBody OrderDetailListDTO orderDetailListDTO, HttpSession session) {
+        session.setAttribute("detailList", orderDetailListDTO);
 
         return new ResponseEntity<>("/order/orderLine", HttpStatus.OK);
     }
