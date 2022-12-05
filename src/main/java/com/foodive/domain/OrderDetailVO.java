@@ -20,4 +20,7 @@ public class OrderDetailVO {
     private Integer totalPrice;
 
     private Date orderDate;
+
+    private Integer realPrice;
+    private Integer stock;
 }

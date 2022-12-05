@@ -1,10 +1,7 @@
 package com.foodive.service;
 
 import com.foodive.domain.*;
-import com.foodive.mapper.OrderDetailMapper;
-import com.foodive.mapper.OrderMapper;
-import com.foodive.mapper.PayMapper;
-import com.foodive.mapper.ShipMapper;
+import com.foodive.mapper.*;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +26,9 @@ public class OrderServiceImpl implements OrderService {
     @Setter(onMethod_ = @Autowired)
     private PayMapper payMapper;
 
+    @Setter(onMethod_ = @Autowired)
+    private ProductMapper productMapper;
+
     @Transactional
     @Override
     public boolean order(OrderLineDTO orderLineDTO) {
@@ -42,6 +42,8 @@ public class OrderServiceImpl implements OrderService {
         orderLineDTO.getDetailList().forEach(detail -> {
             detail.setOno(orderVO.getOno());
             detailMapper.insert(detail);
+            CartDTO cart = new CartDTO(detail.getPno(), detail.getQty(), detail.getStock());
+            productMapper.afterOrder(cart);
         });
 
         ShipVO shipVO = orderLineDTO.getShip();

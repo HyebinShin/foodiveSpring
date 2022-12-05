@@ -29,7 +29,7 @@ public interface ProductMapper {
     public ProductVO get(@Param("product") ProductVO product);
 
     /**
-     * @param cri 페이징 정보
+     * @param cri     페이징 정보
      * @param product 찾고 싶은 상품의 정보
      * @return 상품 객체 리스트
      */
@@ -58,8 +58,17 @@ public interface ProductMapper {
 
     /**
      * 새로운 상품을 장바구니에 담을 때 해당 상품의 정보를 얻어 장바구니 객체에 담는다
+     *
      * @param pno 검색하고 싶은 상품 번호
      * @return 장바구니 객체 (유저 아이디와 수량, 총액은 빠져 있음)
      */
     public CartDTO getCartInfo(Long pno);
+
+    /**
+     * 주문 완료 후 상품의 재고를 주문 수량만큼 뺀다.
+     * 만약 상품의 재고가 0이 되면 판매 상태를 품절(state=2)로 변경한다.
+     *
+     * @param cart 주문 상품 데이터(pno, stock, qty)
+     */
+    public void afterOrder(CartDTO cart);
 }

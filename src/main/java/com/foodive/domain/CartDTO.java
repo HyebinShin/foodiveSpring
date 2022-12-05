@@ -1,21 +1,27 @@
 package com.foodive.domain;
 
-import lombok.Data;
+import lombok.*;
 
 import java.util.Objects;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class CartDTO {
     // cart table
     private Long cno;
     private String id;
+    @NonNull
     private Long pno;
+    @NonNull
     private Integer qty;
 
     // product table
     private String korName;
     private Integer price;
     private Integer discount;
+    @NonNull
     private Integer stock;
 
     // calculate

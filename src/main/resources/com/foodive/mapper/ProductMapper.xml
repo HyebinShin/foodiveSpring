@@ -139,9 +139,24 @@
     </update>
 
     <select id="getCartInfo" resultType="com.foodive.domain.CartDTO">
-        select pno, stock, korName, price, discount,
-               (price * (100-discount)/100) as realPrice
+        select pno,
+               stock,
+               korName,
+               price,
+               discount,
+               (price * (100 - discount) / 100) as realPrice
         from tbl_product
         where pno = #{pno}
     </select>
+
+
+    <update id="afterOrder">
+        update tbl_product
+        set
+        stock = (#{stock} - #{qty})
+        <if test="stock - qty == 0">
+            , state = 2
+        </if>
+        where pno = #{pno}
+    </update>
 </mapper>
