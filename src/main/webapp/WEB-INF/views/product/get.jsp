@@ -140,7 +140,7 @@
                     })
                     let orderDetailListDTO = {detailList:detailList, sumPrice:totalPrice};
 
-                    orderController().setOrderDetail(orderDetailListDTO);
+                    orderController.setOrderDetail(orderDetailListDTO);
                     break;
             }
 

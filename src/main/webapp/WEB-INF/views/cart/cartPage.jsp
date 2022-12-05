@@ -18,11 +18,13 @@
 
 <%@include file="../includes/footer.jsp" %>
 
-<script src="/resources/js/cart.js"></script>
-<script src="/resources/js/order.js"></script>
+<script type="text/javascript" src="/resources/js/cart.js"></script>
+<script type="text/javascript" src="/resources/js/order.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function () {
+        orderController.testExist();
+
         let id = `<c:out value="${loginInfo.id}"/>`;
         let cartList = `<c:out value="${loginInfo.getCartList()}"/>`;
 
@@ -153,7 +155,7 @@
                     break;
                 case 'order':
                     let orderDetailListDTO = {detailList:detailList, sumPrice:$(".cart-total-page > div").data("sum")};
-                    orderController().setOrderDetail(orderDetailListDTO);
+                    orderController.setOrderDetail(orderDetailListDTO);
                     break;
             }
         })
