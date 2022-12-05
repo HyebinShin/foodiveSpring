@@ -240,7 +240,11 @@ const init = (function () {
     function initProductBtn(product) {
         let html = "";
 
-        html += `<div class='product-btn'>`;
+        let price = product.price;
+        let discount = product.discount;
+        let realPrice = discount!=0 ? price * (100-discount)/100 : price;
+
+        html += `<div class='product-btn' data-kor=${product.korName} data-price=${realPrice} data-stock=${product.stock}>`;
         html += `<button type='button' class='btn btn-default' data-type="cart" data-pno=${product.pno}>장바구니</button>`;
         html += `<button type='button' class='btn btn-primary' data-type="order" data-pno=${product.pno}>주문하기</button>`;
         html += `</div>`;

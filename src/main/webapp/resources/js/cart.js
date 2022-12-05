@@ -346,7 +346,11 @@ const cartInit = (function () {
     function initCartModalFooter(product) {
         modalFooter.empty();
 
-        let html = `<div class='modal-product-btn'>`;
+        let price = product.price;
+        let discount = product.discount;
+        let realPrice = discount!=0 ? price * (100-discount)/100 : price;
+
+        let html = `<div class='modal-product-btn' data-kor=${product.korName} data-price=${realPrice} data-stock=${product.stock}>`;
         html += `<button type='button' class='btn btn-default' data-type="cart" data-pno=${product.pno}>장바구니</button>`;
         html += `<button type='button' class='btn btn-primary' data-type="order" data-pno=${product.pno}>주문하기</button>`;
         html += `</div>`;

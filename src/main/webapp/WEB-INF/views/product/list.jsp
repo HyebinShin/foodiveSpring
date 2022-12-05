@@ -40,6 +40,7 @@
 <script src="/resources/js/productService.js"></script>
 <script src="/resources/js/product.js"></script>
 <script src="/resources/js/cart.js"></script>
+<script src="/resources/js/order.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         let category = `<c:out value="${category}"/>`;
@@ -146,6 +147,8 @@
             let pno = $(this).data("pno");
             let qty = $("input[name='qty']").val();
 
+            let closestDiv = $(this).closest("div");
+
             if(qty==0) {
                 alert('수량을 선택해주세요');
                 return;
@@ -164,6 +167,23 @@
                     }
                     cartController().addCart(cart);
                     modal.modal("hide");
+                    break;
+                case 'order':
+                    if (!confirm('주문 하시겠습니까?')) {
+                        return;
+                    }
+                    let detailList=[];
+
+                    let korName = closestDiv.data("kor");
+                    let price = Number(closestDiv.data("price"));
+                    let totalPrice = Number(qty) * price;
+                    let stock = closestDiv.data("stock");
+
+                    detailList.push({
+                        pno:pno, korName:korName, qty:qty, totalPrice:totalPrice, realPrice:price, stock:stock
+                    })
+
+                    orderController().setOrderDetail(detailList);
                     break;
             }
         })
