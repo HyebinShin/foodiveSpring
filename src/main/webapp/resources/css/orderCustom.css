@@ -39,5 +39,5 @@
 }
 
 .order-history .pay div, .order-history .ship div {
-    padding: 10px;
+    padding-left: 10px;
 }

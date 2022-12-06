@@ -49,6 +49,7 @@ let orderController = (function () {
                     orderInit.initOrderHistoryGet(space, data.order, data.detailList)
                     break;
                 case 'ship': // name, zipcode, address, phone
+                    orderInit.initOrderHistoryShip(space, data);
                     break;
                 case 'pay': // payment
                     orderInit.initOrderHistoryPay(space, data);
@@ -271,13 +272,31 @@ let orderInit = (function () {
     function initOrderHistoryPay(space, pay) {
         space.empty();
 
-        let html = `<div class='form-group'>`;
-        html += `<label>결제방법</label>`;
-        html += `<p>${pay.payment}</p>`;
-        html += `</div>`// div.class.form-group
+        let html = initFormGroup("결제 방법", pay.payment)
 
         space.append(html);
         space.closest("tr").show();
+    }
+
+    function initOrderHistoryShip(space, ship) {
+        space.empty();
+
+        let html = initFormGroup("배송 수신자 성함", ship.name);
+        html += initFormGroup("배송지 우편번호", ship.zipcode);
+        html += initFormGroup("배송지 주소", ship.address);
+        html += initFormGroup("배송 수신자 연락처", ship.phone);
+
+        space.append(html);
+        space.closest("tr").show();
+    }
+
+    function initFormGroup(label, data) {
+        let html = `<div class='form-group'>`;
+        html += `<label>${label}</label>`;
+        html += `<p>${data}</p>`;
+        html += `</div>`;
+
+        return html;
     }
 
     return {
@@ -285,7 +304,8 @@ let orderInit = (function () {
         initOrderHistory: initOrderHistory,
         initOrderHistoryBtn: initOrderHistoryBtn,
         initOrderHistoryGet:initOrderHistoryGet,
-        initOrderHistoryPay:initOrderHistoryPay
+        initOrderHistoryPay:initOrderHistoryPay,
+        initOrderHistoryShip:initOrderHistoryShip
     }
 
 })();
