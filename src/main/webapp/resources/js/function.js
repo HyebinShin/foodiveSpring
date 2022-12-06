@@ -109,6 +109,12 @@ let fnc = (function () {
         div.find(`select[name='${selectName}']`).val(val).prop("selected", true);
     }
 
+    // OrderVO 생성자 @required ono, state
+    function OrderVO(ono, state) {
+        this.ono = ono;
+        this.state = state;
+    }
+
     return {
         displayTime:displayTime,
         initPagination:initPagination,
@@ -121,6 +127,7 @@ let fnc = (function () {
         hideAndShowBtn:hideAndShowBtn,
         resetInputVal:resetInputVal,
         resetSelectVal:resetSelectVal,
-        hideAndShowThisBtn:hideAndShowThisBtn
+        hideAndShowThisBtn:hideAndShowThisBtn,
+        OrderVO:OrderVO
     }
 })();

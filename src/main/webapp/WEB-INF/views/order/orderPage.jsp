@@ -256,8 +256,19 @@
                                 fnc.returnSelectVal(closestDiv, 'payment'),
                                 fnc.returnSelectVal(closestDiv, 'payState')
                             );
+                            let orderVO;
+                            let thisOrder = $(this).parents(".hidden-tr").prev(".order-list-tr");
+                            let ono = thisOrder.data("ono");
+                            let stateSelect = thisOrder.find("select");
+                            if (clonePayObj.state==0&&payVO.state==1) {
+                                stateSelect.val(1).prop("selected", true);
+                                orderVO = new fnc.OrderVO(ono, stateSelect.val());
+                            } else if (payVO.state==2) {
+                                stateSelect.val(4).prop("selected", true);
+                                orderVO = new fnc.OrderVO(ono, stateSelect.val());
+                            }
                             payVO.payNo = $(this).data("payno");
-                            orderController.modifyOrder({pay:payVO});
+                            orderController.modifyOrder({pay:payVO, order:orderVO});
                             break;
                     }
                     break;
@@ -275,6 +286,22 @@
             let location = $(".error-well");
 
             orderValidate.checkChange(name, input, location);
+        })
+
+        // 주문 상태 변경
+        $(document).on("change", ".order-list-tr select", function () {
+            let ono = $(this).parents(".order-list-tr").data("ono");
+            let val = $(this).val();
+            let payState;
+            orderService.getOrderHistoryGet({type:'pay', ono:ono}, function (pay) {
+                payState = pay.state;
+                if (!orderValidate.checkPayState(payState, val)) {
+                    alert('결제 상태를 다시 확인해주세요.');
+                    return false;
+                }
+                let orderVO = new fnc.OrderVO(ono, val);
+                orderController.modifyOrder({order:orderVO});
+            })
         })
 
     })

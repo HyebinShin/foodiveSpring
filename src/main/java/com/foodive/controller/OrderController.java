@@ -169,7 +169,7 @@ public class OrderController {
             isSuccess = shipService.modify(ship);
             msg = OrderMsg.MODIFY_SHIP;
         } else if (pay != null){
-            isSuccess = payService.modify(pay);
+            isSuccess = payService.modify(orderLineDTO);
             msg = OrderMsg.MODIFY_PAY_STATE;
         } else if (orderVO != null) {
             isSuccess = orderService.modify(orderVO);

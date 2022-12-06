@@ -286,7 +286,7 @@ let orderInit = (function () {
 
 
     function initOrderListTR(order) {
-        let html = `<tr data-ono=${order.ono} data-type="detailList">`;
+        let html = `<tr class="order-list-tr" data-ono=${order.ono} data-type="detailList">`;
         html += `<td>${order.ono}</td>`;
         html += `<td>${order.id}</td>`;
         html += `<td>${fnc.displayTime(order.orderDate)}</td>`;
@@ -299,6 +299,7 @@ let orderInit = (function () {
         args.push(new fnc.constructorSelect("주문 접수", 1));
         args.push(new fnc.constructorSelect("배송 중", 2));
         args.push(new fnc.constructorSelect("배송 완료", 3));
+        args.push(new fnc.constructorSelect("주문 취소", 4));
 
         html += `<td>${initSelect(order, 'orderState', args)}</td>`;
 
@@ -624,9 +625,30 @@ let orderValidate = (function () {
         return true;
     }
 
+    function checkPayState(pay, order) {
+        switch (order) {
+            case '1': case '2': case '3':
+                if (pay!=1) {
+                    return false;
+                }
+                return true;
+            case '4':
+                if (pay!=2) {
+                    return false;
+                }
+                return true;
+            case '0':
+                if (pay!=0) {
+                    return false;
+                }
+                return true;
+        }
+    }
+
     return {
         checkChange: checkChange,
-        checkNull: checkNull
+        checkNull: checkNull,
+        checkPayState:checkPayState
     }
 })();
 

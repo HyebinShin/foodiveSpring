@@ -1,5 +1,7 @@
 package com.foodive.service;
 
+import com.foodive.domain.OrderLineDTO;
+import com.foodive.domain.OrderVO;
 import com.foodive.domain.PayVO;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -29,7 +31,14 @@ public class PayServiceTests {
         payVO.setOno(33L);
         payVO.setState(1);
 
-        service.modify(payVO);
+        OrderVO orderVO = new OrderVO("admin000", 5000);
+        orderVO.setState(1);
+
+        OrderLineDTO orderLineDTO = new OrderLineDTO();
+        orderLineDTO.setPay(payVO);
+        orderLineDTO.setOrder(orderVO);
+
+        service.modify(orderLineDTO);
     }
 
     @Test
