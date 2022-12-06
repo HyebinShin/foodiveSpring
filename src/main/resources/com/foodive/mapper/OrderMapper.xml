@@ -9,7 +9,15 @@
             and id = #{datePage.id}
         </if>
         <if test="datePage.dateNumber!=null">
-            and (orderDate between (sysdate - #{datePage.dateNumber}) and sysdate)
+            <choose>
+                <when test="datePage.page!=null">
+                    and (orderDate between (sysdate - #{datePage.dateNumber} * #{datePage.page})
+                    and (sysdate - #{datePage.dateNumber}*(#{datePage.page}-1)))
+                </when>
+                <otherwise>
+                    and (orderDate between (sysdate - #{datePage.dateNumber}) and sysdate)
+                </otherwise>
+            </choose>
         </if>
         <if test="datePage.state!=null">
             and state = #{datePage.state}
@@ -22,15 +30,15 @@
         from tbl_order
         <where>
             <include refid="datePage"></include>
-            <if test="cri.pageNum!=null">
-            <![CDATA[
+            <if test="cri!=null">
+                <![CDATA[
             and rownum<= #{cri.pageNum} * #{cri.amount}
            ]]>
             </if>
         </where>
         )
-        <if test="cri.pageNum!=null">
-        <![CDATA[
+        <if test="cri!=null">
+            <![CDATA[
         where rn > (#{cri.pageNum} - 1) * #{cri.amount}
         ]]>
         </if>

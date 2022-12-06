@@ -69,7 +69,7 @@ public class OrderServiceTests {
     @Test
     public void testGetList() {
         Criteria criteria = new Criteria(1, 10);
-        DatePageDTO datePageDTO = new DatePageDTO(1, 0, null);
+        DatePageDTO datePageDTO = new DatePageDTO(1, 0, null, null);
 
         service.getList(criteria, datePageDTO);
     }
