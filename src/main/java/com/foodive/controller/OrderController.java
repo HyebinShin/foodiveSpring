@@ -89,24 +89,28 @@ public class OrderController {
     }
 
     @GetMapping(
-            value = "/history/{date}/{page}",
+            value = "/historyList/{date}/{page}",
             produces = "application/json; charset=utf-8"
     )
     @ResponseBody
     public ResponseEntity<OrderPageDTO> getOrderHistory(
-            @PathVariable("page") Integer page,
             @PathVariable("date") Integer date,
+            @PathVariable("page") Integer page,
             HttpSession session
     ) {
-        LoginInfo loginInfo = (LoginInfo) session.getAttribute("loginInfo");
-        DatePageDTO datePageDTO = new DatePageDTO(date*page, null, loginInfo.getId());
+        log.info("get order history");
 
-        return new ResponseEntity<>(orderService.getList(new Criteria(), datePageDTO), HttpStatus.OK);
+        LoginInfo loginInfo = (LoginInfo) session.getAttribute("loginInfo");
+        DatePageDTO datePageDTO = new DatePageDTO(date, null, page, loginInfo.getId());
+
+        log.info("date page dto");
+
+        return new ResponseEntity<>(orderService.getList(null, datePageDTO), HttpStatus.OK);
     }
 
 
     @GetMapping(
-            value = "/history/{type}/{ono}",
+            value = "/historyGet/{type}/{ono}",
             produces = "application/json; charset=utf-8"
     )
     @ResponseBody

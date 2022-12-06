@@ -1,3 +1,5 @@
+document.write(`<script src="/resources/js/function.js"></script>`);
+
 let orderController = (function () {
 
     function testExist() {
@@ -6,7 +8,7 @@ let orderController = (function () {
 
     function setOrderDetail(orderDetailListDTO) {
         orderService.setOrderDetail(orderDetailListDTO, function (result) {
-            location.href=result;
+            location.href = result;
         });
     }
 
@@ -18,10 +20,28 @@ let orderController = (function () {
         })
     }
 
+    function getOrderHistory(date, page) {
+        let param = {
+            date:date,
+            page:page
+        }
+        orderService.getOrderList(param, function (orderCnt, list) {
+            if (page === -1) {
+                let pageNum = Math.ceil(orderCnt/10.0);
+                getOrderHistory(date, pageNum);
+                return;
+            }
+
+            orderInit.initOrderHistory(list);
+            orderInit.initOrderHistoryBtn(list, page, date);
+        });
+    }
+
     return {
-        testExist:testExist,
-        setOrderDetail:setOrderDetail,
-        addOrder:addOrder
+        testExist: testExist,
+        setOrderDetail: setOrderDetail,
+        addOrder: addOrder,
+        getOrderHistory:getOrderHistory
     };
 })();
 
@@ -29,13 +49,13 @@ let orderService = (function () {
 
     function setOrderDetail(orderDetailListDTO, callback, error) {
         $.ajax({
-            type:'post',
+            type: 'post',
             url: '/order/setOrderDetail',
             data: JSON.stringify(orderDetailListDTO),
             contentType: 'application/json; charset=utf-8',
             success: function (result, status, xhr) {
-                if(callback) {
-                    callback (result);
+                if (callback) {
+                    callback(result);
                 }
             },
             error: function (xhr, status, er) {
@@ -48,7 +68,7 @@ let orderService = (function () {
 
     function addOrder(orderLine, callback, error) {
         $.ajax({
-            type:'post',
+            type: 'post',
             url: '/order/new',
             data: JSON.stringify(orderLine),
             contentType: 'application/json; charset=utf-8',
@@ -65,14 +85,72 @@ let orderService = (function () {
         })
     }
 
+    function getOrderList(param, callback, error) {
+        let date = param.date;
+        let page = param.page || 1;
+        $.getJSON(`/order/historyList/${date}/${page}`,
+            function (data) {
+                if (callback) {
+                    callback(data.orderCnt, data.list);
+                }
+            }).fail(function (xhr, status, err) {
+            error(err);
+        })
+    }
+
     return {
-        setOrderDetail:setOrderDetail,
-        addOrder:addOrder
+        setOrderDetail: setOrderDetail,
+        addOrder: addOrder,
+        getOrderList:getOrderList
     }
 
 })();
 
 let orderInit = (function () {
+
+    // 고객 주문 내역 추가
+    let tbody = $(".order-history tbody");
+    let orderHistoryBtn = $(".order-history-btn");
+
+    function initOrderHistory(orderList) {
+        let innerText = tbody.text();
+        console.log("innerText: "+innerText);
+        if (innerText.includes("해당 기간에 주문 내역이 없습니다")) {
+            tbody.empty();
+        }
+
+        if (orderList == null) {
+            tbody.append(`해당 기간에 주문 내역이 없습니다.`);
+            return;
+        }
+
+        let html = "";
+
+        for (let i=0, len=orderList.length||0; i<len; i++) {
+            html += `<tr data-ono=${orderList[i].ono}>`;
+
+            html += `<td>${orderList[i].ono}</td>`;
+            html += `<td>${fnc.displayTime(orderList[i].orderDate)}</td>`;
+            html += `<td>${orderList[i].totalPrice}</td>`;
+
+            html += `</tr>`;
+        }
+
+        tbody.append(html);
+    }
+
+    function initOrderHistoryBtn(orderList, page, date) {
+        orderHistoryBtn.empty();
+        if (orderList==null) {
+            return;
+        }
+        orderHistoryBtn.append(`<button type="button" data-page=${Number(page)+1} data-date=${date} class="btn btn-default">${date}일 더 보기</button>`);
+    }
+
+    return {
+        initOrderHistory:initOrderHistory,
+        initOrderHistoryBtn:initOrderHistoryBtn
+    }
 
 })();
 
@@ -116,7 +194,7 @@ let orderValidate = (function () {
                 msg = orderMessage.errorMsg.ADDRESS_NOT_VALI;
                 break;
         }
-        if (input!==''&&!regex(regexCase, input)) {
+        if (input !== '' && !regex(regexCase, input)) {
             printMessage(msg);
             return false;
         }
@@ -132,11 +210,13 @@ let orderValidate = (function () {
             case 'phone':
                 msg = orderMessage.errorMsg.PHONE_NULL;
                 break;
-            case 'address1': case 'address2': case 'zipcode':
+            case 'address1':
+            case 'address2':
+            case 'zipcode':
                 msg = orderMessage.errorMsg.ADDRESS_NULL;
                 break;
         }
-        if (input==='') {
+        if (input === '') {
             printMessage(msg);
             return false;
         }
@@ -144,8 +224,8 @@ let orderValidate = (function () {
     }
 
     return {
-        checkChange:checkChange,
-        checkNull:checkNull
+        checkChange: checkChange,
+        checkNull: checkNull
     }
 })();
 
@@ -153,14 +233,14 @@ let orderMessage = (function () {
 
     const errorMsg = {
         NAME_NULL: "배송 받으실 분의 성함을 입력해주세요.",
-        NAME_NOT_VALI : "배송 수신인은 3자에서 15자 이내의 한글/영어/숫자만 입력가능합니다.",
-        PHONE_NULL : "배송 받으실 분의 연락처를 입력해주세요.",
-        PHONE_NOT_VALI : "연락처의 형식대로 입력해주세요.",
-        ADDRESS_NULL : "주소를 입력해주세요.",
-        ADDRESS_NOT_VALI : "상세 주소는 70자 이내로 입력해주세요."
+        NAME_NOT_VALI: "배송 수신인은 3자에서 15자 이내의 한글/영어/숫자만 입력가능합니다.",
+        PHONE_NULL: "배송 받으실 분의 연락처를 입력해주세요.",
+        PHONE_NOT_VALI: "연락처의 형식대로 입력해주세요.",
+        ADDRESS_NULL: "주소를 입력해주세요.",
+        ADDRESS_NOT_VALI: "상세 주소는 70자 이내로 입력해주세요."
     }
 
     return {
-        errorMsg:errorMsg
+        errorMsg: errorMsg
     }
 })();
