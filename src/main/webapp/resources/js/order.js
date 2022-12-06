@@ -234,12 +234,15 @@ let orderInit = (function () {
             html += `<tr data-pno=${detailList[i].pno}>`;
 
             html += `<td>${detailList[i].korName}</td>`;
-            html += `<td>${price}</td>`;
+            html += `<td>₩ ${price.toLocaleString(undefined, {maximumFractionDigits:0})}</td>`;
             html += `<td>${qty}</td>`;
-            html += `<td>${total}</td>`;
+            html += `<td>₩ ${total.toLocaleString(undefined, {maximumFractionDigits:0})}</td>`;
 
             html += `</tr>`;
         }
+
+        // 총 구매 금액 표시
+        html += `<tr><td></td><td></td><td></td><td>₩ ${order.totalPrice.toLocaleString(undefined, {maximumFractionDigits:0})}</td></tr>`;
 
         // 배송지 표시될 공간
         html += `<tr class="hidden-tr ship">`;
@@ -262,6 +265,10 @@ let orderInit = (function () {
 
         space.append(html);
         space.closest("tr").show();
+    }
+
+    function initOrderHistoryPay(space, pay) {
+
     }
 
     return {
