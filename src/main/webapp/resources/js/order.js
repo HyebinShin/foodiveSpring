@@ -167,7 +167,7 @@ let orderInit = (function () {
 
             html += `<td>${orderList[i].ono}</td>`;
             html += `<td>${fnc.displayTime(orderList[i].orderDate)}</td>`;
-            html += `<td>${orderList[i].totalPrice}</td>`;
+            html += `<td>₩ ${orderList[i].totalPrice.toLocaleString(undefined, {maximumFractionDigits:0})}</td>`;
 
             html += `</tr>`;
 

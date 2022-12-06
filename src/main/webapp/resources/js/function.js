@@ -6,7 +6,12 @@ let fnc = (function () {
         let mm = dateObj.getMonth() + 1;
         let dd = dateObj.getDate();
 
-        return [yy, '/', (mm > 9 ? '' : '0') + mm, '/', (dd > 9 ? '' : '0') + dd].join('');
+        let hh = dateObj.getHours();
+        let mi = dateObj.getMinutes();
+        let ss = dateObj.getSeconds();
+
+        return [yy, '/', (mm > 9 ? '' : '0') + mm, '/', (dd > 9 ? '' : '0') + dd + ' ' +
+        (hh > 9 ? '' : '0') + hh, ':', (mi > 9 ? '' : '0') + mi, ':', (ss > 9 ? '' : '0') + ss].join('');
     }
 
     return {
