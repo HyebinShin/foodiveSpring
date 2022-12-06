@@ -4,7 +4,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">결제 내역 페이지</h1>
+        <h1 class="page-header">주문 내역 페이지</h1>
     </div>
 </div>
 
@@ -12,7 +12,7 @@
     <div class="col-lg-12">
         <div class="panel panel-info">
             <div class="panel-heading">
-                기간 단위별 결제 내역
+                기간 단위별 주문 내역
             </div> <!-- div.class.panel-heading -->
             <div class="panel-body">
                 <div class="col-lg-4">
