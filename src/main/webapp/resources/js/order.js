@@ -51,6 +51,7 @@ let orderController = (function () {
                 case 'ship': // name, zipcode, address, phone
                     break;
                 case 'pay': // payment
+                    orderInit.initOrderHistoryPay(space, data);
                     break;
             }
         })
@@ -268,14 +269,23 @@ let orderInit = (function () {
     }
 
     function initOrderHistoryPay(space, pay) {
+        space.empty();
 
+        let html = `<div class='form-group'>`;
+        html += `<label>결제방법</label>`;
+        html += `<p>${pay.payment}</p>`;
+        html += `</div>`// div.class.form-group
+
+        space.append(html);
+        space.closest("tr").show();
     }
 
     return {
         initPeriod:initPeriod,
         initOrderHistory: initOrderHistory,
         initOrderHistoryBtn: initOrderHistoryBtn,
-        initOrderHistoryGet:initOrderHistoryGet
+        initOrderHistoryGet:initOrderHistoryGet,
+        initOrderHistoryPay:initOrderHistoryPay
     }
 
 })();

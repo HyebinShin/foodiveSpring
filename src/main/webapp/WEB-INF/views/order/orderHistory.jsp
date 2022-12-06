@@ -107,6 +107,9 @@
             let ono = $(this).data("ono");
 
             console.log("type: "+type+", ono: "+ono);
+            let closestHidden = $(this).closest("div").prev("table").find("."+type+" td");
+
+            orderController.getOrderHistoryGet(type, ono, closestHidden);
         })
 
     })

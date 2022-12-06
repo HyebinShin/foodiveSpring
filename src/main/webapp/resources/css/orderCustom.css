@@ -5,7 +5,9 @@
 .address-form > input, .address-form > div { margin: 0.5rem 0;}
 #zipcode { width: calc(100%/2); display: inline-block; }
 #search_zipcode { cursor: pointer; }
-.address-form div { border: 1px solid gray; border-radius: 5px; width: calc(100%/2 - 5px); display: inline-block; text-align: center; }
+.address-form div {
+    border: 1px solid gray; border-radius: 5px; width: calc(100%/2 - 5px); display: inline-block; text-align: center;
+}
 .address-form span { display: block; margin: 0 auto; width: 100px;}
 .order-btn, .address-form span, .order-history-get-btn { margin: 0 auto; }
 
@@ -34,4 +36,8 @@
 
 .period {
     background-color: white;
+}
+
+.order-history .pay div, .order-history .ship div {
+    padding: 10px;
 }
