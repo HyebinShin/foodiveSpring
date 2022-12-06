@@ -62,9 +62,12 @@ let orderController = (function () {
         let param = {
             dateNumber:dateNumber,
             datePage:datePage,
-            state:state,
-            page:page
+            page:page,
+            state:state
         }
+
+        console.log("param: "+JSON.stringify(param));
+
         orderService.getOrderList(param, function (orderCnt, list) {
             if (page === -1) {
                 let pageNum = Math.ceil(orderCnt / 10.0);
@@ -72,6 +75,9 @@ let orderController = (function () {
                 return;
             }
 
+            orderInit.initPeriod(dateNumber * datePage);
+            orderInit.initOrderHistory(list, orderInit.initOrderListTR, true);
+            fnc.initPagination(orderCnt, page, $(".order-page-btn"));
 
         });
     }
@@ -153,11 +159,14 @@ let orderService = (function () {
     }
 
     function getOrderList(param, callback, error) {
-        let dateNumber = param.dateNumber;
-        let datePage = param.datePage;
-        let state = param.state;
-        let page = param.page;
-        $.getJSON(`/order/${dateNumber}/${datePage}/${state}/${page}`,
+        let url = "/order";
+
+        console.log("param: "+JSON.stringify(param));
+        Object.keys(param).forEach((key) => (param[key]!=null ? url += `/${param[key]}` : ''));
+
+        console.log("url: "+url);
+
+        $.getJSON(url,
             function (data) {
                 if (callback) {
                     callback(data.orderCnt, data.list);
@@ -184,7 +193,7 @@ let orderInit = (function () {
     let orderHistoryBtn = $(".order-history-btn");
     let period = $(".period");
 
-    function initOrderHistory(orderList, functionName) {
+    function initOrderHistory(orderList, functionName, isClear) {
         let innerText = tbody.text();
         if (innerText.includes("해당 기간에 주문 내역이 없습니다")) {
             tbody.empty();
@@ -193,6 +202,10 @@ let orderInit = (function () {
         if (orderList == null) {
             tbody.append(`해당 기간에 주문 내역이 없습니다.`);
             return;
+        }
+
+        if (isClear) {
+            tbody.empty();
         }
 
         let html = "";
@@ -216,6 +229,34 @@ let orderInit = (function () {
         html += `<td>${order.ono}</td>`;
         html += `<td>${fnc.displayTime(order.orderDate)}</td>`;
         html += `<td>₩ ${order.totalPrice.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>`;
+        html += `</tr>`;
+
+        return html;
+    }
+
+    // Select 생성자
+    function OrderStateSelect(name, value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    function initOrderListTR(order) {
+        let html = `<tr data-ono=${order.ono} data-type="detailList">`;
+        html += `<td>${order.ono}</td>`;
+        html += `<td>${order.id}</td>`;
+        html += `<td>${fnc.displayTime(order.orderDate)}</td>`;
+        html += `<td>₩ ${order.totalPrice.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>`;
+
+        // let args = [{value:0, name:"결제 대기"}, {value:1, name: "주문 접수"}, {value:2, name: "배송 중"}, {value:3, name: "배송 완료"}];
+
+        let args = [];
+        args.push(new OrderStateSelect("결제 대기", 0));
+        args.push(new OrderStateSelect("주문 접수", 1));
+        args.push(new OrderStateSelect("배송 중", 2));
+        args.push(new OrderStateSelect("배송 완료", 3));
+
+        html += `<td>${initSelect(order, 'orderState', args)}</td>`;
+
         html += `</tr>`;
 
         return html;
@@ -329,10 +370,27 @@ let orderInit = (function () {
         space.closest("tr").show();
     }
 
+    // 단순 출력
     function initFormGroup(label, data) {
         let html = `<div class='form-group'>`;
         html += `<label>${label}</label>`;
         html += `<p>${data}</p>`;
+        html += `</div>`;
+
+        return html;
+    }
+
+    // select
+    function initSelect(order, type, args) {
+        let html = `<div class='form-group'>`;
+
+        html += `<select class="form-control oneSelect" name=${type} id='select${order.ono}' data-ono=${order.ono}>`;
+
+        for(let i=0; i<args.length; i++) {
+            let isSelected = args[i].value === order.state ? 'selected' : '';
+            html += `<option value=${args[i].value} ${isSelected}>${args[i].name}</option>`;
+        }
+        
         html += `</div>`;
 
         return html;
@@ -345,7 +403,8 @@ let orderInit = (function () {
         initOrderHistoryGet: initOrderHistoryGet,
         initOrderHistoryPay: initOrderHistoryPay,
         initOrderHistoryShip: initOrderHistoryShip,
-        initOrderHistoryTR:initOrderHistoryTR
+        initOrderHistoryTR:initOrderHistoryTR,
+        initOrderListTR:initOrderListTR
     }
 
 })();

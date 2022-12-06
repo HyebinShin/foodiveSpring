@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/order/*")
@@ -30,7 +31,7 @@ public class OrderController {
 
     private CartService cartService;
 
-    @GetMapping({"/orderLine", "/orderHistory"})
+    @GetMapping({"/orderLine", "/orderHistory", "/orderPage"})
     public void goOrderPage() {
         // 주문서 페이지로 이동
     }
@@ -110,7 +111,7 @@ public class OrderController {
 
 
     @GetMapping(
-            value = "/historyGet/{type}/{ono}",
+            value = {"/historyGet/{type}/{ono}", "/{type}/{ono}"},
             produces = "application/json; charset=utf-8"
     )
     @ResponseBody
@@ -127,6 +128,25 @@ public class OrderController {
                 return new ResponseEntity<>(payService.get(ono), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(
+            value = {"/{dateNumber}/{datePage}/{page}/{state}", "/{dateNumber}/{datePage}/{page}"},
+            produces = "application/json; charset=utf-8"
+    )
+    @ResponseBody
+    public ResponseEntity<OrderPageDTO> getOrderList(
+            @PathVariable("dateNumber") Integer dateNumber,
+            @PathVariable("datePage") Integer datePage,
+            @PathVariable(value = "state", required = false) Optional<Integer> state,
+            @PathVariable("page") Integer page
+    ) {
+        Integer optionState = state.orElse(null);
+
+        DatePageDTO datePageDTO = new DatePageDTO(dateNumber, optionState, datePage, null);
+        Criteria criteria = new Criteria(page, 10);
+
+        return new ResponseEntity<>(orderService.getList(criteria, datePageDTO), HttpStatus.OK);
     }
 
 }

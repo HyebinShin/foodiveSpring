@@ -1,5 +1,5 @@
-.order-page, .order-btn, .order-history-btn, .order-history-get-btn { display: flex; flex-wrap: wrap; }
-.order-page, .order-history-btn { justify-content: center; }
+.order-page, .order-btn, .order-history-btn, .order-history-get-btn, .order-page-btn { display: flex; flex-wrap: wrap; }
+.order-page, .order-history-btn, .order-page-btn { justify-content: center; }
 .order-btn, .order-history-get-btn { justify-content: space-around; width: 180px; }
 
 .address-form > input, .address-form > div { margin: 0.5rem 0;}

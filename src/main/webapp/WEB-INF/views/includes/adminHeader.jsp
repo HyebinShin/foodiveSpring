@@ -40,11 +40,11 @@
 
     <link href="/resources/css/custom.css" rel="stylesheet">
 
-<%--<script type="text/javascript">--%>
-<%--    if('\${loginInfo.state}!=2') {--%>
-<%--        location.replace("/main");--%>
-<%--    }--%>
-<%--</script>--%>
+    <%--<script type="text/javascript">--%>
+    <%--    if('\${loginInfo.state}!=2') {--%>
+    <%--        location.replace("/main");--%>
+    <%--    }--%>
+    <%--</script>--%>
 
 </head>
 <body>
@@ -132,6 +132,9 @@
                             </li>
                         </ul>
                         <!-- /.nav-second-level -->
+                    </li>
+                    <li>
+                        <a href="/order/orderPage"><i class="fa fa-shopping-cart fa-fw"></i> 주문 관리</a>
                     </li>
                 </ul>
             </div>

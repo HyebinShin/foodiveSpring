@@ -19,9 +19,9 @@
                     <div class="form-group input-group">
                         <span class="input-group-addon">기간 단위</span>
                         <select class="form-control" name="date" id="dateSelect">
-                            <option value="7" selected>7일 이내</option>
-                            <option value="14">14일 이내</option>
-                            <option value="30">30일 이내</option>
+                            <option value="7" selected>7일</option>
+                            <option value="14">14일</option>
+                            <option value="30">30일</option>
                         </select>
                     </div>
                 </div> <!-- 기간 단위 선택. 끝 -->
@@ -32,7 +32,7 @@
                             2022.12.06~
                         </div>
                     </div>
-                </div>
+                </div> <!-- 기간 표시. 끝 -->
                 <div class="order-history">
                     <table class="table table-hover">
                         <thead>
