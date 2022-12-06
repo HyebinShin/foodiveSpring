@@ -86,7 +86,23 @@
             orderController.getOrderHistory(date, pageNum);
         });
 
+        // 주문 상세 정보 확인
         $(document).on("click", ".order-history tbody tr", function (e) {
+            let type = $(this).data("type");
+            let ono = $(this).data("ono");
+
+            if (type==='detailList') {
+                let closestHidden = $(this).next(".hidden-tr").find("td");
+                $(this).siblings(".hidden-tr").hide();
+
+                orderController.getOrderHistoryGet(type, ono, closestHidden);
+            }
+        })
+
+        // 배송 정보 및 결제 정보 확인
+        $(document).on("click", ".order-history-get-btn button", function (e) {
+            e.preventDefault();
+
             let type = $(this).data("type");
             let ono = $(this).data("ono");
 

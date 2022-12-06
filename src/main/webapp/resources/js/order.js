@@ -38,14 +38,15 @@ let orderController = (function () {
         });
     }
 
-    function getOrderHistoryGet(type, ono) {
+    function getOrderHistoryGet(type, ono, space) {
         let param = {
             type: type,
             ono: ono
         }
-        orderService.getOrderHistoryGet(param, function (order) {
+        orderService.getOrderHistoryGet(param, function (data) {
             switch (type) {
                 case 'detailList': // order, detailList(pno, korName, qty, totalPrice)
+                    orderInit.initOrderHistoryGet(space, data.order, data.detailList)
                     break;
                 case 'ship': // name, zipcode, address, phone
                     break;
@@ -167,6 +168,13 @@ let orderInit = (function () {
             html += `<td>${orderList[i].totalPrice}</td>`;
 
             html += `</tr>`;
+
+            // 해당 주문 데이터 표시될 공간
+            html += `<tr class="hidden-tr">`;
+
+            html += `<td colspan="3" data-ono=${orderList[i].ono}>내용</td>`;
+
+            html += `</tr>`;
         }
 
         tbody.append(html);
@@ -200,10 +208,67 @@ let orderInit = (function () {
         orderHistoryBtn.append(`<button type="button" data-page=${Number(page) + 1} data-date=${date} class="btn btn-default">${date}일 더 보기</button>`);
     }
 
+    // 주문 데이터 표시
+    function initOrderHistoryGet(space, order, detailList) {
+        space.empty();
+
+        if (detailList.length === 0) {
+            return;
+        }
+
+        let html = `<table class='table table-hover'>`;
+        html += `<thead><tr>`
+        html += `<th>상품명</th>`;
+        html += `<th>가격</th>`;
+        html += `<th>구매수량</th>`;
+        html += `<th>총액</th>`;
+        html += `</tr></thead>`;
+
+        html += `<tbody>`;
+
+        for (let i=0, len=detailList.length||0; i<len; i++) {
+            let qty = Number(detailList[i].qty);
+            let total = Number(detailList[i].totalPrice);
+            let price = total / qty;
+
+            html += `<tr data-pno=${detailList[i].pno}>`;
+
+            html += `<td>${detailList[i].korName}</td>`;
+            html += `<td>${price}</td>`;
+            html += `<td>${qty}</td>`;
+            html += `<td>${total}</td>`;
+
+            html += `</tr>`;
+        }
+
+        // 배송지 표시될 공간
+        html += `<tr class="hidden-tr ship">`;
+        html += `<td colspan="4">배송지</td>`;
+        html += `</tr>`;
+
+        // 결제 방법 표시될 공간
+        html += `<tr class="hidden-tr pay">`;
+        html += `<td colspan="4">결제방법</td>`;
+        html += `</tr>`;
+
+        html += `</tbody>`;
+
+        html += `</table>`;
+
+        html += `<div class='order-history-get-btn'>`
+        html += `<button class='btn btn-default' data-type="ship" data-ono=${order.ono}>배송 정보</button>`
+        html += `<button class='btn btn-default' data-type="pay" data-ono=${order.ono}>결제 정보</button>`
+        html += `</div>`;
+
+        space.append(html);
+        space.closest("tr").show();
+    }
+
     return {
         initPeriod:initPeriod,
         initOrderHistory: initOrderHistory,
-        initOrderHistoryBtn: initOrderHistoryBtn
+        initOrderHistoryBtn: initOrderHistoryBtn,
+        initOrderHistoryGet:initOrderHistoryGet
     }
 
 })();
