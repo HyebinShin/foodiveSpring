@@ -161,9 +161,6 @@
                 })
             })
 
-
-            let address = $("input[name='address1']").val() + ", " + $("input[name='address2']").val();
-
             let order = {
                 id:id,
                 totalPrice:`<c:out value="${detailList.sumPrice}"/>`
@@ -171,7 +168,8 @@
             let ship = {
                 name:$("input[name='name']").val(),
                 zipcode:$("input[name='zipcode']").val(),
-                address:address,
+                address1: $("input[name='address1']").val(),
+                address2: $("input[name='address2']").val(),
                 phone:$("input[name='phone']").val()
             };
             let pay = {

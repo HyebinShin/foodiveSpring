@@ -15,7 +15,8 @@ public class ShipVO {
     @NonNull
     private String zipcode;
     @NonNull
-    private String address;
+    private String address1;
+    private String address2;
     @NonNull
     private String phone;
 

@@ -33,7 +33,8 @@ public class ShipMapperTests {
             ship.setOno(l);
             ship.setName("배송테스트"+l);
             ship.setZipcode("123456");
-            ship.setAddress("배송테스트 주소지"+l);
+            ship.setAddress1("배송테스트 주소지"+l);
+            ship.setAddress2("배송테스트 상세주소지");
             ship.setPhone("010-1234-5678");
 
             mapper.insert(ship);
@@ -46,7 +47,8 @@ public class ShipMapperTests {
         ship.setSno(5L);
         ship.setName("배송테스트 수정");
         ship.setZipcode("654321");
-        ship.setAddress("배송테스트 주소지 수정");
+        ship.setAddress1("배송테스트 주소지 수정");
+        ship.setAddress2("배송테스트 상세주소지");
         ship.setPhone("010-4321-8765");
 
         mapper.update(ship);

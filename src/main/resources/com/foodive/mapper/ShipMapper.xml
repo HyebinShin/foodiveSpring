@@ -9,8 +9,8 @@
             select seq_ship.nextval from dual
         </selectKey>
 
-        insert into tbl_ship (sno, ono, name, zipcode, address, phone, orderDate)
-        values (#{sno}, #{ono}, #{name}, #{zipcode}, #{address}, #{phone}, sysdate)
+        insert into tbl_ship (sno, ono, name, zipcode, address1, address2, phone, orderDate)
+        values (#{sno}, #{ono}, #{name}, #{zipcode}, #{address1}, #{address2}, #{phone}, sysdate)
     </insert>
 
     <update id="update">
@@ -21,10 +21,7 @@
                 name = #{name},
             </if>
             <if test="zipcode!=null">
-                zipcode = #{zipcode},
-            </if>
-            <if test="address!=null">
-                address = #{address},
+                zipcode = #{zipcode}, address1 = #{address1}, address2 = #{address2},
             </if>
             <if test="phone!=null">
                 phone = #{phone},
