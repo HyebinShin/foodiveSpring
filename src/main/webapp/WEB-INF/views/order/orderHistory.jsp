@@ -25,6 +25,14 @@
                         </select>
                     </div>
                 </div> <!-- 기간 단위 선택. 끝 -->
+                <div class="col-lg-4">
+                    <div class="form-group input-group">
+                        <span class="input-group-addon">기간</span>
+                        <div class="period input-group-addon">
+                            2022.12.06~
+                        </div>
+                    </div>
+                </div>
                 <div class="order-history">
                     <table class="table table-hover">
                         <thead>
@@ -76,6 +84,13 @@
             console.log("pageNum: "+pageNum+", date: "+date);
 
             orderController.getOrderHistory(date, pageNum);
+        });
+
+        $(document).on("click", ".order-history tbody tr", function (e) {
+            let type = $(this).data("type");
+            let ono = $(this).data("ono");
+
+            console.log("type: "+type+", ono: "+ono);
         })
 
     })

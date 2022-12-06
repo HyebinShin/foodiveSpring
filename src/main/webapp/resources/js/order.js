@@ -22,26 +22,45 @@ let orderController = (function () {
 
     function getOrderHistory(date, page) {
         let param = {
-            date:date,
-            page:page
+            date: date,
+            page: page
         }
-        orderService.getOrderList(param, function (orderCnt, list) {
+        orderService.getOrderHistoryList(param, function (orderCnt, list) {
             if (page === -1) {
-                let pageNum = Math.ceil(orderCnt/10.0);
+                let pageNum = Math.ceil(orderCnt / 10.0);
                 getOrderHistory(date, pageNum);
                 return;
             }
 
+            orderInit.initPeriod(date*page);
             orderInit.initOrderHistory(list);
             orderInit.initOrderHistoryBtn(list, page, date);
         });
+    }
+
+    function getOrderHistoryGet(type, ono) {
+        let param = {
+            type: type,
+            ono: ono
+        }
+        orderService.getOrderHistoryGet(param, function (order) {
+            switch (type) {
+                case 'detailList': // order, detailList(pno, korName, qty, totalPrice)
+                    break;
+                case 'ship': // name, zipcode, address, phone
+                    break;
+                case 'pay': // payment
+                    break;
+            }
+        })
     }
 
     return {
         testExist: testExist,
         setOrderDetail: setOrderDetail,
         addOrder: addOrder,
-        getOrderHistory:getOrderHistory
+        getOrderHistory: getOrderHistory,
+        getOrderHistoryGet:getOrderHistoryGet
     };
 })();
 
@@ -85,7 +104,7 @@ let orderService = (function () {
         })
     }
 
-    function getOrderList(param, callback, error) {
+    function getOrderHistoryList(param, callback, error) {
         let date = param.date;
         let page = param.page || 1;
         $.getJSON(`/order/historyList/${date}/${page}`,
@@ -98,10 +117,24 @@ let orderService = (function () {
         })
     }
 
+    function getOrderHistoryGet(param, callback, error) {
+        let type = param.type;
+        let ono = param.ono;
+        $.getJSON(`/order/historyGet/${type}/${ono}`,
+            function (data) {
+                if (callback) {
+                    callback(data);
+                }
+            }).fail(function (xhr, status, err) {
+            error(err);
+        })
+    }
+
     return {
         setOrderDetail: setOrderDetail,
         addOrder: addOrder,
-        getOrderList:getOrderList
+        getOrderHistoryList: getOrderHistoryList,
+        getOrderHistoryGet: getOrderHistoryGet
     }
 
 })();
@@ -111,10 +144,10 @@ let orderInit = (function () {
     // 고객 주문 내역 추가
     let tbody = $(".order-history tbody");
     let orderHistoryBtn = $(".order-history-btn");
+    let period = $(".period");
 
     function initOrderHistory(orderList) {
         let innerText = tbody.text();
-        console.log("innerText: "+innerText);
         if (innerText.includes("해당 기간에 주문 내역이 없습니다")) {
             tbody.empty();
         }
@@ -126,8 +159,8 @@ let orderInit = (function () {
 
         let html = "";
 
-        for (let i=0, len=orderList.length||0; i<len; i++) {
-            html += `<tr data-ono=${orderList[i].ono}>`;
+        for (let i = 0, len = orderList.length || 0; i < len; i++) {
+            html += `<tr data-ono=${orderList[i].ono} data-type="detailList">`;
 
             html += `<td>${orderList[i].ono}</td>`;
             html += `<td>${fnc.displayTime(orderList[i].orderDate)}</td>`;
@@ -139,17 +172,38 @@ let orderInit = (function () {
         tbody.append(html);
     }
 
+    function initPeriod(date) {
+        let today = new Date();
+        let endDay = new Date();
+        endDay.setDate(today.getDate()-date);
+
+        let tYY = today.getFullYear();
+        let tMM = today.getMonth()+1;
+        let tDD = today.getDate();
+
+        let eYY = endDay.getFullYear();
+        let eMM = endDay.getMonth()+1;
+        let eDD = endDay.getDate();
+
+        period.empty();
+
+        let html = [eYY, '/', eMM, '/', eDD, ' - ', tYY, '/', tMM, '/', tDD].join('');
+
+        period.append(html);
+    }
+
     function initOrderHistoryBtn(orderList, page, date) {
         orderHistoryBtn.empty();
-        if (orderList==null) {
+        if (orderList == null) {
             return;
         }
-        orderHistoryBtn.append(`<button type="button" data-page=${Number(page)+1} data-date=${date} class="btn btn-default">${date}일 더 보기</button>`);
+        orderHistoryBtn.append(`<button type="button" data-page=${Number(page) + 1} data-date=${date} class="btn btn-default">${date}일 더 보기</button>`);
     }
 
     return {
-        initOrderHistory:initOrderHistory,
-        initOrderHistoryBtn:initOrderHistoryBtn
+        initPeriod:initPeriod,
+        initOrderHistory: initOrderHistory,
+        initOrderHistoryBtn: initOrderHistoryBtn
     }
 
 })();
