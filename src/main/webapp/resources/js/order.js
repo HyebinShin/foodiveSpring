@@ -16,7 +16,7 @@ let orderController = (function () {
         orderService.addOrder(orderLine, function (result) {
             alert(result);
 
-            location.href = "/main"; // [수정 예정] 주문 결과창으로 이동
+            location.href = "/order/orderHistory";
         })
     }
 
