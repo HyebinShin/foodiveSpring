@@ -82,13 +82,34 @@ let orderController = (function () {
         });
     }
 
+    function getOrder(type, ono, space) {
+        let param = {
+            type: type,
+            ono: ono
+        }
+        orderService.getOrderHistoryGet(param, function (data) {
+            switch (type) {
+                case 'detailList': // order, detailList(pno, korName, qty, totalPrice)
+                    orderInit.initOrderHistoryGet(space, data.order, data.detailList);
+                    break;
+                case 'ship': // name, zipcode, address, phone
+                    orderInit.initOrderShip(space, data);
+                    break;
+                case 'pay': // payment
+                    orderInit.initOrderPay(space, data);
+                    break;
+            }
+        })
+    }
+
     return {
         testExist: testExist,
         setOrderDetail: setOrderDetail,
         addOrder: addOrder,
         getOrderHistory: getOrderHistory,
         getOrderHistoryGet: getOrderHistoryGet,
-        getOrderList: getOrderList
+        getOrderList: getOrderList,
+        getOrder:getOrder
     };
 })();
 
@@ -203,9 +224,11 @@ let orderInit = (function () {
             tbody.append(`해당 기간에 주문 내역이 없습니다.`);
             return;
         }
+        let colspan = 3;
 
         if (isClear) {
             tbody.empty();
+            colspan = 5;
         }
 
         let html = "";
@@ -216,7 +239,7 @@ let orderInit = (function () {
             // 해당 주문 데이터 표시될 공간
             html += `<tr class="hidden-tr">`;
 
-            html += `<td colspan="3" data-ono=${orderList[i].ono}>내용</td>`;
+            html += `<td colspan=${colspan} data-ono=${orderList[i].ono}>내용</td>`;
 
             html += `</tr>`;
         }
@@ -234,11 +257,6 @@ let orderInit = (function () {
         return html;
     }
 
-    // Select 생성자
-    function OrderStateSelect(name, value) {
-        this.name = name;
-        this.value = value;
-    }
 
     function initOrderListTR(order) {
         let html = `<tr data-ono=${order.ono} data-type="detailList">`;
@@ -250,10 +268,10 @@ let orderInit = (function () {
         // let args = [{value:0, name:"결제 대기"}, {value:1, name: "주문 접수"}, {value:2, name: "배송 중"}, {value:3, name: "배송 완료"}];
 
         let args = [];
-        args.push(new OrderStateSelect("결제 대기", 0));
-        args.push(new OrderStateSelect("주문 접수", 1));
-        args.push(new OrderStateSelect("배송 중", 2));
-        args.push(new OrderStateSelect("배송 완료", 3));
+        args.push(new fnc.constructorSelect("결제 대기", 0));
+        args.push(new fnc.constructorSelect("주문 접수", 1));
+        args.push(new fnc.constructorSelect("배송 중", 2));
+        args.push(new fnc.constructorSelect("배송 완료", 3));
 
         html += `<td>${initSelect(order, 'orderState', args)}</td>`;
 
@@ -363,8 +381,55 @@ let orderInit = (function () {
 
         let html = initFormGroup("배송 수신인 성함", ship.name);
         html += initFormGroup("배송지 우편번호", ship.zipcode);
-        html += initFormGroup("배송지 주소", ship.address);
+        let address = ship.address1 + ", " + ship.address2;
+        html += initFormGroup("배송지 주소", address);
         html += initFormGroup("배송 수신자 연락처", ship.phone);
+
+        space.append(html);
+        space.closest("tr").show();
+    }
+
+    // 관리자 페이지 결제 방법 init
+    function initOrderPay(space, pay) {
+        space.empty();
+
+        let args = [];
+        args.push(new fnc.constructorSelect("무통장입금", "무통장입금"));
+        let html = `${initSelect(pay, 'payment', args, '결제 방법')}`;
+
+        args = [];
+        args.push(new fnc.constructorSelect("무통장 입금 전", 0));
+        args.push(new fnc.constructorSelect("결제 완료", 1));
+        args.push(new fnc.constructorSelect("결제 취소", 2));
+
+        html += `${initSelect(pay, 'payState', args, '결제 상태')}`;
+
+        space.append(html);
+        space.closest("tr").show();
+    }
+
+    // 관리자 페이지 배송 방법 init
+    function initOrderShip(space, ship) {
+        space.empty();
+
+        console.log("ship: "+JSON.stringify(ship));
+
+        let html = "";
+        let args = [];
+        args.push(new fnc.constructorInput('배송 수신인 성함', 'name', ship.name));
+        args.push(new fnc.constructorInput('배송 수신자 연락처', 'phone', ship.phone));
+
+        html += `${initInputText(args)}`;
+        html += `<div class='form-group'>`;
+        html += `<label>배송지</label>`;
+        html += `<div class="address-form">`;
+        html += `<input class="form-control" value=${ship.zipcode} name="zipcode" id="zipcode" maxlength="7" readonly>`
+        html += `<div class="form-control" id="search_zipcode"><span>우편번호 검색</span></div>`;
+        html += `<input class="form-control address" value='${ship.address1}' name="address1" id="address1" maxlength="70" readonly>`;
+        let address2 = ship.address2 != null ? ship.address2 : '';
+        html += `<input class="form-control address" value='${address2}' name="address2" id="address2" maxlength="70" required="required">`;
+
+        html += `</div></div>`;
 
         space.append(html);
         space.closest("tr").show();
@@ -380,9 +445,30 @@ let orderInit = (function () {
         return html;
     }
 
+    // input text
+    function initInputText(args) {
+        let html = "";
+
+        for (let i=0; i<args.length; i++) {
+            html += `<div class='form-group'>`;
+            html += `<label>${args[i].label}</label>`;
+            html += `<input class='form-control' type='text' name=${args[i].name} value=${args[i].data}>`;
+            html += `</div>`;
+        }
+
+        return html;
+    }
+
     // select
-    function initSelect(order, type, args) {
-        let html = `<div class='form-group'>`;
+    function initSelect(order, type, args, label) {
+        let html = "";
+
+        if(label!=null) {
+            html += `<div class='form-group col-lg-6'>`;
+            html += `<label>${label}</label>`;
+        } else {
+            html += `<div class='form-group'>`;
+        }
 
         html += `<select class="form-control oneSelect" name=${type} id='select${order.ono}' data-ono=${order.ono}>`;
 
@@ -390,7 +476,8 @@ let orderInit = (function () {
             let isSelected = args[i].value === order.state ? 'selected' : '';
             html += `<option value=${args[i].value} ${isSelected}>${args[i].name}</option>`;
         }
-        
+
+        html += `</select>`;
         html += `</div>`;
 
         return html;
@@ -404,7 +491,9 @@ let orderInit = (function () {
         initOrderHistoryPay: initOrderHistoryPay,
         initOrderHistoryShip: initOrderHistoryShip,
         initOrderHistoryTR:initOrderHistoryTR,
-        initOrderListTR:initOrderListTR
+        initOrderListTR:initOrderListTR,
+        initOrderPay:initOrderPay,
+        initOrderShip:initOrderShip
     }
 
 })();

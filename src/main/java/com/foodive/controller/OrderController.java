@@ -111,7 +111,7 @@ public class OrderController {
 
 
     @GetMapping(
-            value = {"/historyGet/{type}/{ono}", "/{type}/{ono}"},
+            value = {"/historyGet/{type}/{ono}"},
             produces = "application/json; charset=utf-8"
     )
     @ResponseBody

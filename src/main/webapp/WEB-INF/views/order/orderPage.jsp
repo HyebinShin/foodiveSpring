@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@include file="../includes/header.jsp" %>
+<%@include file="../includes/adminHeader.jsp" %>
 <link href="/resources/css/orderCustom.css" rel="stylesheet">
 
 <div class="row">
@@ -75,7 +75,7 @@
 
 </div>
 
-<%@include file="../includes/footer.jsp" %>
+<%@include file="../includes/adminFooter.jsp" %>
 
 <script src="/resources/js/order.js"></script>
 
@@ -135,6 +135,32 @@
             console.log("datePage: "+datePage);
 
             orderController.getOrderList(dateNumber, datePage, state, 1);
+        })
+
+        // 주문 상세 정보 확인
+        $(document).on("click", ".order-history tbody tr", function (e) {
+            let type = $(this).data("type");
+            let ono = $(this).data("ono");
+
+            if (type==='detailList') {
+                let closestHidden = $(this).next(".hidden-tr").find("td");
+                $(this).siblings(".hidden-tr").hide();
+
+                orderController.getOrder(type, ono, closestHidden);
+            }
+        })
+
+        // 배송 정보 및 결제 정보 확인
+        $(document).on("click", ".order-history-get-btn button", function (e) {
+            e.preventDefault();
+
+            let type = $(this).data("type");
+            let ono = $(this).data("ono");
+
+            console.log("type: "+type+", ono: "+ono);
+            let closestHidden = $(this).closest("div").prev("table").find("."+type+" td");
+
+            orderController.getOrder(type, ono, closestHidden);
         })
 
     })

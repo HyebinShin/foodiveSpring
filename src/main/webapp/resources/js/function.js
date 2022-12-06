@@ -49,8 +49,23 @@ let fnc = (function () {
         location.html(str);
     }
 
+    // select 생성자
+    function constructorSelect(name, value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    // input 생성자
+    function constructorInput(label, name, data) {
+        this.label = label;
+        this.name = name;
+        this.data = data;
+    }
+
     return {
         displayTime:displayTime,
-        initPagination:initPagination
+        initPagination:initPagination,
+        constructorSelect:constructorSelect,
+        constructorInput:constructorInput
     }
 })();
