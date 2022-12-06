@@ -32,8 +32,8 @@ let orderController = (function () {
                 return;
             }
 
-            orderInit.initPeriod(date*page);
-            orderInit.initOrderHistory(list);
+            orderInit.initPeriod(date * page);
+            orderInit.initOrderHistory(list, orderInit.initOrderHistoryTR);
             orderInit.initOrderHistoryBtn(list, page, date);
         });
     }
@@ -58,12 +58,31 @@ let orderController = (function () {
         })
     }
 
+    function getOrderList(dateNumber, datePage, state, page) {
+        let param = {
+            dateNumber:dateNumber,
+            datePage:datePage,
+            state:state,
+            page:page
+        }
+        orderService.getOrderList(param, function (orderCnt, list) {
+            if (page === -1) {
+                let pageNum = Math.ceil(orderCnt / 10.0);
+                getOrderList(dateNumber, datePage, state, pageNum);
+                return;
+            }
+
+
+        });
+    }
+
     return {
         testExist: testExist,
         setOrderDetail: setOrderDetail,
         addOrder: addOrder,
         getOrderHistory: getOrderHistory,
-        getOrderHistoryGet:getOrderHistoryGet
+        getOrderHistoryGet: getOrderHistoryGet,
+        getOrderList: getOrderList
     };
 })();
 
@@ -133,11 +152,27 @@ let orderService = (function () {
         })
     }
 
+    function getOrderList(param, callback, error) {
+        let dateNumber = param.dateNumber;
+        let datePage = param.datePage;
+        let state = param.state;
+        let page = param.page;
+        $.getJSON(`/order/${dateNumber}/${datePage}/${state}/${page}`,
+            function (data) {
+                if (callback) {
+                    callback(data.orderCnt, data.list);
+                }
+            }).fail(function (xhr, status, err) {
+            error(err);
+        })
+    }
+
     return {
         setOrderDetail: setOrderDetail,
         addOrder: addOrder,
         getOrderHistoryList: getOrderHistoryList,
-        getOrderHistoryGet: getOrderHistoryGet
+        getOrderHistoryGet: getOrderHistoryGet,
+        getOrderList:getOrderList
     }
 
 })();
@@ -149,7 +184,7 @@ let orderInit = (function () {
     let orderHistoryBtn = $(".order-history-btn");
     let period = $(".period");
 
-    function initOrderHistory(orderList) {
+    function initOrderHistory(orderList, functionName) {
         let innerText = tbody.text();
         if (innerText.includes("해당 기간에 주문 내역이 없습니다")) {
             tbody.empty();
@@ -163,13 +198,7 @@ let orderInit = (function () {
         let html = "";
 
         for (let i = 0, len = orderList.length || 0; i < len; i++) {
-            html += `<tr data-ono=${orderList[i].ono} data-type="detailList">`;
-
-            html += `<td>${orderList[i].ono}</td>`;
-            html += `<td>${fnc.displayTime(orderList[i].orderDate)}</td>`;
-            html += `<td>₩ ${orderList[i].totalPrice.toLocaleString(undefined, {maximumFractionDigits:0})}</td>`;
-
-            html += `</tr>`;
+            html += `${functionName(orderList[i])}`;
 
             // 해당 주문 데이터 표시될 공간
             html += `<tr class="hidden-tr">`;
@@ -182,17 +211,27 @@ let orderInit = (function () {
         tbody.append(html);
     }
 
+    function initOrderHistoryTR(order) {
+        let html = `<tr data-ono=${order.ono} data-type="detailList">`;
+        html += `<td>${order.ono}</td>`;
+        html += `<td>${fnc.displayTime(order.orderDate)}</td>`;
+        html += `<td>₩ ${order.totalPrice.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>`;
+        html += `</tr>`;
+
+        return html;
+    }
+
     function initPeriod(date) {
         let today = new Date();
         let endDay = new Date();
-        endDay.setDate(today.getDate()-date);
+        endDay.setDate(today.getDate() - date);
 
         let tYY = today.getFullYear();
-        let tMM = today.getMonth()+1;
+        let tMM = today.getMonth() + 1;
         let tDD = today.getDate();
 
         let eYY = endDay.getFullYear();
-        let eMM = endDay.getMonth()+1;
+        let eMM = endDay.getMonth() + 1;
         let eDD = endDay.getDate();
 
         period.empty();
@@ -228,7 +267,7 @@ let orderInit = (function () {
 
         html += `<tbody>`;
 
-        for (let i=0, len=detailList.length||0; i<len; i++) {
+        for (let i = 0, len = detailList.length || 0; i < len; i++) {
             let qty = Number(detailList[i].qty);
             let total = Number(detailList[i].totalPrice);
             let price = total / qty;
@@ -236,15 +275,15 @@ let orderInit = (function () {
             html += `<tr data-pno=${detailList[i].pno}>`;
 
             html += `<td>${detailList[i].korName}</td>`;
-            html += `<td>₩ ${price.toLocaleString(undefined, {maximumFractionDigits:0})}</td>`;
+            html += `<td>₩ ${price.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>`;
             html += `<td>${qty}</td>`;
-            html += `<td>₩ ${total.toLocaleString(undefined, {maximumFractionDigits:0})}</td>`;
+            html += `<td>₩ ${total.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>`;
 
             html += `</tr>`;
         }
 
         // 총 구매 금액 표시
-        html += `<tr><td></td><td></td><td></td><td>₩ ${order.totalPrice.toLocaleString(undefined, {maximumFractionDigits:0})}</td></tr>`;
+        html += `<tr><td></td><td></td><td></td><td>₩ ${order.totalPrice.toLocaleString(undefined, {maximumFractionDigits: 0})}</td></tr>`;
 
         // 배송지 표시될 공간
         html += `<tr class="hidden-tr ship">`;
@@ -281,7 +320,7 @@ let orderInit = (function () {
     function initOrderHistoryShip(space, ship) {
         space.empty();
 
-        let html = initFormGroup("배송 수신자 성함", ship.name);
+        let html = initFormGroup("배송 수신인 성함", ship.name);
         html += initFormGroup("배송지 우편번호", ship.zipcode);
         html += initFormGroup("배송지 주소", ship.address);
         html += initFormGroup("배송 수신자 연락처", ship.phone);
@@ -300,12 +339,13 @@ let orderInit = (function () {
     }
 
     return {
-        initPeriod:initPeriod,
+        initPeriod: initPeriod,
         initOrderHistory: initOrderHistory,
         initOrderHistoryBtn: initOrderHistoryBtn,
-        initOrderHistoryGet:initOrderHistoryGet,
-        initOrderHistoryPay:initOrderHistoryPay,
-        initOrderHistoryShip:initOrderHistoryShip
+        initOrderHistoryGet: initOrderHistoryGet,
+        initOrderHistoryPay: initOrderHistoryPay,
+        initOrderHistoryShip: initOrderHistoryShip,
+        initOrderHistoryTR:initOrderHistoryTR
     }
 
 })();
