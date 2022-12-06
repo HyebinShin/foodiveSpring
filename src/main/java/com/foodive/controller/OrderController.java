@@ -149,4 +149,37 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getList(criteria, datePageDTO), HttpStatus.OK);
     }
 
+    @PostMapping(
+            value = {"/modify"},
+            consumes = "application/json; charset=utf-8",
+            produces = "text/plain; charset=utf-8"
+    )
+    @ResponseBody
+    public ResponseEntity<String> modify(
+            @RequestBody OrderLineDTO orderLineDTO
+    ) {
+        OrderVO orderVO = orderLineDTO.getOrder();
+        ShipVO ship = orderLineDTO.getShip();
+        PayVO pay = orderLineDTO.getPay();
+
+        boolean isSuccess = false;
+        String msg = null;
+
+        if (ship != null) {
+            isSuccess = shipService.modify(ship);
+            msg = OrderMsg.MODIFY_SHIP;
+        } else if (pay != null){
+            isSuccess = payService.modify(pay);
+            msg = OrderMsg.MODIFY_PAY_STATE;
+        } else if (orderVO != null) {
+            isSuccess = orderService.modify(orderVO);
+            msg = OrderMsg.MODIFY_ORDER_STATE;
+        }
+
+        return isSuccess ?
+                new ResponseEntity<>(msg, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
 }

@@ -7,12 +7,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class OrderLineDTO {
-    @NonNull
     private OrderVO order;
-    @NonNull
     private List<OrderDetailVO> detailList;
     private ShipVO ship;
     private PayVO pay;
+
+    public OrderLineDTO(OrderVO order, List<OrderDetailVO> detailList) {
+        this.order = order;
+        this.detailList = detailList;
+    }
 }

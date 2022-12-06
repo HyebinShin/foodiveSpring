@@ -110,8 +110,9 @@
             let input = $(this).val();
             console.log("name: "+name); // name, phone, address2
             console.log("input: "+input);
+            let location = $(".order-line-ship");
 
-            orderValidate.checkChange(name, input)
+            orderValidate.checkChange(name, input, location);
         })
 
         $(".order-btn").on("click", "button", function (e) {
@@ -132,13 +133,15 @@
 
                 console.log("input: "+input+", name: "+name);
 
-                if (!orderValidate.checkNull(name, input)) {
+                let location = $(".order-line-ship");
+
+                if (!orderValidate.checkNull(name, input, location)) {
                     return false;
                 }
 
                 switch (name) {
                     case 'name': case 'phone': case 'address2':
-                        if (!orderValidate.checkChange(name, input)) {
+                        if (!orderValidate.checkChange(name, input, location)) {
                             return false;
                         }
                         break;

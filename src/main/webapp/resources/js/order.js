@@ -92,13 +92,19 @@ let orderController = (function () {
                 case 'detailList': // order, detailList(pno, korName, qty, totalPrice)
                     orderInit.initOrderHistoryGet(space, data.order, data.detailList);
                     break;
-                case 'ship': // name, zipcode, address, phone
+                case 'ship': // name, zipcode, address1, address2, phone
                     orderInit.initOrderShip(space, data);
                     break;
                 case 'pay': // payment
                     orderInit.initOrderPay(space, data);
                     break;
             }
+        })
+    }
+
+    function modifyOrder(orderLineDTO) {
+        orderService.modifyOrder(orderLineDTO, function (result) {
+            alert(result);
         })
     }
 
@@ -109,7 +115,8 @@ let orderController = (function () {
         getOrderHistory: getOrderHistory,
         getOrderHistoryGet: getOrderHistoryGet,
         getOrderList: getOrderList,
-        getOrder:getOrder
+        getOrder:getOrder,
+        modifyOrder:modifyOrder
     };
 })();
 
@@ -197,12 +204,32 @@ let orderService = (function () {
         })
     }
 
+    function modifyOrder(param, callback, error) {
+        $.ajax({
+            type:'post',
+            url: '/order/modify',
+            data: JSON.stringify(param),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result, status, xhr) {
+                if (callback) {
+                    callback(result);
+                }
+            },
+            error: function (xhr, status, er) {
+                if (error) {
+                    error(er);
+                }
+            }
+        })
+    }
+
     return {
         setOrderDetail: setOrderDetail,
         addOrder: addOrder,
         getOrderHistoryList: getOrderHistoryList,
         getOrderHistoryGet: getOrderHistoryGet,
-        getOrderList:getOrderList
+        getOrderList:getOrderList,
+        modifyOrder:modifyOrder
     }
 
 })();
@@ -316,8 +343,17 @@ let orderInit = (function () {
             return;
         }
 
-        let html = `<table class='table table-hover'>`;
-        html += `<thead><tr>`
+        let html = "";
+        // 경고 메시지 출력 div
+        html += `<div class="error-well">`;
+        html += `<div class='well'>`;
+        html += `<div><i class="fa fa-info-circle"></i>`;
+        html += `<div class='validate-well'>경고메시지</div></div></div>`;
+        html += `</div>`;
+
+        html += `<table class='table table-hover'>`;
+        html += `<thead>`
+        html += `<tr>`;
         html += `<th>상품명</th>`;
         html += `<th>가격</th>`;
         html += `<th>구매수량</th>`;
@@ -393,9 +429,11 @@ let orderInit = (function () {
     function initOrderPay(space, pay) {
         space.empty();
 
+        let html = `<div class="modify-pay" id='modify-pay-${pay.ono}'>`;
+
         let args = [];
         args.push(new fnc.constructorSelect("무통장입금", "무통장입금"));
-        let html = `${initSelect(pay, 'payment', args, '결제 방법')}`;
+        html += `${initSelect(pay, 'payment', args, '결제 방법')}`;
 
         args = [];
         args.push(new fnc.constructorSelect("무통장 입금 전", 0));
@@ -404,7 +442,16 @@ let orderInit = (function () {
 
         html += `${initSelect(pay, 'payState', args, '결제 상태')}`;
 
+        html += `<div class='order-modify-btn'>`
+        html += `<button type="button" class='btn btn-info removeReadOnly' data-type="pay" data-action="removeReadOnly" data-payno=${pay.payNo}>수정</button>`
+        html += `<button type="button" class='btn btn-info modify' data-type="pay" data-action="modify" data-payno=${pay.payNo}>수정</button>`
+        html += `<button type="reset" class='btn btn-default reset' data-type="pay" data-action="reset">수정 취소</button>`
+        html += `</div>`;
+
+        html += `</div>`;
         space.append(html);
+        $(".order-modify-btn button[data-action!='removeReadOnly']").hide();
+        $(".modify-pay select").attr("disabled", "disabled");
         space.closest("tr").show();
     }
 
@@ -412,12 +459,12 @@ let orderInit = (function () {
     function initOrderShip(space, ship) {
         space.empty();
 
-        console.log("ship: "+JSON.stringify(ship));
-
         let html = "";
         let args = [];
         args.push(new fnc.constructorInput('배송 수신인 성함', 'name', ship.name));
         args.push(new fnc.constructorInput('배송 수신자 연락처', 'phone', ship.phone));
+
+        html += `<div class="modify-ship" id="modify-ship-${ship.ono}">`
 
         html += `${initInputText(args)}`;
         html += `<div class='form-group'>`;
@@ -431,7 +478,16 @@ let orderInit = (function () {
 
         html += `</div></div>`;
 
+        html += `<div class='order-modify-btn'>`
+        html += `<button type="button" class='btn btn-info removeReadOnly' data-type="ship" data-action="removeReadOnly" data-sno=${ship.sno}>수정</button>`
+        html += `<button type="button" class='btn btn-info modify' data-type="ship" data-action="modify" data-sno=${ship.sno}>수정</button>`
+        html += `<button type="reset" class='btn btn-default reset' data-type="ship" data-action="reset">수정 취소</button>`
+        html += `</div>`;
+
+        html += `</div>`;
         space.append(html);
+        $(".order-modify-btn button[data-action!='removeReadOnly']").hide();
+        $(".modify-ship input").attr("disabled", "disabled");
         space.closest("tr").show();
     }
 
@@ -452,7 +508,7 @@ let orderInit = (function () {
         for (let i=0; i<args.length; i++) {
             html += `<div class='form-group'>`;
             html += `<label>${args[i].label}</label>`;
-            html += `<input class='form-control' type='text' name=${args[i].name} value=${args[i].data}>`;
+            html += `<input class='form-control' type='text' name='${args[i].name}' value='${args[i].data}'>`;
             html += `</div>`;
         }
 
@@ -470,11 +526,11 @@ let orderInit = (function () {
             html += `<div class='form-group'>`;
         }
 
-        html += `<select class="form-control oneSelect" name=${type} id='select${order.ono}' data-ono=${order.ono}>`;
+        html += `<select class="form-control oneSelect" name='${type}' id='select${order.ono}' data-ono='${order.ono}'>`;
 
         for(let i=0; i<args.length; i++) {
             let isSelected = args[i].value === order.state ? 'selected' : '';
-            html += `<option value=${args[i].value} ${isSelected}>${args[i].name}</option>`;
+            html += `<option value='${args[i].value}' ${isSelected}>${args[i].name}</option>`;
         }
 
         html += `</select>`;
@@ -518,14 +574,15 @@ let orderValidate = (function () {
         return regex.test(input);
     }
 
-    function printMessage(msg) {
+    function printMessage(msg, location) {
         let validateWell = $(".validate-well");
         validateWell.empty();
         validateWell.append(msg);
-        $(".order-line-ship > .well").css("display", "block");
+        location.find(".well").css("display", "block");
+        // $(`${location} > .well`).css("display", "block");
     }
 
-    function checkChange(regexCase, input) {
+    function checkChange(regexCase, input, location) {
         let msg;
         switch (regexCase) {
             case 'name':
@@ -539,13 +596,13 @@ let orderValidate = (function () {
                 break;
         }
         if (input !== '' && !regex(regexCase, input)) {
-            printMessage(msg);
+            printMessage(msg, location);
             return false;
         }
         return true;
     }
 
-    function checkNull(regexCase, input) {
+    function checkNull(regexCase, input, location) {
         let msg;
         switch (regexCase) {
             case 'name':
@@ -561,7 +618,7 @@ let orderValidate = (function () {
                 break;
         }
         if (input === '') {
-            printMessage(msg);
+            printMessage(msg, location);
             return false;
         }
         return true;

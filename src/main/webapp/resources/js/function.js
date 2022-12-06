@@ -62,10 +62,65 @@ let fnc = (function () {
         this.data = data;
     }
 
+    // pay 생성자
+    function constructorPay(payment, state) {
+        this.payment = payment;
+        this.state = state;
+    }
+
+    // ship 생성자
+    function constructorShip(name, zipcode, address1, address2, phone) {
+        this.name = name;
+        this.zipcode = zipcode;
+        this.address1 = address1;
+        this.address2 = address2;
+        this.phone = phone;
+    }
+
+    // input 값 찾기
+    function returnInputVal(div, inputName) {
+        return div.find(`input[name='${inputName}']`).val();
+    }
+
+    // select 값 찾기
+    function returnSelectVal(div, selectName) {
+        return div.find(`select[name='${selectName}'] option:selected`).val();
+    }
+
+    // button hide and show ( :not )
+    function hideAndShowBtn(selector, data) {
+        $(selector).closest("div").find(`button[data-action!='${data}']`).show();
+        $(selector).closest("div").find(`button[data-action='${data}']`).hide();
+    }
+
+    // button hide and show ( this)
+    function hideAndShowThisBtn(selector, data) {
+        $(selector).closest("div").find(`button[data-action!='${data}']`).hide();
+        $(selector).closest("div").find(`button[data-action='${data}']`).show();
+    }
+
+    // input 값 다시 넣기
+    function resetInputVal(div, inputName, val) {
+        div.find(`input[name='${inputName}']`).val(val);
+    }
+
+    // select 값 다시 넣기
+    function resetSelectVal(div, selectName, val) {
+        div.find(`select[name='${selectName}']`).val(val).prop("selected", true);
+    }
+
     return {
         displayTime:displayTime,
         initPagination:initPagination,
         constructorSelect:constructorSelect,
-        constructorInput:constructorInput
+        constructorInput:constructorInput,
+        constructorPay:constructorPay,
+        constructorShip:constructorShip,
+        returnInputVal:returnInputVal,
+        returnSelectVal:returnSelectVal,
+        hideAndShowBtn:hideAndShowBtn,
+        resetInputVal:resetInputVal,
+        resetSelectVal:resetSelectVal,
+        hideAndShowThisBtn:hideAndShowThisBtn
     }
 })();

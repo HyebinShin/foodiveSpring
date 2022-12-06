@@ -163,5 +163,119 @@
             orderController.getOrder(type, ono, closestHidden);
         })
 
+        // 배송 정보 및 결제 정보 수정 버튼 오픈 및 객체 clone
+        let cloneShipObj;
+        let clonePayObj;
+        $(document).on("click", ".order-modify-btn button", function () {
+            let type = $(this).data("type");
+            let action = $(this).data("action");
+
+            console.log("type: "+type);
+            let closestDiv = $(this).closest(".modify-"+type);
+
+            switch (action) {
+                case 'removeReadOnly':
+                    switch (type) {
+                        case 'ship':
+                            cloneShipObj = new fnc.constructorShip(
+                                fnc.returnInputVal(closestDiv, 'name'),
+                                fnc.returnInputVal(closestDiv, 'zipcode'),
+                                fnc.returnInputVal(closestDiv, 'address1'),
+                                fnc.returnInputVal(closestDiv, 'address2'),
+                                fnc.returnInputVal(closestDiv, 'phone')
+                            );
+                            fnc.hideAndShowBtn(this, 'removeReadOnly');
+                            $(this).closest(".modify-ship").find("input").removeAttr("disabled");
+                            break;
+                        case 'pay':
+                            clonePayObj = new fnc.constructorPay(
+                                fnc.returnSelectVal(closestDiv, 'payment'),
+                                fnc.returnSelectVal(closestDiv, 'payState')
+                            );
+                            fnc.hideAndShowBtn(this, 'removeReadOnly');
+                            $(this).closest(".modify-pay").find("select").removeAttr("disabled");
+                            break;
+                    }
+                    break;
+                // 수정 및 리셋
+                case 'reset':
+                    switch (type) {
+                        case 'ship':
+                            fnc.resetInputVal(closestDiv, 'name', cloneShipObj.name);
+                            fnc.resetInputVal(closestDiv, 'zipcode', cloneShipObj.zipcode);
+                            fnc.resetInputVal(closestDiv, 'address1', cloneShipObj.address1);
+                            fnc.resetInputVal(closestDiv, 'address2', cloneShipObj.address2);
+                            fnc.resetInputVal(closestDiv, 'phone', cloneShipObj.phone);
+                            $(this).closest(".modify-ship").find("input").attr("disabled", "disabled");
+                            break;
+                        case 'pay':
+                            fnc.resetSelectVal(closestDiv, 'payment', clonePayObj.payment);
+                            fnc.resetSelectVal(closestDiv, 'payState', clonePayObj.state);
+                            $(this).closest(".modify-pay").find("select").attr("disabled", "disabled");
+                            break;
+                    }
+                    $(".error-well > .well").hide();
+                    fnc.hideAndShowThisBtn(this, 'removeReadOnly');
+                    break;
+                case 'modify':
+                    switch (type) {
+                        case 'ship':
+                            let sno = $(this).data("sno");
+                            $(".modify-ship input").each(function () {
+                                let input = $(this).val();
+                                let name = $(this).attr("name");
+                                let location = $(".error-well");
+
+                                console.log("input: "+input+", name: "+name);
+
+                                if (!orderValidate.checkNull(name, input, location)) {
+                                    return false;
+                                }
+
+                                switch (name) {
+                                    case 'name': case 'phone': case 'address2':
+                                        if (!orderValidate.checkChange(name, input, location)) {
+                                            console.log("invalidate");
+                                            return false;
+                                        }
+                                        break;
+                                }
+                            })
+                            let shipVO = new fnc.constructorShip(
+                                fnc.returnInputVal(closestDiv, 'name'),
+                                fnc.returnInputVal(closestDiv, 'zipcode'),
+                                fnc.returnInputVal(closestDiv, 'address1'),
+                                fnc.returnInputVal(closestDiv, 'address2'),
+                                fnc.returnInputVal(closestDiv, 'phone')
+                            );
+                            shipVO.sno = sno;
+                            orderController.modifyOrder({ship:shipVO});
+                            break;
+                        case 'pay':
+                            let payVO = new fnc.constructorPay(
+                                fnc.returnSelectVal(closestDiv, 'payment'),
+                                fnc.returnSelectVal(closestDiv, 'payState')
+                            );
+                            payVO.payNo = $(this).data("payno");
+                            orderController.modifyOrder({pay:payVO});
+                            break;
+                    }
+                    break;
+            }
+
+            console.log("cloneShipObj: "+JSON.stringify(cloneShipObj));
+            console.log("clonePayObj: "+JSON.stringify(clonePayObj));
+        })
+
+        $(document).on("change", ".modify-ship input", function () {
+            let name = $(this).attr("name");
+            let input = $(this).val();
+            console.log("name: "+name); // name, phone, address2
+            console.log("input: "+input);
+            let location = $(".error-well");
+
+            orderValidate.checkChange(name, input, location);
+        })
+
     })
 </script>

@@ -1,6 +1,6 @@
-.order-page, .order-btn, .order-history-btn, .order-history-get-btn, .order-page-btn { display: flex; flex-wrap: wrap; }
+.order-page, .order-btn, .order-history-btn, .order-history-get-btn, .order-page-btn, .order-modify-btn { display: flex; flex-wrap: wrap; }
 .order-page, .order-history-btn, .order-page-btn { justify-content: center; }
-.order-btn, .order-history-get-btn { justify-content: space-around; width: 180px; }
+.order-btn, .order-history-get-btn, .order-modify-btn { justify-content: space-around; width: 180px; }
 
 .address-form > input, .address-form > div { margin: 0.5rem 0;}
 #zipcode { width: calc(100%/2); display: inline-block; }
@@ -9,23 +9,23 @@
     border: 1px solid gray; border-radius: 5px; width: calc(100%/2 - 5px); display: inline-block; text-align: center;
 }
 .address-form span { display: block; margin: 0 auto; width: 100px;}
-.order-btn, .address-form span, .order-history-get-btn { margin: 0 auto; }
+.order-btn, .address-form span, .order-history-get-btn, .order-modify-btn { margin: 0 auto; }
 
-.hidden-tr, .order-line-ship > .well {
+.hidden-tr, .order-line-ship > .well, .order-history .well {
     display: none;
 }
 
-.order-line-ship > .well {
+.order-line-ship > .well, .order-history .well {
     border: 0;
     background-color: #942a25;
 }
 
-.order-line-ship > .well > div {
+.order-line-ship > .well > div, .order-history .well div {
     display:flex;
     align-content: center;
 }
 
-.order-line-ship > .well i {
+.order-line-ship > .well i, .order-history .well i {
     color: white;
     font-size: 20px;
 }
