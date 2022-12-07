@@ -162,6 +162,15 @@ public class OrderController {
         ShipVO ship = orderLineDTO.getShip();
         PayVO pay = orderLineDTO.getPay();
 
+        if (orderVO != null) {
+            try {
+                validateState(orderVO, pay);
+            } catch (IllegalArgumentException e) {
+                log.error(e.getMessage());
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
         boolean isSuccess = false;
         String msg = null;
 
@@ -180,6 +189,31 @@ public class OrderController {
                 new ResponseEntity<>(msg, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
+    }
+
+    // 결제 상태 및 주문 상태 검증
+    private void validateState(OrderVO orderVO, PayVO payVO) {
+        payVO = payVO!=null ? payVO : payService.get(orderVO.getOno());
+        Integer orderState = orderVO.getState();
+        Integer payState = payVO.getState();
+
+        switch (orderState) {
+            case 1: case 2: case 3:
+                if (payState!=1) {
+                    throw new IllegalArgumentException();
+                }
+                break;
+            case 4:
+                if (payState!=2) {
+                    throw new IllegalArgumentException();
+                }
+                break;
+            case 0 :
+                if (payState!=0) {
+                    throw new IllegalArgumentException();
+                }
+                break;
+        }
     }
 
 }
