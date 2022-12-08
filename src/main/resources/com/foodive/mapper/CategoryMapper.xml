@@ -4,26 +4,34 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.foodive.mapper.CategoryMapper">
 
+    <sql id="HCode">
+        <choose>
+            <when test='category.HCode == "null" || category.HCode == null'>
+                or tbl_category.hCode is null
+            </when>
+            <otherwise>
+                or tbl_category.hCode like '%'||#{category.hCode}||'%'
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="notHCode">
+        <if test="category.cno!=null">
+            or tbl_category.cno = #{category.cno}
+        </if>
+        <if test="category.code!=null">
+            or tbl_category.code = #{category.code}
+        </if>
+        <if test="category.name!=null">
+            or tbl_category.name like '%'||#{category.name}||'%'
+        </if>
+    </sql>
+
     <sql id="search">
         <trim prefixOverrides="or|and">
             <trim prefix="(" suffix=")" prefixOverrides="or">
-                <if test="category.cno!=null">
-                    or tbl_category.cno = #{category.cno}
-                </if>
-                <if test="category.code!=null">
-                    or tbl_category.code = #{category.code}
-                </if>
-                <if test="category.name!=null">
-                    or tbl_category.name like '%'||#{category.name}||'%'
-                </if>
-                    <choose>
-                        <when test='category.HCode == "null" || category.HCode == null '>
-                            or tbl_category.hCode is null
-                        </when>
-                        <otherwise>
-                            or tbl_category.hCode like '%'||#{category.hCode}||'%'
-                        </otherwise>
-                    </choose>
+                <include refid="notHCode"/>
+                <include refid="HCode"/>
             </trim>
             <if test="category.state!=null">
                 and state = #{category.state}
@@ -99,8 +107,9 @@
     <select id="get" resultType="com.foodive.domain.CategoryVO">
         select /*+ index_desc (tbl_category pk_category) */ *
         from tbl_category
-        where
-        <include refid="search"/>
+        <where>
+        <include refid="notHCode"/>
+        </where>
     </select>
 
     <select id="getListWithPaging" resultType="com.foodive.domain.CategoryVO">
