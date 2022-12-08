@@ -146,7 +146,5 @@
     <div id="page-wrapper">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
-
-        <script type="text/javascript">
-            console.log('state: <c:out value="${loginInfo.state}"/>');
-        </script>
+        
+        <%@ include file="../auth/adminAuth.jsp" %>

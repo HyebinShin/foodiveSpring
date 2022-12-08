@@ -1,6 +1,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@include file="../includes/header.jsp" %>
+<%@include file="../auth/memberAuth.jsp"%>
 
 <link href="/resources/css/orderCustom.css" rel="stylesheet">
 

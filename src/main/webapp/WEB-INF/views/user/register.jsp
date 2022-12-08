@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@include file="../includes/header.jsp" %>
+<%@include file="../auth/anonymoutAuth.jsp"%>
 <link href="/resources/css/userCustom.css" rel="stylesheet">
 
 <div class="row">
